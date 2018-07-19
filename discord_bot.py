@@ -29,6 +29,12 @@ async def sleep(ctx):
     await ctx.send("Yes, "+ctx.message.author.mention+". You should use the sleep.")
 
 @bot.command()
+async def shower(ctx):
+    shower = [' you reek already!', ' it`s about time...', ' nah, its cool.', ' I mean, have you already showered this week?',' but only a golden shower.']
+    """Shower?"""
+    await ctx.send("Yes, "+ctx.message.author.mention+ random.choice(shower))
+
+@bot.command()
 async def book(ctx):
     """Search for book on goodreads."""
     await ctx.send("http"+"s://www.goodreads.com/search?q="+"Test"+"&search%5Bsource%5D=goodreads&search_type=books&tab=books")
@@ -42,11 +48,8 @@ async def book(ctx):
 @bot.command()
 async def info(ctx):
     embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
-
     embed.add_field(name="Author", value="._x3l51")
-
     await ctx.send(embed=embed)
-
 bot.remove_command('help')
 
 @bot.event
@@ -59,9 +62,9 @@ async def on_message(message):
     ball_res = ['It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes - definitely.', 'Yo may rely on it.', 'As I see it, yes.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.', 'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Connot predict now.', 'Concentrate and ask again.', 'Don`t count on it.', 'My reply is no.', 'My sources say no.', 'Outlook not so good.']
     str = message.content.lower()
 
-    if isinstance(message.channel, discord.DMChannel):
-        await message.author.send("Cant respond here!")
-        return
+#    if isinstance(message.channel, discord.DMChannel):
+#        await message.author.send("Cant respond here!")
+#        return
     if bot.user.mentioned_in(message) and message.mention_everyone is False:
         if 'help' in message.content.lower():
             await message.channel.send('If you are in need of immediate assistance, I kindly suggest you to dial 911.')
@@ -77,10 +80,14 @@ async def on_message(message):
         await message.add_reaction('🇦🇺')
     if 'europe' in message.clean_content.lower():
         await message.add_reaction('🇪🇺')
-    if 'USA'  in message.clean_content.lower():
-        await message.add_reaction('🇺🇸')
+    if 'facepalm'  in message.clean_content.lower():
+        await message.add_reaction('🤦')
     if 'Canada' in message.clean_content.lower():
         await message.add_reaction('🇨🇦')
+    if 'sweden' in message.clean_content.lower():
+        await message.add_reaction('🇸🇪')
+    if 'sleep' in message.clean_content.lower():
+        await message.add_reaction('💤')
     if 'nani' in message.clean_content.lower():
         await message.channel.send('NAAAAANNNIIIIII!?!?!?!11')
 
