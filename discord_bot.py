@@ -7,6 +7,7 @@ TOKEN = 'HERE GOES THE TOKEN'
 
 description = '''Sir Henry Pickles, the pickly Bot!'''
 bot = commands.Bot(command_prefix='?', description=description)
+#changing the comman_prefix is critical
 
 @bot.event
 async def on_ready():
@@ -14,6 +15,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+#this will be printed into the hosts console
 
 @bot.command()
 async def test(ctx):
@@ -44,6 +46,12 @@ async def sleep(ctx):
 async def book(ctx):
     """Search for book on goodreads."""
     await ctx.send("http"+"s://www.goodreads.com/search?q="+"Test"+"&search%5Bsource%5D=goodreads&search_type=books&tab=books")
+#still working on it. Picture this:
+#Someone types "?book Neil Gaiman"
+#I imagine to grab "Neil Gaiman" to
+#automatically put it into the
+#link to search for it. It should
+#go where "Test" is right now.
 
 @bot.command()
 async def info(ctx):
@@ -58,9 +66,11 @@ bot.remove_command('help')
 @bot.event
 async def on_message(message):
     greeting = ['hello', 'hi', 'hey', 'greetings', 'sup']
-    greeting_res = ['hello', 'hi', 'hey', 'greetings', 'sup']
+    #greeting_res = ['hello', 'hi', 'hey', 'greetings', 'sup']
+    #This one could work with any() to pick responses at random
     bye = ['bye', 'see you', 'see ya', 'cya', 'nite']
-    bye_res = ['bye', 'see you', 'see ya', 'cya', 'nite']
+    #bye_res = ['bye', 'see you', 'see ya', 'cya', 'nite'] 
+    #This one could work with any() to pick responses at random
     str = message.content.lower()
 
     if isinstance(message.channel, discord.DMChannel):
