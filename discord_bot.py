@@ -88,6 +88,8 @@ async def on_message(message):
         await message.add_reaction('🇸🇪')
     if 'sleep' in message.clean_content.lower():
         await message.add_reaction('💤')
+    if 'sushi' in message.clean_content.lower():
+        await message.add_reaction('🍣')
     if 'nani' in message.clean_content.lower():
         await message.channel.send('NAAAAANNNIIIIII!?!?!?!11')
 
