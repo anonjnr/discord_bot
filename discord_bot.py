@@ -1,4 +1,5 @@
 import discord
+import random
 from discord.ext import commands
 
 #Get the discord.py from here: https://github.com/Rapptz/discord.py
@@ -21,21 +22,6 @@ async def on_ready():
 async def test(ctx):
     """Use this to test if I'm working."""
     await ctx.send("successful")
-
-@bot.command()
-async def hi(ctx):
-    """Just, hi."""
-    await ctx.send("Quite the *lingo* of the youth, eh? Hi to you too, "+ctx.message.author.mention+"!")
-
-@bot.command()
-async def hello(ctx):
-    """Another greeting."""
-    await ctx.send("I bid you pickly greetings!")
-
-@bot.command()
-async def sup(ctx):
-    """Yet another greeting."""
-    await ctx.send("Sup brooooooo. Or sis, idc. <3")
 
 @bot.command()
 async def sleep(ctx):
@@ -66,11 +52,11 @@ bot.remove_command('help')
 @bot.event
 async def on_message(message):
     greeting = ['hello', 'hi', 'hey', 'greetings', 'sup']
-    #greeting_res = ['hello', 'hi', 'hey', 'greetings', 'sup']
-    #This one could work with any() to pick responses at random
-    bye = ['bye', 'see you', 'see ya', 'cya', 'nite']
-    #bye_res = ['bye', 'see you', 'see ya', 'cya', 'nite'] 
-    #This one could work with any() to pick responses at random
+    greeting_res = ['Quite the *lingo* of the youth, eh? Hi to you too!','I bid you pickly greetings!', 'Sup brooooooo. Or sis, idc. <3', 'Shama-Lama-Ding-Dong right back at you!', 'hi', 'hey', 'greetings', 'sup']
+    bye = ['bye', 'see you', 'see ya', 'cya', 'nite', 'good night']
+    bye_res = ['Farewell!', 'bye', 'see you', 'see ya', 'cya', 'nite']
+    ball = ['8ball']
+    ball_res = ['It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes - definitely.', 'Yo may rely on it.', 'As I see it, yes.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.', 'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Connot predict now.', 'Concentrate and ask again.', 'Don`t count on it.', 'My reply is no.', 'My sources say no.', 'Outlook not so good.']
     str = message.content.lower()
 
     if isinstance(message.channel, discord.DMChannel):
@@ -80,9 +66,11 @@ async def on_message(message):
         if 'help' in message.content.lower():
             await message.channel.send('If you are in need of immediate assistance, I kindly suggest you to dial 911.')
         elif any(x in str for x in greeting):
-            await message.channel.send('Shama-Lama-Ding-Dong right back at you!')
+            await message.channel.send(random.choice(greeting_res))
         elif any(x in str for x in bye):
-            await message.channel.send('Have a great one!')
+            await message.channel.send(random.choice(bye_res))
+        elif all(x in str for x in ball):
+            await message.channel.send('Answer: '+random.choice(ball_res))
         else:
             await message.add_reaction('👀')
     if 'australia' in message.clean_content.lower():
