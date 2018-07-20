@@ -94,8 +94,6 @@ async def on_message(message):
         await message.add_reaction('🚿')
     if 'nani' in message.clean_content.lower():
         await message.channel.send('NAAAAANNNIIIIII!?!?!?!11')
-    #the space after the trigger word is important
-    #to don't have weird triggers.
 
     await bot.process_commands(message)
     #required bc on_message nullifies all other commands
