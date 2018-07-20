@@ -54,17 +54,17 @@ bot.remove_command('help')
 
 @bot.event
 async def on_message(message):
-    greeting = ['hello ', 'hi ', 'hey ', 'greetings ', 'sup ']
+    greeting = ['hello', 'hi', 'hey', 'greetings', 'sup']
     greeting_res = ['Quite the *lingo* of the youth, eh? Hi to you too!','I bid you pickly greetings!', 'Sup brooooooo. Or sis, idc. <3', 'Shama-Lama-Ding-Dong right back at you!', 'hi', 'hey', 'greetings', 'sup']
-    bye = ['bye ', 'see you ', 'see ya ', 'cya ', 'nite ', 'good night ']
+    bye = ['bye', 'see you', 'see ya', 'cya', 'nite', 'good night']
     bye_res = ['Farewell!', 'bye', 'see you', 'see ya', 'cya', 'nite']
     ball = ['8ball']
     ball_res = ['It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes - definitely.', 'Yo may rely on it.', 'As I see it, yes.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.', 'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Connot predict now.', 'Concentrate and ask again.', 'Don`t count on it.', 'My reply is no.', 'My sources say no.', 'Outlook not so good.']
     str = message.content.lower()
 
-    if isinstance(message.channel, discord.DMChannel):
-        await message.author.send("Cant respond here!")
-        return
+#    if isinstance(message.channel, discord.DMChannel):
+#        await message.author.send("Cant respond here!")
+#        return
     if bot.user.mentioned_in(message) and message.mention_everyone is False:
         if 'help' in message.content.lower():
             await message.channel.send('If you are in need of immediate assistance, I kindly suggest you to dial 911.')
@@ -86,13 +86,13 @@ async def on_message(message):
         await message.add_reaction('🇨🇦')
     if 'sweden' in message.clean_content.lower():
         await message.add_reaction('🇸🇪')
-    if 'sleep ' in message.clean_content.lower():
+    if 'sleep' in message.clean_content.lower():
         await message.add_reaction('💤')
-    if 'sushi ' in message.clean_content.lower():
+    if 'sushi' in message.clean_content.lower():
         await message.add_reaction('🍣')
-    if 'shower ' in message.clean_content.lower():
+    if 'shower' in message.clean_content.lower():
         await message.add_reaction('🚿')
-    if 'nani ' in message.clean_content.lower():
+    if 'nani' in message.clean_content.lower():
         await message.channel.send('NAAAAANNNIIIIII!?!?!?!11')
     #the space after the trigger word is important
     #to don't have weird triggers.
