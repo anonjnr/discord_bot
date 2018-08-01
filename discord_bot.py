@@ -1,3 +1,4 @@
+import asyncio
 import discord
 import random
 from discord.ext import commands
@@ -8,6 +9,7 @@ TOKEN = 'HERE GOES THE TOKEN'
 
 description = '''Sir Henry Pickles, the pickly Bot!'''
 bot = commands.Bot(command_prefix='?', description=description)
+client = discord.Client()
 #changing the comman_prefix is critical
 
 @bot.event
@@ -32,7 +34,7 @@ async def sleep(ctx):
 async def shower(ctx):
     shower = [' you reek already!', ' it`s about time...', ' nah, its cool.', ' I mean, have you already showered this week?',' but only a golden shower.']
     """Shower?"""
-    await ctx.send("Yes, "+ctx.message.author.mention+ random.choice(shower))
+    await ctx.send("Yes, "+ctx.message.author.mention+ " " + random.choice(shower))
 
 @bot.command()
 async def book(ctx):
@@ -60,14 +62,25 @@ async def on_message(message):
     bye_res = ['Farewell!', 'bye', 'see you', 'see ya', 'cya', 'nite']
     ball = ['8ball']
     ball_res = ['It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes - definitely.', 'Yo may rely on it.', 'As I see it, yes.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.', 'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Connot predict now.', 'Concentrate and ask again.', 'Don`t count on it.', 'My reply is no.', 'My sources say no.', 'Outlook not so good.']
+    eye_bleach = ['https://imgur.com/r/aww']
+#    roles = ['123456789123456789']
+#    Output of \@mods is <@&123456789123456789>
     str = message.content.lower()
 
 #    if isinstance(message.channel, discord.DMChannel):
 #        await message.author.send("Cant respond here!")
 #        return
     if bot.user.mentioned_in(message) and message.mention_everyone is False:
+#        if 'mod' in message.content.lower():
+#            for r in message.author.roles:
+#                if r.id is roles:
+#                    await message.channel.send('You`re a mod.')
+#                return
+#       I'm trying to fetch the role of the author
+        if 'eye bleach' in message.content.lower():
+            await message.channel.send(random.choice(eye_bleach))
         if 'help' in message.content.lower():
-            await message.channel.send('If you are in need of immediate assistance, I kindly suggest you to dial 911.')
+                await message.channel.send('If you are in need of immediate assistance, I kindly suggest you to dial 911.')
         elif any(x in str for x in greeting):
             await message.channel.send(random.choice(greeting_res))
         elif any(x in str for x in bye):
@@ -92,6 +105,13 @@ async def on_message(message):
         await message.add_reaction('🍣')
     if 'shower' in message.clean_content.lower():
         await message.add_reaction('🚿')
+    if 'love' in message.clean_content.lower():
+        await message.add_reaction('💓')
+    if 'goodest robot' in message.clean_content.lower():
+        await message.add_reaction('🤖')
+        await message.add_reaction('🇮')
+        await message.add_reaction('🇦')
+        await message.add_reaction('🇲')
     if 'nani' in message.clean_content.lower():
         await message.channel.send('NAAAAANNNIIIIII!?!?!?!11')
 
