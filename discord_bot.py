@@ -2,6 +2,7 @@ import asyncio
 import discord
 import random
 import time
+import urllib.request
 from discord import Game
 from discord.ext import commands
 from discord.ext.commands import Bot
@@ -24,7 +25,7 @@ async def on_ready():
 
 @bot.command()
 async def members(ctx):
-    role_mod = [468826620648620042]
+    role_mod = [468826620648620042, 475322910635065345]
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
@@ -41,9 +42,14 @@ async def info(ctx):
     await ctx.send(embed=embed)
 bot.remove_command('help')
 
+@bot.command()
+async def gmt(ctx):
+    t = time.gmtime()
+    await ctx.send("Actual time GMT: " + time.asctime(t))
+
 @bot.command(pass_context = True)
 async def clear(ctx):
-    role_mod = [468826620648620042]
+    role_mod = [468826620648620042, 475322910635065345]
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
@@ -52,7 +58,7 @@ async def clear(ctx):
             await ctx.send("Channel has been cleared of messages.")
             await ctx.send("https://cdn.discordapp.com/attachments/474903005523869715/474903418100645898/FwxbY6j.gif")
             return
-    await ctx.send(ctx.message.author.mention+', you\'re not a <@!410406332143763466>. You can\'t use this command.')
+    await ctx.send(ctx.message.author.mention+', you\'re not a <@&475322910635065345>. You can\'t use this command.')
 
 @bot.command()
 async def test(ctx):
@@ -62,7 +68,7 @@ async def test(ctx):
 
 @bot.command()
 async def mod(ctx):
-    role_mod = [475322910635065345]
+    role_mod = [468826620648620042, 475322910635065345]
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
@@ -71,27 +77,59 @@ async def mod(ctx):
 
 @bot.command()
 async def help(ctx):
-    embed = discord.Embed(title="Sir Henry Pickles", description="Basic commands of the bot", color=0xeee657)
-    embed.add_field(name="How to call a command", value='Mention the bot and put the command\n after `@Sir Henry Pickles COMMAND`')
-    embed.add_field(name="Info", value='Basic `info` on the bot')
-    embed.add_field(name="Sleep", value='Ask if you should go to `sleep`')
-    embed.add_field(name="Shower", value='Ask if you should take a `shower`')
-    embed.add_field(name="8ball", value='Ask the magic `8ball`')
-    embed.add_field(name="Mod", value='Check if you\'re a `mod`')
-    embed.add_field(name="Test", value='Check if I\'m working right with `test`')
-    embed.add_field(name="Rolling Dice", value='You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!')
-    await ctx.send(embed=embed)
-
-# https://i.imgur.com/QNiL6SP.gif
-# https://i.imgur.com/GDNyuPn.mp4
-# https://i.imgur.com/DKJhx9l.gif
-
-# should't be used as it pings @everyone
-# @bot.command()
-# async def roles(ctx):
-#     roles_me = ctx.message.author.roles
-#     await ctx.send(ctx.message.author.mention + "\'s roles are: ")
-#     await ctx.send(roles_me)
+    await ctx.send(
+        "\n"
+        "----------\n"
+        "\n"
+        "**Name**: Sir Henry Pickles\n"
+        "**Description:** *Basic commands of the bot.*\n"
+        "\n"
+        "You can call a command by `@Sir Henry Pickles COMMAND`\n"
+        "\n"
+        "`info`\n" 
+        "Basic information on the Bot\n"
+        "\n"
+        "`test`\n" 
+        "Tests if the Bot works properly\n"
+        "\n"
+        "`greeting`\n" 
+        "Say `Hi` to Henry! Or `Hello` or `Morning` or something like this\n"
+        "\n"
+        "`goodbye`\n" 
+        "Same as with greeting. Responds to a variety of goodbyes\n"
+        "\n"
+        "`sleep`\n" 
+        "Let\'s the Bot decide if you should go to bed\n"
+        "\n"
+        "`shower`\n" 
+        "Let\'s the Bot decide if you should take a shower\n"
+        "\n"
+        "`joke`\n" 
+        "Let Henry tell you a joke\n"
+        "\n"
+        "`8ball`\n" 
+        "Ask the oracle\n"
+        "\n"
+        "`roll`\n" 
+        "You can `roll` a dice using `2d8` with 2 being the number\n"
+        "of dice you want the bot to roll and 8 being the number of sides\n"
+        "the dice has. If you just want the bot to throw one dice, just put `d8`.\n"
+        "You can add your modifier too! Simply put `2d8 3` with 3 being your\n"
+        "modifier. Negative values do work too!\n"
+        "\n"
+        "`clear`\n"
+        "With this command a Moderator can clear all messages in a\n"
+        "channel if something NSFW or otherwise inaapropriate got posted.\n"
+        "Other users can use this command aswell - it automatically pings\n"
+        "the Moderators for them.\n"
+        "\n"
+        "`bleach`\n"
+        "Applies eye bleach. *Try it!*\n"
+        "\n"
+        "`roles`\n"
+        "Shows you what roles you have.\n"
+        "\n"
+    )
 
 @bot.command()
 async def sleep(ctx):
@@ -102,6 +140,31 @@ async def sleep(ctx):
 async def shower(ctx):
     shower = [' you reek already!', ' it`s about time...', ' nah, its cool.', ' I mean, have you already showered this week?',' but only a golden shower.']
     await ctx.send(ctx.message.author.mention+ " " + random.choice(shower))
+
+@bot.command()
+async def joke(ctx):
+    joke = [
+        'I always get pickle and chutney mixed up.\n'
+        'It makes me chuckle.',
+
+        'When the giant cannibals started to soak me in vinegar, I\'d had enough.\n'
+        '"Why don\'t you pickle someone your own size?" I shouted.',
+
+        'What\'s green and sour and swims in an aquarium?\n'
+        'A tro-pickle fish.',
+
+        'What\'s green and got two wheels?\n'
+        'A motorpickle.',
+
+        'I walked into the kitchen today to find my blonde wife looking very confused while holding a jar of pickle.\n'
+        '"What\'s wrong?" I asked her.\n'
+        'She replied "This jar of pickle says to store it in a cool, dark location."\n'
+        'I said, "Okay, how about in the fridge?"\n'
+        'She said "No, silly, there\'s a little light inside."',
+        '\n'
+        '',
+        ]
+    await ctx.send(random.choice(joke))
 
 @bot.command()
 async def roll(ctx, dice_string, mod: int = 0):
@@ -150,10 +213,12 @@ async def bleach(ctx):
     ]
     await ctx.send(random.choice(eye_bleach))
 
-#google calendar
-@bot.command()
-async def cal(ctx):
-    ctx.send()
+# TIP System
+
+# #google calendar
+# @bot.command()
+# async def cal(ctx):
+#     ctx.send()
 
 # #goodreads
 # @bot.command()
@@ -161,13 +226,24 @@ async def cal(ctx):
 #     contents = urllib.request.urlopen("https://www.goodreads.com/search.xml?key=CGisitAFBAgQpaE1fBbZkQ&q=Ender%27s+Game").read()
 #     await ctx.send(contents)
 
+##Movie Knights
+# https://i.imgur.com/QNiL6SP.gif
+# https://i.imgur.com/GDNyuPn.mp4
+# https://i.imgur.com/DKJhx9l.gif
+
+@bot.command()
+async def roles(ctx):
+    await ctx.send(ctx.message.author.mention + "\'s roles are:")
+    for r in ctx.message.author.roles:
+        roles_me = r.name
+        await ctx.send("`"+roles_me+"`")
+
 @bot.event
 async def on_message(message):
     greeting = ['hello', 'hi', 'hey', 'greetings', 'sup', 'morning']
     greeting_res = ['Quite the *lingo* of the youth, eh? Hi to you too!','I bid you pickly greetings!', 'Sup brooooooo. Or sis, idc. <3', 'Shama-Lama-Ding-Dong right back at you!', 'hi', 'hey', 'greetings', 'sup']
     bye = ['bye', 'see you', 'see ya', 'cya', 'nite', 'good night']
     bye_res = ['Farewell!', 'bye', 'see you', 'see ya', 'cya', 'nite']
-    ball = ['8ball']
     ball_res = ['It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes - definitely.', 'You may rely on it.', 'As I see it, yes.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.', 'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Connot predict now.', 'Concentrate and ask again.', 'Don`t count on it.', 'My reply is no.', 'My sources say no.', 'Outlook not so good.']
     str = message.content.lower()
 
@@ -175,14 +251,14 @@ async def on_message(message):
         return
 
     if bot.user.mentioned_in(message) and message.mention_everyone is False:
+        if '8ball' in message.content.lower():
+            await message.channel.send(random.choice(ball_res))
         if 'help' in message.content.lower():
-                await message.channel.send('If you are in need of immediate assistance, I kindly suggest you to dial 911.')
+                await message.channel.send('If you are in need of immediate assistance, I kindly suggest you to call the emergency services.')
         elif any(x in str for x in greeting):
             await message.channel.send(random.choice(greeting_res))
         elif any(x in str for x in bye):
             await message.channel.send(random.choice(bye_res))
-        elif all(x in str for x in ball):
-            await message.channel.send('Answer: '+random.choice(ball_res))
         # else:
         #     await message.add_reaction('👀')
     if 'australia' in message.clean_content.lower():
