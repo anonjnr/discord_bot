@@ -19,7 +19,7 @@ from discord.ext.commands import Bot
 #print(dir(message))
 #help(obj)
 
-TOKEN = 'NDc1MzE4MDAxMjk4NTcxMjg3.DkdSyQ.AIjRbidSvGACNKfcdeKR94epeq0'
+TOKEN = 'TOKENGOESHERE'
 
 description = '''Sir Henry Pickles, the pickly Bot!'''
 bot = commands.Bot(command_prefix=commands.when_mentioned)
