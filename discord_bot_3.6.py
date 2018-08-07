@@ -1,17 +1,16 @@
 #!/usr/bin/env python3.6
 # -*- coding: utf-8 -*-
+# bot_bcad_3.6.py
 
 import asyncio
 import discord
 import random
 import time
 import subprocess
-import urllib.request
 import requests
+import wikipedia
 from xml.etree import ElementTree
-from discord import Game
 from discord.ext import commands
-from discord.ext.commands import Bot
 
 #python3 -m pip install -U discord.py
 #pip install requests-xml
@@ -21,11 +20,12 @@ from discord.ext.commands import Bot
 
 TOKEN = 'TOKENGOESHERE'
 
+# get the mod role by sending \@MODROLE into chat
 description = '''Sir Henry Pickles, the pickly Bot!'''
-bot = commands.Bot(command_prefix=commands.when_mentioned)
+bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
 bot.remove_command('help')
-role_mod = ['468826620648620042', '475322910635065345']
-mention_mod = '<@&475322910635065345>'
+role_mod = ['MODROLEIDHERE']
+mention_mod = '<@&MODROLEIDSHERE>'
 
 @bot.event
 async def on_ready():
@@ -36,7 +36,7 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def members(ctx):
     for r in ctx.message.author.roles:
         pulled_roles = r.id
@@ -47,14 +47,15 @@ async def members(ctx):
             return
     await ctx.bot.say(ctx.message.author.mention+', you\'re not a mod. You can\'t use this command.')
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def info(ctx):
     embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
     embed.add_field(name="Author", value='<@!410406332143763466>')
     await ctx.bot.say(embed=embed)
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def gmt(ctx):
+    print(time.strftime('%a, %d %b %Y %H:%M:%S GMT', time.gmtime()))
     t = time.gmtime()
     await ctx.bot.say("Actual time GMT: " + time.asctime(t))
 
@@ -63,7 +64,6 @@ async def clear(ctx, cle: int = 1000):
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
-            #await ctx.channel.purge(limit=cle+1)
             await bot.purge_from(ctx.message.channel, limit=cle+1)
             cle_num = str(cle)
             if cle == 1000:
@@ -78,15 +78,15 @@ async def clear(ctx, cle: int = 1000):
             embed.set_image(url="https://cdn.discordapp.com/attachments/474903005523869715/474903418100645898/FwxbY6j.gif")
             await ctx.bot.say(embed=embed)
             return
-    await ctx.bot.say(ctx.message.author.mention+', you\'re part of ' + mention_mod + '. You can\'t use this command.')
+    await ctx.bot.say(ctx.message.author.mention+', you\'re not part of ' + mention_mod + '. You can\'t use this command.')
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def test(ctx):
     await ctx.bot.say("successful")
     print(ctx.message.author.mention+" used *test*.")
     print('------')
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def mod(ctx):
     for r in ctx.message.author.roles:
         pulled_roles = r.id
@@ -104,11 +104,11 @@ async def cmd_help(ctx):
         "**Name**: Sir Henry Pickles\n"
         "**Description:** *Does his best.*\n"
     )
-    embed=discord.Embed(title="COMMANDS", description="You can call a command by typing `@Sir Henry Pickles COMMAND`", color=0x00ff00)
+    embed=discord.Embed(title="COMMANDS", description="You can call a command by typing `@Sir Henry Pickles COMMAND` or `!COMMAND`", color=0x00ff00)
     embed.add_field(name="`help`", value="Prints this. It's the basic commands you can use the Bot for")
     embed.add_field(name="`info`", value="Basic information on the Bot such as name and author")
     embed.add_field(name="`test`", value="Tests if the Bot works properly. Has no other purpose")
-    embed.add_field(name="`goodreads`", value="Let'\s you look for authors and books on Goodread.com. For this you can use an authors name, book title, ISBN or even all together. Example: `@Sir Henry Pickles goodreads Neil Gaiman Norse Mythology`")
+    embed.add_field(name="`goodreads`", value="Let\'s you look for authors and books on Goodread.com. For this you can use an authors name, book title, ISBN or even all together. Example: `@Sir Henry Pickles goodreads Neil Gaiman Norse Mythology` or `!goodreads Neil Gaiman Norse Mythology`")
     embed.add_field(name="`greeting`", value="Say `Hi` to Henry! Or `Hello` or `Morning` or something like this")
     embed.add_field(name="`goodbye`", value="Same as with greeting. Responds to a variety of goodbyes")
     embed.add_field(name="`sleep`", value="Let\'s the Bot decide if you should go to bed")
@@ -124,17 +124,17 @@ async def cmd_help(ctx):
     await ctx.bot.say(embed=embed)
     await ctx.bot.say("If you still have questions, please ping the `@Mods`")
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def sleep(ctx):
     sleep = ['Yes, you should use the sleep.', 'But mooooom idonwanna!', 'Whatevs, man.', 'JA!']
     await ctx.bot.say(random.choice(sleep))
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def shower(ctx):
     shower = [' you reek already!', ' it`s about time...', ' nah, its cool.', ' I mean, have you already showered this week?',' but only a golden shower.']
     await ctx.bot.say(ctx.message.author.mention+ " " + random.choice(shower))
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def joke(ctx):
     joke = [
         'I always get pickle and chutney mixed up.\n'
@@ -255,7 +255,7 @@ async def joke(ctx):
         ]
     await ctx.bot.say(random.choice(joke))
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def roll(ctx, dice_string, mod: int = 0):
     count_raw, num_raw = dice_string.split("d")
     if not count_raw:
@@ -276,7 +276,7 @@ async def roll(ctx, dice_string, mod: int = 0):
         num_ran_count_mod = num_ran_count+mod
         await ctx.bot.say("I rolled "+ str(num_ran_count) + " for you. That\'s a " + str(num_ran_count_mod) + " with your modifier.")
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def bleach(ctx):
     eye_bleach = [
     'https://i.imgur.com/cQBeAjw.mp4',
@@ -336,7 +336,7 @@ async def bleach(ctx):
 # async def cal(ctx):
 #     ctx.bot.say()
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def goodreads(ctx, *keyword_raw):
     keyword = str(keyword_raw)
     x = int(0)
@@ -358,20 +358,26 @@ async def goodreads(ctx, *keyword_raw):
 
         # ['__class__', '__copy__', '__deepcopy__', '__delattr__', '__delitem__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__len__', '__lt__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setitem__', '__setstate__', '__sizeof__', '__str__', '__subclasshook__', 'append', 'attrib', 'clear', 'extend', 'find', 'findall', 'findtext', 'get', 'getchildren', 'getiterator', 'insert', 'items', 'iter', 'iterfind', 'itertext', 'keys', 'makeelement', 'remove', 'set', 'tag', 'tail', 'text']
 
+# @bot.command(pass_context = True)
+# async def wikipedia(ctx, *wiki_keyword_raw):
+#     help(command)
+#     wiki_keyword = str(wiki_keyword_raw)
+#     # wiki_sum = wikipedia.summary("Apple", sentences=1, chars=100,auto_suggest=True, redirect=True)
+#     # print(wiki_sum)
+#     # wikipedia.summary(wiki_keyword, sentences=1)
+
 ##Movie Knights
 # https://i.imgur.com/QNiL6SP.gif
 # https://i.imgur.com/GDNyuPn.mp4
 # https://i.imgur.com/DKJhx9l.gif
 
-@bot.command(pass_context=True)
+@bot.command(pass_context = True)
 async def roles(ctx):
     await ctx.bot.say(ctx.message.author.mention + "\'s roles are:")
     for r in ctx.message.author.roles:
         roles_me = r.name
         await ctx.bot.say("`"+roles_me+"`")
 
-# make changes for 3.6
-# --------------------
 @bot.event
 async def on_message(message):
     greeting = ['hello', 'hi', 'hey', 'greetings', 'sup', 'morning']
