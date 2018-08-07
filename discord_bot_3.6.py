@@ -25,7 +25,7 @@ description = '''Sir Henry Pickles, the pickly Bot!'''
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
 bot.remove_command('help')
 role_mod = ['MODROLEIDHERE']
-mention_mod = '<@&MODROLEIDSHERE>'
+mention_mod = '<@&MODROLEIDHERE>'
 
 @bot.event
 async def on_ready():
@@ -50,7 +50,7 @@ async def members(ctx):
 @bot.command(pass_context = True)
 async def info(ctx):
     embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
-    embed.add_field(name="Author", value='<@!410406332143763466>')
+    embed.add_field(name="Author", value='<@!AUTHORIDHERE>')
     await ctx.bot.say(embed=embed)
 
 @bot.command(pass_context = True)
@@ -341,7 +341,7 @@ async def goodreads(ctx, *keyword_raw):
     keyword = str(keyword_raw)
     x = int(0)
     xml = ElementTree.fromstring(
-        requests.get('https://www.goodreads.com/search.xml?key=CGisitAFBAgQpaE1fBbZkQ&q=' + keyword + '&page=1').text)
+        requests.get('https://www.goodreads.com/search.xml?key=GOODREADSKEYHERE&q=' + keyword + '&page=1').text)
 
     for v in xml.find('search/results'):
         book = v.find('best_book')
