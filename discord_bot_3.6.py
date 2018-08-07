@@ -19,11 +19,13 @@ from discord.ext.commands import Bot
 #print(dir(message))
 #help(obj)
 
-TOKEN = 'TOKENGOESHERE'
+TOKEN = 'NDc1MzE4MDAxMjk4NTcxMjg3.DkdSyQ.AIjRbidSvGACNKfcdeKR94epeq0'
 
 description = '''Sir Henry Pickles, the pickly Bot!'''
 bot = commands.Bot(command_prefix=commands.when_mentioned)
 bot.remove_command('help')
+role_mod = ['468826620648620042', '475322910635065345']
+mention_mod = '<@&475322910635065345>'
 
 @bot.event
 async def on_ready():
@@ -36,16 +38,12 @@ async def on_ready():
 
 @bot.command(pass_context=True)
 async def members(ctx):
-    role_mod = ['468826620648620042', '475322910635065345']
-    wr_mem= open("memberlist.txt","w+")
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
-            #help(members)
-            for member in ctx.guild.members:
-                wr_mem.write(member)
-                wr_mem.close() 
-                await ctx.bot.say(member)
+            for server in bot.servers:
+                for member in server.members:
+                    await ctx.bot.say(member)
             return
     await ctx.bot.say(ctx.message.author.mention+', you\'re not a mod. You can\'t use this command.')
 
@@ -62,15 +60,16 @@ async def gmt(ctx):
 
 @bot.command(pass_context = True)
 async def clear(ctx, cle: int = 1000):
-    role_mod = ['468826620648620042', '475322910635065345']
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
-            await ctx.channel.purge(limit=cle+1)
+            #await ctx.channel.purge(limit=cle+1)
+            await bot.purge_from(ctx.message.channel, limit=cle+1)
+            cle_num = str(cle)
             if cle == 1000:
                 num_cleared = "up to 1000 messages"
-            elif cle == 0:
-                num_cleared = "your message because why would you want to clear 0 messages!?"
+            elif cle <= 0:
+                num_cleared = "your message because why would you want to clear " + cle_num + " messages!?"
             elif cle == 1:
                 num_cleared = "1 message"
             else:
@@ -79,7 +78,7 @@ async def clear(ctx, cle: int = 1000):
             embed.set_image(url="https://cdn.discordapp.com/attachments/474903005523869715/474903418100645898/FwxbY6j.gif")
             await ctx.bot.say(embed=embed)
             return
-    await ctx.bot.say(ctx.message.author.mention+', you\'re not a <@&475322910635065345>. You can\'t use this command.')
+    await ctx.bot.say(ctx.message.author.mention+', you\'re part of ' + mention_mod + '. You can\'t use this command.')
 
 @bot.command(pass_context=True)
 async def test(ctx):
@@ -89,7 +88,6 @@ async def test(ctx):
 
 @bot.command(pass_context=True)
 async def mod(ctx):
-    role_mod = ['468826620648620042', '475322910635065345'] 
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
@@ -110,6 +108,7 @@ async def cmd_help(ctx):
     embed.add_field(name="`help`", value="Prints this. It's the basic commands you can use the Bot for")
     embed.add_field(name="`info`", value="Basic information on the Bot such as name and author")
     embed.add_field(name="`test`", value="Tests if the Bot works properly. Has no other purpose")
+    embed.add_field(name="`goodreads`", value="Let'\s you look for authors and books on Goodread.com. For this you can use an authors name, book title, ISBN or even all together. Example: `@Sir Henry Pickles goodreads Neil Gaiman Norse Mythology`")
     embed.add_field(name="`greeting`", value="Say `Hi` to Henry! Or `Hello` or `Morning` or something like this")
     embed.add_field(name="`goodbye`", value="Same as with greeting. Responds to a variety of goodbyes")
     embed.add_field(name="`sleep`", value="Let\'s the Bot decide if you should go to bed")
@@ -121,6 +120,7 @@ async def cmd_help(ctx):
     embed.add_field(name="`GMT`", value="Gives you the current time for the GMT timezones")
     embed.add_field(name="`bleach`", value="Applies eye bleach. *Try it!* (recommended after and/ or before `clear`)")
     embed.add_field(name="`roles`", value="Shows you what roles you have")
+    embed.add_field(name="`votecall`", value="Calls a simple thumb up/ thumb down vote for the message.")
     await ctx.bot.say(embed=embed)
     await ctx.bot.say("If you still have questions, please ping the `@Mods`")
 
@@ -298,9 +298,35 @@ async def bleach(ctx):
     'https://i.imgur.com/wwOM7kU.mp4',
     'https://i.imgur.com/cXP94NP.mp4',
     'https://i.imgur.com/10b9Y12.mp4',
-    'https://i.imgur.com/KnXrY6R.jpg'
+    "https://i.imgur.com/KnXrY6R.jpg"
     ]
     await ctx.bot.say(random.choice(eye_bleach))
+
+    # Ebedded bleach doesnt work for mp4
+    # "https://i.imgur.com/cQBeAjw.mp4",
+    # "https://i.imgur.com/p40Hwwi.jpg",
+    # "https://i.imgur.com/Onyvdgh.mp4",
+    # "https://i.imgur.com/bGtlZbl.jpg",
+    # "https://i.imgur.com/kTmRulV.jpg",
+    # "https://i.imgur.com/lmnpp5K.mp4",
+    # "https://i.imgur.com/fcRvoJn.jpg",
+    # "https://i.imgur.com/07lceng.mp4",
+    # "https://i.imgur.com/J1EPxUk.jpg",
+    # "https://i.imgur.com/JxO5seE.jpg",
+    # "https://i.imgur.com/ViNjAKD.mp4",
+    # "https://i.imgur.com/vpDxduH.jpg",
+    # "https://i.imgur.com/ngTloKH.jpg",
+    # "https://i.imgur.com/IiMIW1h.jpg",
+    # "https://i.imgur.com/aC8xiz5.mp4",
+    # "https://i.imgur.com/rq56D4o.jpg",
+    # "https://i.imgur.com/wwOM7kU.mp4",
+    # "https://i.imgur.com/cXP94NP.mp4",
+    # "https://i.imgur.com/10b9Y12.mp4",
+    # "https://i.imgur.com/KnXrY6R.jpg"
+    # ]
+    # embed=discord.Embed(color=0x00ff00)
+    # embed.set_image(url=random.choice(eye_bleach))
+    # await ctx.bot.say(embed=embed)
 
 # TIP System
 # Karma System
@@ -310,32 +336,27 @@ async def bleach(ctx):
 # async def cal(ctx):
 #     ctx.bot.say()
 
-#goodreads
-#should add pagecount for results
 @bot.command(pass_context=True)
-async def goodreads(ctx):
+async def goodreads(ctx, *keyword_raw):
+    keyword = str(keyword_raw)
+    x = int(0)
     xml = ElementTree.fromstring(
-        requests.get('https://www.goodreads.com/search.xml?key=CGisitAFBAgQpaE1fBbZkQ&q=IT+King&page=1').text)
-    
+        requests.get('https://www.goodreads.com/search.xml?key=CGisitAFBAgQpaE1fBbZkQ&q=' + keyword + '&page=1').text)
+
     for v in xml.find('search/results'):
         book = v.find('best_book')
-
         author = book.find('author/name').text
         title = book.find('title').text
+        book_id = book.find('id').text
+        result_list = ('**' + author + '**' + ': ' + title + ' - ' + 'https://www.goodreads.com/book/show/' + book_id + '.It')
 
-        print(author, ':', title)
-        await ctx.bot.say(f'{author} : {title}')
+        await ctx.bot.say(result_list)
 
-#  ['__class__', '__copy__', '__deepcopy__', '__delattr__', '__delitem__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__len__', '__lt__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setitem__', '__setstate__', '__sizeof__', '__str__', '__subclasshook__', 'append', 'attrib', 'clear', 'extend', 'find', 'findall', 'findtext', 'get', 'getchildren', 'getiterator', 'insert', 'items', 'iter', 'iterfind', 'itertext', 'keys', 'makeelement', 'remove', 'set', 'tag', 'tail', 'text']
-    
-    
-    # print("first")
-    # print("And all the rest... %s" %(list(therest)))
-    # await ctx.bot.say("https://www.goodreads.com/search?q=" + search)
-    # author
-    # title
-    # isbn
-    # https://www.goodreads.com/search?q=IT+King
+        x = (x + 1)
+        if x == 3:
+            break
+
+        # ['__class__', '__copy__', '__deepcopy__', '__delattr__', '__delitem__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__len__', '__lt__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setitem__', '__setstate__', '__sizeof__', '__str__', '__subclasshook__', 'append', 'attrib', 'clear', 'extend', 'find', 'findall', 'findtext', 'get', 'getchildren', 'getiterator', 'insert', 'items', 'iter', 'iterfind', 'itertext', 'keys', 'makeelement', 'remove', 'set', 'tag', 'tail', 'text']
 
 ##Movie Knights
 # https://i.imgur.com/QNiL6SP.gif
