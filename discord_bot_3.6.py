@@ -27,9 +27,10 @@ TOKEN = 'TOKENGOESHERE'
 description = '''Sir Henry Pickles, the pickly Bot!'''
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
 bot.remove_command('help')
-role_mod = ['ROLEIDGOESHERE']
-mention_mod = '<@&ROLEIDGOESHERE>'
-reddit = praw.Reddit(client_id='CLIENTIDGOESHERE', client_secret='CLIENTSECRETGOESHERE', user_agent='ALLTHATOTHERJAZZHERE')
+role_mod = ['ROLEIDHERE']
+mention_mod = '<@&ROLEIDHERE>'
+reddit = praw.Reddit(client_id='CLIENTIDHERE', client_secret='CLIENTSECRETHERE', user_agent='ALLOTHERJAZZHERE')
+
 
 @bot.event
 async def on_ready():
@@ -39,9 +40,6 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-
-# with open('data_storing.json') as f:
-#    data = json.load(f)
 
 @bot.command(pass_context = True)
 async def members(ctx):
@@ -115,17 +113,19 @@ async def mod(ctx):
 
 @bot.command(name='help', pass_context=True)
 async def cmd_help(ctx):
+    member = ctx.message.author
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `help`')
     print('------')
     
     embed_cmd=discord.Embed(title="COMMANDS", description="You can call a command by typing `@Sir Henry Pickles COMMAND` or `!COMMAND`", color=0x00ff00)
-    embed_cmd.add_field(name="`help`", value="Prints this. It's the basic commands you can use the Bot for")
+    embed_cmd.add_field(name="`help`", value="Sends this per DM. It's the basic commands you can use the Bot for")
     embed_cmd.add_field(name="`info`", value="Basic information on the Bot such as name and author")
     embed_cmd.add_field(name="`test`", value="Tests if the Bot works properly. Has no other purpose")
 
     embed_use=discord.Embed(title="USEFUL", description="", color=0x00ff00)
     embed_use.add_field(name="`goodreads`", value="Let\'s you look for authors and books on Goodread.com. For this you can use an authors name, book title, ISBN or even all together. Example: `@Sir Henry Pickles goodreads Neil Gaiman Norse Mythology` or `!goodreads Neil Gaiman Norse Mythology`")
     embed_use.add_field(name="`reddit`", value="With this command you can let Henry post the `top 3 hot topics` of a subreddit of your choosing. Simply use `@Sir Henry Pickles reddit SUBREDDIT` or `!reddit SUBREDDIT` with `subreddit` being the subreddit of your choosing. Subreddit")
+    embed_use.add_field(name="`wikipedia`", value="Let\s you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you\'re looking for")
     embed_use.add_field(name="`roll`", value="You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!")
     embed_use.add_field(name="`GMT`", value="Gives you the current time for the GMT timezones")
 
@@ -142,7 +142,7 @@ async def cmd_help(ctx):
     embed_misc.add_field(name="`shower`", value="Let\'s the Bot decide if you should take a shower")
     embed_misc.add_field(name="`joke`", value="Let Henry tell you a joke which most certainly is hilarious")
     embed_misc.add_field(name="`8ball`", value="Ask the oracle with this all time classic")
-    await ctx.bot.say(
+    await bot.send_message(member, 
         "If you are in need of immediate assistance, I kindly suggest you to call the emergency services.\n"
         "\n"
         "----------\n"
@@ -150,12 +150,12 @@ async def cmd_help(ctx):
         "**Name**: Sir Henry Pickles\n"
         "**Description:** *Does his best.*\n"
     )
-    
-    await ctx.bot.say(embed=embed_cmd)
-    await ctx.bot.say(embed=embed_use)
-    await ctx.bot.say(embed=embed_mod)
-    await ctx.bot.say(embed=embed_misc)
-    await ctx.bot.say("If you still have questions, please ping the `@Mods`")
+
+    await bot.send_message(member, embed=embed_cmd)
+    await bot.send_message(member, embed=embed_use)
+    await bot.send_message(member, embed=embed_mod)
+    await bot.send_message(member, embed=embed_misc)
+    await bot.send_message(member, "If you still have questions, please ping the `@Mods`")
 
 @bot.command(pass_context = True)
 async def sleep(ctx):
@@ -178,6 +178,12 @@ async def joke(ctx):
     joke = [
         'I always get pickle and chutney mixed up.\n'
         'It makes me chuckle.',
+
+        'What do you call a lazy dill?\n'
+        'A shirkin\' gherkin.',
+
+        'Why don\'t pickles laugh at Hebrew jokes?\n'
+        'It\'s not kosher.',
 
         'When the giant cannibals started to soak me in vinegar, I\'d had enough.\n'
         '"Why don\'t you pickle someone your own size?" I shouted.',
@@ -305,24 +311,27 @@ async def cmd_8ball(ctx):
 async def roll(ctx, dice_string, mod: int = 0):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `roll`')
     print('------')
-    count_raw, num_raw = dice_string.split("d")
-    if not count_raw:
-        count_raw = 1
-    count = int(count_raw)
-    num = int(num_raw)
-    await ctx.bot.say("Rolling "+ str(count) +" d"+ str(num) +" ...")
-    await asyncio.sleep( 2 )
-    random.seed()
-    numbers = []
-    for count in range(count):
-        number = random.randint(1,num)
-        numbers.append(number)
-    num_ran_count = (sum(numbers))
-    if mod == 0:
-        await ctx.bot.say("I rolled a "+ str(num_ran_count) + " for you.")
-    else:
-        num_ran_count_mod = num_ran_count+mod
-        await ctx.bot.say("I rolled "+ str(num_ran_count) + " for you. That\'s a " + str(num_ran_count_mod) + " with your modifier.")
+    try:
+        count_raw, num_raw = dice_string.split("d")
+        if not count_raw:
+            count_raw = 1
+        count = int(count_raw)
+        num = int(num_raw)
+        await ctx.bot.say("Rolling "+ str(count) +" d"+ str(num) +" ...")
+        await asyncio.sleep( 2 )
+        random.seed()
+        numbers = []
+        for count in range(count):
+            number = random.randint(1,num)
+            numbers.append(number)
+        num_ran_count = (sum(numbers))
+        if mod == 0:
+            await ctx.bot.say("I rolled a "+ str(num_ran_count) + " for you.")
+        else:
+            num_ran_count_mod = num_ran_count+mod
+            await ctx.bot.say("I rolled "+ str(num_ran_count) + " for you. That\'s a " + str(num_ran_count_mod) + " with your modifier.")
+    except:
+        await ctx.bot.say(f'Error. Something didn\'t work out, <@{ctx.message.author.id}>. Check your formatting. Was it: `4d12 3`?')
 
 @bot.command(pass_context = True)
 async def bleach(ctx):
@@ -405,7 +414,7 @@ async def goodreads(ctx, *keyword_raw):
 
         if i == 2:
             break
-
+    
         # ['__class__', '__copy__', '__deepcopy__', '__delattr__', '__delitem__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__len__', '__lt__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setitem__', '__setstate__', '__sizeof__', '__str__', '__subclasshook__', 'append', 'attrib', 'clear', 'extend', 'find', 'findall', 'findtext', 'get', 'getchildren', 'getiterator', 'insert', 'items', 'iter', 'iterfind', 'itertext', 'keys', 'makeelement', 'remove', 'set', 'tag', 'tail', 'text']
 
 @bot.command(name='reddit', pass_context=True)
@@ -414,26 +423,43 @@ async def cmd_reddit(ctx, subreddit_raw):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `reddit`, looking for the subreddit: `'+subreddit_input+'`')
     print('------')
     x = int(0)
-    for i, submission in enumerate(reddit.subreddit(subreddit_input).hot(limit=5)):
-        if submission.over_18:
-            await ctx.bot.say("Please do not request NSFW results. "+mention_mod)
-            break
-        if submission.stickied:
-            continue  
-        result_list = (f'{submission.url}')
-        if not submission.over_18 and not submission.stickied:
-            await ctx.bot.say(result_list)
-            x = int(x + 1 )
-            if x == 3:
+    try:
+        for i, submission in enumerate(reddit.subreddit(subreddit_input).hot(limit=5)):
+            if submission.over_18:
+                await ctx.bot.say("Please do not request NSFW results. "+mention_mod)
                 break
+            if submission.stickied:
+                continue  
+            result_list = (f'{submission.url}')
+            if not submission.over_18 and not submission.stickied:
+                await ctx.bot.say(result_list)
+                x = int(x + 1 )
+                if x == 3:
+                    break
+    except:
+       await ctx.bot.say(f'Error. Something didn\'t work out. Search for somthing else or some time else, <@{ctx.message.author.id}>')
 
-# @bot.command(pass_context = True)
-# async def wikipedia(ctx, *wiki_keyword_raw):
-#     help(command)
-#     wiki_keyword = str(wiki_keyword_raw)
-#     # wiki_sum = wikipedia.summary("Apple", sentences=1, chars=100,auto_suggest=True, redirect=True)
-#     # print(wiki_sum)
-#     # wikipedia.summary(wiki_keyword, sentences=1)
+@bot.command(name='wikipedia', pass_context = True)
+async def cmd_wikipedia(ctx, *wiki_keyword_raw):
+    wiki_error = "Error. Specify/ check/ rephrase your search query"
+    try:
+        wiki_keyword = str(wiki_keyword_raw)
+        wiki_sum = wikipedia.summary(wiki_keyword, sentences=1, chars=100,auto_suggest=True, redirect=True)
+        wiki_keyword_string = wikipedia.page(wiki_keyword)
+        wiki_url = wiki_keyword_string.url
+        embed_wiki=discord.Embed(title="Wikipedia", description=wiki_keyword, color=0x00ff00)
+        embed_wiki.add_field(name=wiki_sum, value=wiki_url)    
+        await ctx.bot.say(embed=embed_wiki)
+    except wikipedia.exceptions.DisambiguationError:
+        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    except wikipedia.exceptions.PageError:
+        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    except wikipedia.exceptions.HTTPTimeoutError:
+        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    except wikipedia.exceptions.RedirectError:
+        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    except wikipedia.exceptions.WikipediaException:
+        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
 
 ##Movie Knights
 # https://i.imgur.com/QNiL6SP.gif
@@ -449,7 +475,6 @@ async def roles(ctx):
         roles_me = r.name
         await ctx.bot.say("`"+roles_me+"`")
 
-# Put 8ball as cmd
 @bot.event
 async def on_message(message):
     greeting = ['hello', 'hi', 'hey', 'greetings', 'sup', 'morning']
