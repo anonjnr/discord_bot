@@ -12,7 +12,7 @@ Official Docs for Discord API: https://discordapp.com/developers/docs/intro
 Special thanks to @sharkbound for the help with fetching and pulling apart the data off goodreads.com (their "API" is a joke btw.)
 Also special thanks to @ir-3 for helping with getting the second prefix running and helping with misc stuff
 
-Used Libs:
+## Used Libs:
 
 ```
 import asyncio
@@ -27,7 +27,7 @@ import json
 from xml.etree import ElementTree
 from discord.ext import commands
 ```
-Get started:
+## Get started:
 
 Download all.
 
@@ -39,7 +39,7 @@ If you run into any issues, look up the documentation as provided on top of this
 
 @anonjnr
 
-Commands:
+## Commands:
 
 You can call a command by typing `@Sir Henry Pickles COMMAND` or `!COMMAND`
 
