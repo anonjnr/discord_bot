@@ -14,23 +14,64 @@ import json
 from xml.etree import ElementTree
 from discord.ext import commands
 
-
 #python3 -m pip install -U discord.py
 #pip install requests-xml
 #pip install wikipedia
+#pip install praw
 
 #print(dir(message))
 #help(obj)
 
-TOKEN = 'TOKENGOESHERE'
+data = {}  
+data['TOKEN'] = []  
+data['TOKEN'].append({  
+    'value': 'DISCORD_BOT_TOKEN_HERE'
+})
+data['MOD_ROLES'] = []
+data['MOD_ROLES'].append({  
+    'value_1': 'ADMIN_ROLE_ID_HERE',  
+    'value_2': 'MOD_ROLEID_HERE'
+})
+data['REDDIT'] = []
+data['REDDIT'].append({
+    'client_id': 'REDDIT_CLIENT_ID_HERE',
+    'client_secret': 'REDDIT_CLIENT_SECRET_HERE',
+    'user_agent': 'REDDIT_USER_AGENT_HERE'
+})
+data['AUTHOR'] = []
+data['AUTHOR'].append({
+    'bot_author_id': 'DISCORD_BOT_AUTHER_ID_HERE'
+})
 
+with open('/server/bcad_bot/data.txt', 'w') as outfile:  
+    json.dump(data, outfile)
+
+with open('/server/bcad_bot/data.txt') as json_file:  
+    data = json.load(json_file)
+    for p in data['TOKEN']:
+        TOKEN = p['value']
+    for p in data['MOD_ROLES']:
+        mod_role_1 = p['value_1']
+        mod_role_2 = p['value_2']
+    for p in data['REDDIT']:
+        json_client_id = p['client_id']
+        json_client_secret = p['client_secret']
+        json_user_agent = p['user_agent']
+    for p in data['AUTHOR']:
+        json_bot_author_id = p['bot_author_id']
+        
 description = '''Sir Henry Pickles, the pickly Bot!'''
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
 bot.remove_command('help')
-role_mod = ['ROLEIDHERE']
-mention_mod = '<@&ROLEIDHERE>'
-reddit = praw.Reddit(client_id='CLIENTIDHERE', client_secret='CLIENTSECRETHERE', user_agent='ALLOTHERJAZZHERE')
+role_mod = [mod_role_1, mod_role_2]
+mention_mod = '<@&' + mod_role_1 + '>'
+reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret, user_agent=json_user_agent)
+bot_author = str("<@!" + json_bot_author_id + ">")
 
+# @bot.event
+# async def on_member_join(ctx, member):
+# 	string=str(member)+" joined"
+# 	await ctx.bot.say(string)
 
 @bot.event
 async def on_ready():
@@ -40,7 +81,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-
+    
 @bot.command(pass_context = True)
 async def members(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `members`')
@@ -61,7 +102,7 @@ async def info(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `info`')
     print('------')
     embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
-    embed.add_field(name="Author", value='<@!410406332143763466>')
+    embed.add_field(name="Author", value=bot_author)
     await ctx.bot.say(embed=embed)
 
 @bot.command(pass_context = True)
@@ -362,31 +403,6 @@ async def bleach(ctx):
     "https://imgur.com/gallery/u61qJad"
     ]
     await ctx.bot.say(random.choice(eye_bleach))
-    # Ebedded bleach doesnt work for mp4
-    # "https://i.imgur.com/cQBeAjw.mp4",
-    # "https://i.imgur.com/p40Hwwi.jpg",
-    # "https://i.imgur.com/Onyvdgh.mp4",
-    # "https://i.imgur.com/bGtlZbl.jpg",
-    # "https://i.imgur.com/kTmRulV.jpg",
-    # "https://i.imgur.com/lmnpp5K.mp4",
-    # "https://i.imgur.com/fcRvoJn.jpg",
-    # "https://i.imgur.com/07lceng.mp4",
-    # "https://i.imgur.com/J1EPxUk.jpg",
-    # "https://i.imgur.com/JxO5seE.jpg",
-    # "https://i.imgur.com/ViNjAKD.mp4",
-    # "https://i.imgur.com/vpDxduH.jpg",
-    # "https://i.imgur.com/ngTloKH.jpg",
-    # "https://i.imgur.com/IiMIW1h.jpg",
-    # "https://i.imgur.com/aC8xiz5.mp4",
-    # "https://i.imgur.com/rq56D4o.jpg",
-    # "https://i.imgur.com/wwOM7kU.mp4",
-    # "https://i.imgur.com/cXP94NP.mp4",
-    # "https://i.imgur.com/10b9Y12.mp4",
-    # "https://i.imgur.com/KnXrY6R.jpg"
-    # ]
-    # embed=discord.Embed(color=0x00ff00)
-    # embed.set_image(url=random.choice(eye_bleach))
-    # await ctx.bot.say(embed=embed)
 
 # TIP System
 # Karma System
