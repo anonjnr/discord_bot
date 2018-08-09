@@ -29,17 +29,45 @@ from discord.ext import commands
 ```
 ## Get started:
 
-Download all.
+```
+sudo apt-get update
+sudo apt-get upgrade
+cd /
+sudo mkdir python
+sudo wget https://www.python.org/ftp/python/3.6.6/Python-3.6.6.tar.xz
+sudo tar xf Python-3.6.6.tar.xz
+cd Python-3.6.6/
+sudo ./configure
+sudo make
+sudo make altinstall
+sudo apt-get install python-dev
+sudo apt-get install python-lxml
+sudo python3.6 -m pip install --upgrade pip
+sudo python3.6 -m pip install -U discord.py
+sudo python3.6 -m pip install requests-xml
+sudo python3.6 -m pip install wikipedia
+sudo python3.6 -m pip install praw
+cd /
+sudo mkdir server
+cd server
+sudo mkdir bcad_bot
+cd bcad_server
+sudo wget https://github.com/anonjnr/discord_bot/archive/master.zip
+sudo unzip ~/master.zip
+sudo chmod 777 data.txt
+```
 
-Open `data.txt` and fill in the token for Discord, the role ID's for the administrators/ mods of your server (find out by `\@ROLE_MENTION` into chat on server), reddit api client ID/ client secret/ user agent, ID auf the author (same method as with roles `\@AUTHER_MENTION`) and the goodreads key.
+Open `data.txt` (`sudo nano data.txt`) and fill in the token for Discord, the role ID's for the administrators/ mods of your server (find out by `\@ROLE_MENTION` into chat on server), reddit api client ID/ client secret/ user agent, ID auf the author (same method as with roles `\@AUTHER_MENTION`) and the goodreads key.
 
-If you don't want to use one or more of those, just leave them blank in the `data.txt`. In the `bcad_bot.py` you will have to commend out/ delete everything, you don't want to use.
+If you don't want to use one or more of those, just leave them blank in the `data.txt`. In the `bcad_bot.py` you will have to commend out/ delete everything, you don't want to use (for editing use `sudo nano bcad_bot.py`).
+
+To start the bot simply use `python3.6 bcad_bot.py`.
 
 If you run into any issues, look up the documentation as provided on top of this `readme.md` or file an issue.
 
-@anonjnr
+XOXOXoxooxo - @anonjnr
 
-## Commands:
+## Commands for the Bot:
 
 You can call a command by typing `@Sir Henry Pickles COMMAND` or `!COMMAND`
 
