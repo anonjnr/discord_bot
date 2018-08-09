@@ -14,6 +14,7 @@ import json
 from xml.etree import ElementTree
 from discord.ext import commands
 
+
 #python3 -m pip install -U discord.py
 #pip install requests-xml
 #pip install wikipedia
@@ -42,6 +43,10 @@ data['AUTHOR'] = []
 data['AUTHOR'].append({
     'bot_author_id': 'DISCORD_BOT_AUTHER_ID_HERE'
 })
+data['GOODREADS'] = []
+data['GOODREADS'].append({
+    'goodreads_key': 'CGisitAFBAgQpaE1fBbZkQ'
+})
 
 with open('/server/bcad_bot/data.txt', 'w') as outfile:  
     json.dump(data, outfile)
@@ -59,6 +64,8 @@ with open('/server/bcad_bot/data.txt') as json_file:
         json_user_agent = p['user_agent']
     for p in data['AUTHOR']:
         json_bot_author_id = p['bot_author_id']
+    for p in data['GOODREADS']:
+        goodreads_key = p['goodreads_key']
         
 description = '''Sir Henry Pickles, the pickly Bot!'''
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
@@ -403,6 +410,31 @@ async def bleach(ctx):
     "https://imgur.com/gallery/u61qJad"
     ]
     await ctx.bot.say(random.choice(eye_bleach))
+    # Ebedded bleach doesnt work for mp4
+    # "https://i.imgur.com/cQBeAjw.mp4",
+    # "https://i.imgur.com/p40Hwwi.jpg",
+    # "https://i.imgur.com/Onyvdgh.mp4",
+    # "https://i.imgur.com/bGtlZbl.jpg",
+    # "https://i.imgur.com/kTmRulV.jpg",
+    # "https://i.imgur.com/lmnpp5K.mp4",
+    # "https://i.imgur.com/fcRvoJn.jpg",
+    # "https://i.imgur.com/07lceng.mp4",
+    # "https://i.imgur.com/J1EPxUk.jpg",
+    # "https://i.imgur.com/JxO5seE.jpg",
+    # "https://i.imgur.com/ViNjAKD.mp4",
+    # "https://i.imgur.com/vpDxduH.jpg",
+    # "https://i.imgur.com/ngTloKH.jpg",
+    # "https://i.imgur.com/IiMIW1h.jpg",
+    # "https://i.imgur.com/aC8xiz5.mp4",
+    # "https://i.imgur.com/rq56D4o.jpg",
+    # "https://i.imgur.com/wwOM7kU.mp4",
+    # "https://i.imgur.com/cXP94NP.mp4",
+    # "https://i.imgur.com/10b9Y12.mp4",
+    # "https://i.imgur.com/KnXrY6R.jpg"
+    # ]
+    # embed=discord.Embed(color=0x00ff00)
+    # embed.set_image(url=random.choice(eye_bleach))
+    # await ctx.bot.say(embed=embed)
 
 # TIP System
 # Karma System
@@ -418,7 +450,7 @@ async def goodreads(ctx, *keyword_raw):
     print('------')
     keyword = str(keyword_raw)
     xml = ElementTree.fromstring(
-        requests.get('https://www.goodreads.com/search.xml?key=CGisitAFBAgQpaE1fBbZkQ&q=' + keyword + '&page=1').text)
+        requests.get('https://www.goodreads.com/search.xml?key=' + goodreads_key + '&q=' + keyword + '&page=1').text)
 
     for i,v in enumerate(xml.find('search/results')):
         book = v.find('best_book')
