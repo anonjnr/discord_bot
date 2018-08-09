@@ -29,6 +29,8 @@ from discord.ext import commands
 
 Commands:
 
+You can call a command by typing `@Sir Henry Pickles COMMAND` or `!COMMAND`
+
 `help`
 Prints this. It's the basic commands you can use the Bot for
 
@@ -40,6 +42,13 @@ Tests if the Bot works properly. Has no other purpose
 
 `goodreads`
 Let's you look for authors and books on Goodread.com. For this you can use an authors name, book title, ISBN or even all together. Example: `@Sir Henry Pickles goodreads Neil Gaiman Norse Mythology` or `!goodreads Neil Gaiman Norse Mythology`
+
+`reddit`
+With this command you can let Henry post the `top 3 hot topics` of a subreddit of your choosing. Simply use `@Sir Henry Pickles reddit SUBREDDIT` or `!reddit SUBREDDIT` with `subreddit` being the subreddit of your choosing. Subreddit
+    
+`wikipedia`
+Let's you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you're looking for
+
 
 `greeting`
 Say Hi to Henry! Or Hello or Morning or something like this
