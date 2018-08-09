@@ -22,10 +22,22 @@ import time
 import subprocess
 import requests
 import wikipedia
+import praw
+import json
 from xml.etree import ElementTree
 from discord.ext import commands
 ```
+Get started:
 
+Download all.
+
+Open `data.txt` and fill in the token for Discord, the role ID's for the administrators/ mods of your server (find out by `\@ROLE_MENTION` into chat on server), reddit api client ID/ client secret/ user agent, ID auf the author (same method as with roles `\@AUTHER_MENTION`) and the goodreads key.
+
+If you don't want to use one or more of those, just leave them blank in the `data.txt`. In the `bcad_bot.py` you will have to commend out/ delete everything, you don't want to use.
+
+If you run into any issues, look up the documentation as provided on top of this `readme.md` or file an issue.
+
+@anonjnr
 
 Commands:
 
@@ -48,7 +60,6 @@ With this command you can let Henry post the `top 3 hot topics` of a subreddit o
     
 `wikipedia`
 Let's you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you're looking for
-
 
 `greeting`
 Say Hi to Henry! Or Hello or Morning or something like this
