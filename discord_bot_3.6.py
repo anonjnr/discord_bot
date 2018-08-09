@@ -45,7 +45,7 @@ data['AUTHOR'].append({
 })
 data['GOODREADS'] = []
 data['GOODREADS'].append({
-    'goodreads_key': 'CGisitAFBAgQpaE1fBbZkQ'
+    'goodreads_key': 'GOODREADS_KEY_HERE'
 })
 
 with open('/server/bcad_bot/data.txt', 'w') as outfile:  
