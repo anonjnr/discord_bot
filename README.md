@@ -3,11 +3,12 @@ Discord bot tailored for the book club after dark.
 
 Written for `Python3.6`.
 
-You'll also need to get the discord.py: https://github.com/Rapptz/discord.py
-
-Official Docs for discord.py: http://discordpy.readthedocs.io/en/latest/migrating.html
+Official Docs for discord.py: http://discordpy.readthedocs.io/en/latest/
+Official Docs for PRAW (reddit): https://praw.readthedocs.io/en/latest/
+Official Docs for wikipedia: https://wikipedia.readthedocs.io/en/latest/
 
 Official Docs for Discord API: https://discordapp.com/developers/docs/intro
+
 
 Special thanks to @sharkbound for the help with fetching and pulling apart the data off goodreads.com (their "API" is a joke btw.)
 Also special thanks to @ir-3 for helping with getting the second prefix running and helping with misc stuff
