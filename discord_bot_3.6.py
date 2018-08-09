@@ -78,35 +78,6 @@ mention_mod = '<@&' + mod_role_1 + '>'
 reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret, user_agent=json_user_agent)
 bot_author = str("<@!" + json_bot_author_id + ">")
 
-TZS = {
-    'UTC': timezone('Etc/GMT'),
-    'GMT': timezone('Etc/GMT'),
-    'ECT': timezone('Etc/GMT+5'),
-    'CEST': timezone('Etc/GMT-2'),
-    'BST': timezone('Etc/GMT-1'),
-    'CET': timezone('Etc/GMT-1'),
-    'EET': timezone('Etc/GMT-2'),
-    'EEST': timezone('Etc/GMT-3'),
-    'CT': timezone('Etc/GMT-3'),
-    'DT': timezone('Etc/GMT-4'),
-    'WST': timezone('Etc/GMT-8'),
-    'WSST': timezone('Etc/GMT-9'),
-    'HAST': timezone('Etc/GMT+10'),
-    'SST': timezone('Etc/GMT+11'),
-    'ADT': timezone('Etc/GMT+2'),
-    'AST': timezone('Etc/GMT+4'),
-    'EDT': timezone('Etc/GMT+4'),
-    'EST': timezone('Etc/GMT+5'),
-    'CDT': timezone('Etc/GMT+5'),
-    'CST': timezone('Etc/GMT+6'),
-    'MDT': timezone('Etc/GMT+6'),
-    'MST': timezone('Etc/GMT+7'),
-    'PDT': timezone('Etc/GMT+7'),
-    'PST': timezone('Etc/GMT+8'),
-    'ADT': timezone('Etc/GMT+8'),
-    'AST': timezone('Etc/GMT+9'),
-}
-
 # ###########
 # import test
 # test.func()
