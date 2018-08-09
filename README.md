@@ -3,9 +3,9 @@ Discord bot tailored for the book club after dark.
 
 Written for `Python3.6`.
 
-Official Docs for discord.py: http://discordpy.readthedocs.io/en/latest/
-Official Docs for PRAW (reddit): https://praw.readthedocs.io/en/latest/
-Official Docs for wikipedia: https://wikipedia.readthedocs.io/en/latest/
+Official Docs for discord.py: http://discordpy.readthedocs.io/en/latest/  
+Official Docs for PRAW (reddit): https://praw.readthedocs.io/en/latest/  
+Official Docs for wikipedia: https://wikipedia.readthedocs.io/en/latest/  
 
 Official Docs for Discord API: https://discordapp.com/developers/docs/intro
 
