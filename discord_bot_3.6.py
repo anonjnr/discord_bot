@@ -11,7 +11,7 @@ import requests
 import wikipedia
 import praw
 import json
-import pytz # python -m pip install pytz
+import pytz
 from datetime import datetime
 from pytz import timezone 
 from xml.etree import ElementTree
@@ -21,6 +21,7 @@ from discord.ext import commands
 #pip install requests-xml
 #pip install wikipedia
 #pip install praw
+#python -m pip install pytz
 
 #print(dir(message))
 #help(obj)
@@ -156,12 +157,10 @@ async def cmd_time(ctx, *tz_keywords):
         return await ctx.bot.say("No keyword given, so here/'s UTC/GMT: " + datetime.now())
     valid_zones = []
     for zone in pytz.all_timezones:
-
         zones = zone.split('/')
         region = ''
         region_tz = ''
         region_city = ''
-        # print(len(zones))
         if len(zones) == 1:
             region = zones[0]
             region_tz = ''
@@ -200,8 +199,7 @@ async def cmd_time(ctx, *tz_keywords):
                     except IndexError:
                         print("INDEX ERROR")
                         return await ctx.bot.say(msg)
-
-                    
+                   
 @bot.command(pass_context = True)
 async def clear(ctx, cle: int = 1000):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `clear` in channel: '+ctx.message.channel.name)
@@ -280,7 +278,6 @@ async def cmd_help(ctx):
         "**Name**: Sir Henry Pickles\n"
         "**Description:** *Does his best.*\n"
     )
-
     await bot.send_message(member, embed=embed_cmd)
     await bot.send_message(member, embed=embed_use)
     await bot.send_message(member, embed=embed_mod)
@@ -554,17 +551,18 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
         embed_wiki=discord.Embed(title="Wikipedia", description=wiki_keyword_clean, color=0x00ff00)
         embed_wiki.add_field(name=wiki_sum, value=wiki_url)    
         await ctx.bot.say(embed=embed_wiki)
-    #except wikipedia.exceptions.DisambiguationError:
+    # except wikipedia.exceptions.DisambiguationError:
+    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
     except:
         await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    except wikipedia.exceptions.PageError:
-        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    except wikipedia.exceptions.HTTPTimeoutError:
-        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    except wikipedia.exceptions.RedirectError:
-        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    except wikipedia.exceptions.WikipediaException:
-        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    # except wikipedia.exceptions.PageError:
+    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    # except wikipedia.exceptions.HTTPTimeoutError:
+    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    # except wikipedia.exceptions.RedirectError:
+    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    # except wikipedia.exceptions.WikipediaException:
+    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
 
 ##Movie Knights
 # https://i.imgur.com/QNiL6SP.gif
