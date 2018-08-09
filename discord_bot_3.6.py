@@ -11,9 +11,11 @@ import requests
 import wikipedia
 import praw
 import json
+import pytz # python -m pip install pytz
+from datetime import datetime
+from pytz import timezone 
 from xml.etree import ElementTree
 from discord.ext import commands
-
 
 #python3 -m pip install -U discord.py
 #pip install requests-xml
@@ -23,35 +25,35 @@ from discord.ext import commands
 #print(dir(message))
 #help(obj)
 
-data = {}  
-data['TOKEN'] = []  
-data['TOKEN'].append({  
-    'value': 'DISCORD_BOT_TOKEN_HERE'
-})
-data['MOD_ROLES'] = []
-data['MOD_ROLES'].append({  
-    'value_1': 'ADMIN_ROLE_ID_HERE',  
-    'value_2': 'MOD_ROLEID_HERE'
-})
-data['REDDIT'] = []
-data['REDDIT'].append({
-    'client_id': 'REDDIT_CLIENT_ID_HERE',
-    'client_secret': 'REDDIT_CLIENT_SECRET_HERE',
-    'user_agent': 'REDDIT_USER_AGENT_HERE'
-})
-data['AUTHOR'] = []
-data['AUTHOR'].append({
-    'bot_author_id': 'DISCORD_BOT_AUTHER_ID_HERE'
-})
-data['GOODREADS'] = []
-data['GOODREADS'].append({
-    'goodreads_key': 'GOODREADS_KEY_HERE'
-})
+# data = {}  
+# data['TOKEN'] = []  
+# data['TOKEN'].append({  
+#     'value': 'DISCORD_BOT_TOKEN_HERE'
+# })
+# data['MOD_ROLES'] = []
+# data['MOD_ROLES'].append({  
+#     'value_1': 'ADMIN_ROLE_ID_HERE',  
+#     'value_2': 'MOD_ROLEID_HERE'
+# })
+# data['REDDIT'] = []
+# data['REDDIT'].append({
+#     'client_id': 'REDDIT_CLIENT_ID_HERE',
+#     'client_secret': 'REDDIT_CLIENT_SECRET_HERE',
+#     'user_agent': 'REDDIT_USER_AGENT_HERE'
+# })
+# data['AUTHOR'] = []
+# data['AUTHOR'].append({
+#     'bot_author_id': 'DISCORD_BOT_AUTHER_ID_HERE'
+# })
+# data['GOODREADS'] = []
+# data['GOODREADS'].append({
+#     'goodreads_key': 'GOODREADS_KEY_HERE'
+# })
+# 
+# with open('/home/xl4/bcad_bot/bcad_tests/data.txt', 'w') as outfile:  
+#     json.dump(data, outfile)
 
-with open('/server/bcad_bot/data.txt', 'w') as outfile:  
-    json.dump(data, outfile)
-
-with open('/server/bcad_bot/data.txt') as json_file:  
+with open('/home/xl4/bcad_bot/bcad_tests/data.txt') as json_file:  
     data = json.load(json_file)
     for p in data['TOKEN']:
         TOKEN = p['value']
@@ -67,7 +69,7 @@ with open('/server/bcad_bot/data.txt') as json_file:
     for p in data['GOODREADS']:
         goodreads_key = p['goodreads_key']
         
-description = '''Sir Henry Pickles, the pickly Bot!'''
+description = 'Sir Henry Pickles, the pickly Bot!'
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
 bot.remove_command('help')
 role_mod = [mod_role_1, mod_role_2]
@@ -75,10 +77,44 @@ mention_mod = '<@&' + mod_role_1 + '>'
 reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret, user_agent=json_user_agent)
 bot_author = str("<@!" + json_bot_author_id + ">")
 
+TZS = {
+    'UTC': timezone('Etc/GMT'),
+    'GMT': timezone('Etc/GMT'),
+    'ECT': timezone('Etc/GMT+5'),
+    'CEST': timezone('Etc/GMT-2'),
+    'BST': timezone('Etc/GMT-1'),
+    'CET': timezone('Etc/GMT-1'),
+    'EET': timezone('Etc/GMT-2'),
+    'EEST': timezone('Etc/GMT-3'),
+    'CT': timezone('Etc/GMT-3'),
+    'DT': timezone('Etc/GMT-4'),
+    'WST': timezone('Etc/GMT-8'),
+    'WSST': timezone('Etc/GMT-9'),
+    'HAST': timezone('Etc/GMT+10'),
+    'SST': timezone('Etc/GMT+11'),
+    'ADT': timezone('Etc/GMT+2'),
+    'AST': timezone('Etc/GMT+4'),
+    'EDT': timezone('Etc/GMT+4'),
+    'EST': timezone('Etc/GMT+5'),
+    'CDT': timezone('Etc/GMT+5'),
+    'CST': timezone('Etc/GMT+6'),
+    'MDT': timezone('Etc/GMT+6'),
+    'MST': timezone('Etc/GMT+7'),
+    'PDT': timezone('Etc/GMT+7'),
+    'PST': timezone('Etc/GMT+8'),
+    'ADT': timezone('Etc/GMT+8'),
+    'AST': timezone('Etc/GMT+9'),
+}
+
 # @bot.event
 # async def on_member_join(ctx, member):
 # 	string=str(member)+" joined"
 # 	await ctx.bot.say(string)
+
+# ###########
+# import test
+# test.func()
+# ##########
 
 @bot.event
 async def on_ready():
@@ -112,13 +148,18 @@ async def info(ctx):
     embed.add_field(name="Author", value=bot_author)
     await ctx.bot.say(embed=embed)
 
-@bot.command(pass_context = True)
-async def gmt(ctx):
-    print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `gmt`')
+@bot.command(name='time', pass_context = True)
+async def cmd_time(ctx, tz_keyword):
+    print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `time ' + tz_keyword + '`')
     print('------')
-    # print(time.strftime('%a, %d %b %Y %H:%M:%S GMT', time.gmtime()))
-    t = time.gmtime()
-    await ctx.bot.say("Actual time GMT: " + time.asctime(t))
+    try:
+        if tz_keyword in TZS:
+            await ctx.bot.say(datetime.now(tz=TZS[tz_keyword]))
+        else:
+            await ctx.bot.say(f'Error. Something didn\'t work out, <@{ctx.message.author.id}>. Search for one of these: {TZS}')
+    except:
+        await ctx.bot.say(f'Error. Something didn\'t work out, <@{ctx.message.author.id}>. Search for one of these: {TZS}')
+        
 
 @bot.command(pass_context = True)
 async def clear(ctx, cle: int = 1000):
@@ -175,7 +216,7 @@ async def cmd_help(ctx):
     embed_use.add_field(name="`reddit`", value="With this command you can let Henry post the `top 3 hot topics` of a subreddit of your choosing. Simply use `@Sir Henry Pickles reddit SUBREDDIT` or `!reddit SUBREDDIT` with `subreddit` being the subreddit of your choosing. Subreddit")
     embed_use.add_field(name="`wikipedia`", value="Let\s you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you\'re looking for")
     embed_use.add_field(name="`roll`", value="You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!")
-    embed_use.add_field(name="`GMT`", value="Gives you the current time for the GMT timezones")
+    embed_use.add_field(name="`time`", value="Gives you the current time for different timezones. These are the possibilities: UTC, BST, CET, CEST, EET, EST, CT, DT, WST, WSST, HAST, SST, ADT, AST, EDT, EST, CDT, CST, MDT, MST, PDT, PST, ADT, AST, GMT")
 
     embed_mod=discord.Embed(title="MODERATION", description="", color=0x00ff00)
     embed_mod.add_field(name="`clear`", value="With this command a Moderator can clear all messages in a channel if something NSFW or otherwise inapropriate got posted. Other users can use this command aswell - it automatically pings the Moderators for them. For the last 1000 messages purged `clear`, for a certain amount `clear NUMBER` with `NUMBER` being any number between 0 and 1000")
@@ -410,31 +451,6 @@ async def bleach(ctx):
     "https://imgur.com/gallery/u61qJad"
     ]
     await ctx.bot.say(random.choice(eye_bleach))
-    # Ebedded bleach doesnt work for mp4
-    # "https://i.imgur.com/cQBeAjw.mp4",
-    # "https://i.imgur.com/p40Hwwi.jpg",
-    # "https://i.imgur.com/Onyvdgh.mp4",
-    # "https://i.imgur.com/bGtlZbl.jpg",
-    # "https://i.imgur.com/kTmRulV.jpg",
-    # "https://i.imgur.com/lmnpp5K.mp4",
-    # "https://i.imgur.com/fcRvoJn.jpg",
-    # "https://i.imgur.com/07lceng.mp4",
-    # "https://i.imgur.com/J1EPxUk.jpg",
-    # "https://i.imgur.com/JxO5seE.jpg",
-    # "https://i.imgur.com/ViNjAKD.mp4",
-    # "https://i.imgur.com/vpDxduH.jpg",
-    # "https://i.imgur.com/ngTloKH.jpg",
-    # "https://i.imgur.com/IiMIW1h.jpg",
-    # "https://i.imgur.com/aC8xiz5.mp4",
-    # "https://i.imgur.com/rq56D4o.jpg",
-    # "https://i.imgur.com/wwOM7kU.mp4",
-    # "https://i.imgur.com/cXP94NP.mp4",
-    # "https://i.imgur.com/10b9Y12.mp4",
-    # "https://i.imgur.com/KnXrY6R.jpg"
-    # ]
-    # embed=discord.Embed(color=0x00ff00)
-    # embed.set_image(url=random.choice(eye_bleach))
-    # await ctx.bot.say(embed=embed)
 
 # TIP System
 # Karma System
@@ -463,8 +479,6 @@ async def goodreads(ctx, *keyword_raw):
         if i == 2:
             break
     
-        # ['__class__', '__copy__', '__deepcopy__', '__delattr__', '__delitem__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__len__', '__lt__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setitem__', '__setstate__', '__sizeof__', '__str__', '__subclasshook__', 'append', 'attrib', 'clear', 'extend', 'find', 'findall', 'findtext', 'get', 'getchildren', 'getiterator', 'insert', 'items', 'iter', 'iterfind', 'itertext', 'keys', 'makeelement', 'remove', 'set', 'tag', 'tail', 'text']
-
 @bot.command(name='reddit', pass_context=True)
 async def cmd_reddit(ctx, subreddit_raw):
     subreddit_input = str(subreddit_raw)
@@ -498,16 +512,17 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
         embed_wiki=discord.Embed(title="Wikipedia", description=wiki_keyword, color=0x00ff00)
         embed_wiki.add_field(name=wiki_sum, value=wiki_url)    
         await ctx.bot.say(embed=embed_wiki)
-    except wikipedia.exceptions.DisambiguationError:
+    #except wikipedia.exceptions.DisambiguationError:
+    except:
         await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    except wikipedia.exceptions.PageError:
-        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    except wikipedia.exceptions.HTTPTimeoutError:
-        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    except wikipedia.exceptions.RedirectError:
-        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    except wikipedia.exceptions.WikipediaException:
-        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    # except wikipedia.exceptions.PageError:
+    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    # except wikipedia.exceptions.HTTPTimeoutError:
+    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    # except wikipedia.exceptions.RedirectError:
+    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+    # except wikipedia.exceptions.WikipediaException:
+    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
 
 ##Movie Knights
 # https://i.imgur.com/QNiL6SP.gif
