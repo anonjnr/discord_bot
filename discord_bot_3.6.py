@@ -109,6 +109,7 @@ async def on_ready():
 async def members(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `members`')
     print('------')
+    info.counter += 1
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
@@ -129,8 +130,10 @@ async def info(ctx):
     ti_del = str((datetime.now() - ti_start))
     embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
     embed.add_field(name="Author", value=bot_author)
+    embed.add_field(name="System Time:", value=str(datetime.now()))
     embed.add_field(name="Uptime", value=ti_del)
     embed.add_field(name="Command count: ", value=info.counter)
+    embed.add_field(name="Reaction count: ", value=reaction_trigger.counter)
     await ctx.bot.say(embed=embed)
 info.counter = 0
 
@@ -139,6 +142,7 @@ info.counter = 0
 async def cmd_time(ctx, *tz_keywords):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `time`')
     print('------')
+    info.counter += 1
     tz_keyword = '_'.join(tz_keywords)
     moon = ('Moon', 'moon')
     moon_rep = ('Very funny, ' + ctx.message.author.mention, 'Wow, ' + ctx.message.author.mention, 'Oi, ' + ctx.message.author.mention + '! Go fork urself m8!', 'Maan, dude, idk maaan, like ... on the moon? duuuude .... DUUuUuuUuUUuDDDEeeeee. *hits blunt* idk ' + ctx.message.author.mention + ', better call the space tesla guy ..!?')
@@ -196,6 +200,7 @@ async def cmd_time(ctx, *tz_keywords):
 async def clear(ctx, cle: int = 1000):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `clear` in channel: '+ctx.message.channel.name)
     print('------')
+    info.counter += 1
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
@@ -219,12 +224,14 @@ async def clear(ctx, cle: int = 1000):
 async def test(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `test`')
     print('------')
+    info.counter += 1
     await ctx.bot.say("successful")
 
 @bot.command(pass_context = True)
 async def mod(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `mod`')
     print('------')
+    info.counter += 1
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
@@ -236,6 +243,7 @@ async def cmd_help(ctx):
     member = ctx.message.author
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `help`')
     print('------')
+    info.counter += 1
     
     embed_cmd=discord.Embed(title="COMMANDS", description="You can call a command by typing `@Sir Henry Pickles COMMAND` or `!COMMAND`", color=0x00ff00)
     embed_cmd.add_field(name="`help`", value="Sends this per DM. It's the basic commands you can use the Bot for")
@@ -280,6 +288,7 @@ async def cmd_help(ctx):
 async def sleep(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `sleep`')
     print('------')
+    info.counter += 1
     sleep = ['Yes, you should use the sleep.', 'But mooooom idonwanna!', 'Whatevs, man.', 'JA!']
     await ctx.bot.say(random.choice(sleep))
 
@@ -287,6 +296,7 @@ async def sleep(ctx):
 async def shower(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `shower`')
     print('------')
+    info.counter += 1
     shower = [' you reek already!', ' it`s about time...', ' nah, its cool.', ' I mean, have you already showered this week?',' but only a golden shower.']
     await ctx.bot.say(ctx.message.author.mention+ " " + random.choice(shower))
 
@@ -294,6 +304,7 @@ async def shower(ctx):
 async def joke(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `joke`')
     print('------')
+    info.counter += 1
     joke = [
         'I always get pickle and chutney mixed up.\n'
         'It makes me chuckle.',
@@ -423,6 +434,7 @@ async def joke(ctx):
 async def cmd_8ball(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `8ball`')
     print('------')
+    info.counter += 1
     ball_res = ['It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes - definitely.', 'You may rely on it.', 'As I see it, yes.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.', 'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Connot predict now.', 'Concentrate and ask again.', 'Don`t count on it.', 'My reply is no.', 'My sources say no.', 'Outlook not so good.']
     await ctx.bot.say(random.choice(ball_res))
 
@@ -430,6 +442,7 @@ async def cmd_8ball(ctx):
 async def roll(ctx, dice_string, mod: int = 0):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `roll`')
     print('------')
+    info.counter += 1
     try:
         count_raw, num_raw = dice_string.split("d")
         if not count_raw:
@@ -456,6 +469,7 @@ async def roll(ctx, dice_string, mod: int = 0):
 async def bleach(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `bleach`')
     print('------')
+    info.counter += 1
     eye_bleach = [
     'https://imgur.com/gallery/O1busfY',
     'https://i.imgur.com/cQBeAjw.mp4',
@@ -496,6 +510,7 @@ async def bleach(ctx):
 async def goodreads(ctx, *keyword_raw):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `goodreads`')
     print('------')
+    info.counter += 1
     keyword = str(keyword_raw)
     xml = ElementTree.fromstring(
         requests.get('https://www.goodreads.com/search.xml?key=' + goodreads_key + '&q=' + keyword + '&page=1').text)
@@ -516,6 +531,7 @@ async def cmd_reddit(ctx, subreddit_raw):
     subreddit_input = str(subreddit_raw)
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `reddit`, looking for the subreddit: `'+subreddit_input+'`')
     print('------')
+    info.counter += 1
     x = int(0)
     try:
         for i, submission in enumerate(reddit.subreddit(subreddit_input).hot(limit=5)):
@@ -536,6 +552,9 @@ async def cmd_reddit(ctx, subreddit_raw):
 # todo exceptions
 @bot.command(name='wikipedia', pass_context = True)
 async def cmd_wikipedia(ctx, *wiki_keyword_raw):
+    print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `wikipedia`, looking for: `'+wiki_keyword_raw+'`')
+    print('------')
+    info.counter += 1
     wiki_error = "Error. Specify/ check/ rephrase your search query"
     try:
         wiki_keyword = str(wiki_keyword_raw)
@@ -569,12 +588,21 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
 async def roles(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `roles`')
     print('------')
+    info.counter += 1
     await ctx.bot.say(ctx.message.author.mention + "\'s roles are:")
     for r in ctx.message.author.roles:
         roles_me = r.name
         await ctx.bot.say("`"+roles_me+"`")
 
 # todo get rid of all these and somehow call them somehow else
+
+def reaction_trigger():
+    #print('ID: '+on_message.message.author.id+' (Name: '+on_message.message.author.name+') triggered a reaction with: *' + str(on_message.message) + '*')
+    # print('Triggered a reaction.')
+    # print('------')
+    reaction_trigger.counter += 1
+reaction_trigger.counter = 0
+
 @bot.event
 async def on_message(message):
     greeting = ['hello', 'hi', 'hey', 'greetings', 'sup', 'morning']
@@ -587,57 +615,60 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if bot.user.mentioned_in(message) and not message.mention_everyone:
-        if any(x in str_mcl for x in greeting):
-            await bot.send_message(message.channel, random.choice(greeting_res))
-        elif any(x in str_mcl for x in bye):
-            await bot.send_message(message.channel, random.choice(bye_res))
-        # else:
-        #     await message.add_reaction('👀')
-    if 'votecall' in message.clean_content.lower():
-        await bot.add_reaction(message, '👍')
-        await bot.add_reaction(message, '👎')
-    if 'usa' in message.clean_content.lower():
-        await bot.add_reaction(message, random.choice(usa_reac))
-    if 'australia' in message.clean_content.lower():
-        await bot.add_reaction(message, '🇦🇺')
-    if 'mexico' in message.clean_content.lower():
-        await bot.add_reaction(message, '🌮')
-    if 'ireland' in message.clean_content.lower():
-        await bot.add_reaction(message, '🇮🇪')
-    if 'scotland' in message.clean_content.lower():
-        await bot.add_reaction(message, '🏴')
-    if 'europe' in message.clean_content.lower():
-        await bot.add_reaction(message, '🇪🇺')
-    if 'germany' in message.clean_content.lower():
-        await bot.add_reaction(message, '🇩🇪')
-    if 'united kingdom' in message.clean_content.lower():
-        await bot.add_reaction(message, '🇬🇧')
-    if 'facepalm'  in message.clean_content.lower():
-        await bot.add_reaction(message, '🤦')
-    if 'canada' in message.clean_content.lower():
-        await bot.add_reaction(message, '🇨🇦')
-    if 'sweden' in message.clean_content.lower():
-        await bot.add_reaction(message, '🇸🇪')
-    if 'norway' in message.clean_content.lower():
-        await bot.add_reaction(message, '🇳🇴')
-    if 'finland' in message.clean_content.lower():
-        await bot.add_reaction(message, '🇫🇮')
-    if 'sleep' in message.clean_content.lower():
-        await bot.add_reaction(message, '💤')
-    if 'sushi' in message.clean_content.lower():
-        await bot.add_reaction(message, '🍣')
-    if 'shower' in message.clean_content.lower():
-        await bot.add_reaction(message, '🚿')
-    if 'love' in message.clean_content.lower():
-        await bot.add_reaction(message, '💓')
-    if 'goodest robot' in message.clean_content.lower():
-        await bot.add_reaction(message, '🤖')
-        await bot.add_reaction(message, '🇮')
-        await bot.add_reaction(message, '🇦')
-        await bot.add_reaction(message, '🇲')
-    if 'nani' in message.clean_content.lower():
-        await bot.send_message(message.channel, 'NAAAAANNNIIIIII!?!?!?!11')
+    if any:
+        if bot.user.mentioned_in(message) and not message.mention_everyone:
+            if any(x in str_mcl for x in greeting):
+                await bot.send_message(message.channel, random.choice(greeting_res))
+            elif any(x in str_mcl for x in bye):
+                await bot.send_message(message.channel, random.choice(bye_res))
+            # else:
+            #     await message.add_reaction('👀')
+        if 'votecall' in message.clean_content.lower():
+            await bot.add_reaction(message, '👍')
+            await bot.add_reaction(message, '👎')
+        if 'usa' in message.clean_content.lower():
+            await bot.add_reaction(message, random.choice(usa_reac))
+        if 'australia' in message.clean_content.lower():
+            await bot.add_reaction(message, '🇦🇺')
+        if 'mexico' in message.clean_content.lower():
+            await bot.add_reaction(message, '🌮')
+        if 'ireland' in message.clean_content.lower():
+            await bot.add_reaction(message, '🇮🇪')
+        if 'scotland' in message.clean_content.lower():
+            await bot.add_reaction(message, '🏴')
+        if 'europe' in message.clean_content.lower():
+            await bot.add_reaction(message, '🇪🇺')
+        if 'germany' in message.clean_content.lower():
+            await bot.add_reaction(message, '🇩🇪')
+        if 'united kingdom' in message.clean_content.lower():
+            await bot.add_reaction(message, '🇬🇧')
+        if 'facepalm'  in message.clean_content.lower():
+            await bot.add_reaction(message, '🤦')
+        if 'canada' in message.clean_content.lower():
+            await bot.add_reaction(message, '🇨🇦')
+        if 'sweden' in message.clean_content.lower():
+            await bot.add_reaction(message, '🇸🇪')
+        if 'norway' in message.clean_content.lower():
+            await bot.add_reaction(message, '🇳🇴')
+        if 'finland' in message.clean_content.lower():
+            await bot.add_reaction(message, '🇫🇮')
+        if 'sleep' in message.clean_content.lower():
+            await bot.add_reaction(message, '💤')
+        if 'sushi' in message.clean_content.lower():
+            await bot.add_reaction(message, '🍣')
+        if 'shower' in message.clean_content.lower():
+            await bot.add_reaction(message, '🚿')
+        if 'love' in message.clean_content.lower():
+            await bot.add_reaction(message, '💓')
+        if 'goodest robot' in message.clean_content.lower():
+            await bot.add_reaction(message, '🤖')
+            await bot.add_reaction(message, '🇮')
+            await bot.add_reaction(message, '🇦')
+            await bot.add_reaction(message, '🇲')
+        if 'nani' in message.clean_content.lower():
+            await bot.send_message(message.channel, 'NAAAAANNNIIIIII!?!?!?!11')
+            
+    reaction_trigger()
 
     await bot.process_commands(message)
 
