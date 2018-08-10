@@ -48,10 +48,10 @@ from discord.ext import commands
 #     'goodreads_key': 'GOODREADS_KEY_HERE'
 # })
 # 
-# with open('/home/xl4/bcad_bot/bcad_tests/data.log', 'w') as outfile:  
+# with open('./logs/data.log', 'w') as outfile:  
 #     json.dump(data, outfile)
 
-with open('/home/xl4/bcad_bot/bcad_tests/data.log') as json_file:  
+with open('./logs/data.log') as json_file:  
     data = json.load(json_file)
     for p in data['TOKEN']:
         TOKEN = p['value']
