@@ -23,9 +23,6 @@ from discord.ext import commands
 #pip install praw
 #python -m pip install pytz
 
-#print(dir(message))
-#help(obj)
-
 # data = {}  
 # data['TOKEN'] = []  
 # data['TOKEN'].append({  
