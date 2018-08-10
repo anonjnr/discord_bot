@@ -6,6 +6,8 @@ Written for `Python3.6`.
 Official Docs for discord.py: http://discordpy.readthedocs.io/en/latest/  
 Official Docs for PRAW (reddit): https://praw.readthedocs.io/en/latest/  
 Official Docs for wikipedia: https://wikipedia.readthedocs.io/en/latest/  
+Official Docs for requests-xml: http://xml.python-requests.org/  
+Official Docs for requests-xml: https://pythonhosted.org/pytz/  
 
 Official Docs for Discord API: https://discordapp.com/developers/docs/intro
 
@@ -25,6 +27,12 @@ import requests
 import wikipedia
 import praw
 import json
+import pytz
+from datetime import datetime
+from datetime import date
+from datetime import time
+from datetime import timedelta
+from pytz import timezone 
 from xml.etree import ElementTree
 from discord.ext import commands
 ```
@@ -48,6 +56,7 @@ sudo python3.6 -m pip install -U discord.py
 sudo python3.6 -m pip install requests-xml
 sudo python3.6 -m pip install wikipedia
 sudo python3.6 -m pip install praw
+sudo python -m pip install pytz
 cd /
 sudo mkdir server
 cd server
@@ -58,11 +67,11 @@ sudo unzip ~/master.zip
 sudo chmod 777 data.txt
 ```
 
-Open `data.txt` (`sudo nano data.txt`) and fill in the token for Discord, the role ID's for the administrators/ mods of your server (find out by `\@ROLE_MENTION` into chat on server), reddit api client ID/ client secret/ user agent, ID auf the author (same method as with roles `\@AUTHER_MENTION`) and the goodreads key.
+Open `data_bcad.log` (`sudo nano logs/data_bcad.log`) and fill in the token for Discord, the role ID's for the administrators/ mods of your server (find out by `\@ROLE_MENTION` into chat on server), reddit api client ID/ client secret/ user agent, ID auf the author (same method as with roles `\@AUTHER_MENTION`) and the goodreads key.
 
-If you don't want to use one or more of those, just leave them blank in the `data.txt`. In the `bcad_bot.py` you will have to commend out/ delete everything, you don't want to use (for editing use `sudo nano bcad_bot.py`).
+If you don't want to use one or more of those, just leave them blank in the `data_bcad.log`. In the `bcad_bot3.6.py` you will have to commend out/ delete everything, you don't want to use (for editing use `sudo nano bcad_bot3.6.py`).
 
-To start the bot simply use `python3.6 bcad_bot.py`.
+To start the bot simply use `python3.6 bcad_bot3.6.py`.
 
 If you run into any issues, look up the documentation as provided on top of this `readme.md` or file an issue.
 
@@ -114,8 +123,8 @@ You can roll a dice using `2d8` with 2 being the number of dice you want the bot
 `clear`
 With this command a Moderator can clear all messages in a channel if something NSFW or otherwise inapropriate got posted. Other users can use this command aswell - it automatically pings the Moderators for them. For the last 1000 messages purged `clear`, for a certains amount `clear NUMBER` with `NUMBER` being any number between 0 and 1000
 
-`GMT`
-Gives you the current time for the GMT timezones
+`time`
+Gives you the current time for all the places. Use for example with `!time UCT` or `!time Denver` or
 
 `bleach`
 Applies eye bleach. Try it! (recommended after and/ or before clear)
