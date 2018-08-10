@@ -13,15 +13,21 @@ import praw
 import json
 import pytz
 from datetime import datetime
+from datetime import date
+from datetime import time
+from datetime import timedelta
 from pytz import timezone 
 from xml.etree import ElementTree
 from discord.ext import commands
 
 #python3 -m pip install -U discord.py
-#pip install requests-xml
-#pip install wikipedia
-#pip install praw
+#python -m pip install requests-xml
+#python -m pip install wikipedia
+#python -m pip install praw
 #python -m pip install pytz
+
+#print(dir(message))
+#help(obj)
 
 # data = {}  
 # data['TOKEN'] = []  
@@ -74,7 +80,10 @@ role_mod = [mod_role_1, mod_role_2]
 mention_mod = '<@&' + mod_role_1 + '>'
 reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret, user_agent=json_user_agent)
 bot_author = str("<@!" + json_bot_author_id + ">")
+ti_start = datetime.now()
+random.seed(a=None)
 
+# todo
 # ###########
 # import test
 # test.func()
@@ -89,6 +98,7 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
+# todo
 # @bot.event
 # async def on_member_join(ctx, member):
 #     welcome = ['Welcome to my kingdom, ']
@@ -109,18 +119,34 @@ async def members(ctx):
             return
     await ctx.bot.say(ctx.message.author.mention+', you\'re not a mod. You can\'t use this command.')
     print('\n')
-    
+
+# todo cmd count    
 @bot.command(pass_context = True)
 async def info(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `info`')
     print('------')
+    info.counter += 1
+    ti_del = str((datetime.now() - ti_start))
     embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
     embed.add_field(name="Author", value=bot_author)
+    embed.add_field(name="Uptime", value=ti_del)
+    embed.add_field(name="Command count: ", value=info.counter)
     await ctx.bot.say(embed=embed)
+info.counter = 0
 
+# todo restrict output to n lines
 @bot.command(name="time", pass_context = True, ignore_extras = False)
 async def cmd_time(ctx, *tz_keywords):
+    print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `time`')
+    print('------')
     tz_keyword = '_'.join(tz_keywords)
+    moon = ('Moon', 'moon')
+    moon_rep = ('Very funny, ' + ctx.message.author.mention, 'Wow, ' + ctx.message.author.mention, 'Oi, ' + ctx.message.author.mention + '! Go fork urself m8!', 'Maan, dude, idk maaan, like ... on the moon? duuuude .... DUUuUuuUuUUuDDDEeeeee. *hits blunt* idk ' + ctx.message.author.mention + ', better call the space tesla guy ..!?')
+    if tz_keyword in (moon):
+        await ctx.bot.say("...")
+        await asyncio.sleep( 2 )
+        return await ctx.bot.say(random.choice(moon_rep))
+        sleep()
     if tz_keyword is None:
         return await ctx.bot.say("No keyword given, so here/'s UTC/GMT: " + datetime.now())
     valid_zones = []
@@ -160,12 +186,10 @@ async def cmd_time(ctx, *tz_keywords):
                     current_len = current_len + len(_msg)
                     try:
                         if current_len + len(valid_zones[idx + 1]) > 1950:
-                            print(current_len, current_len + len(valid_zones[idx + 1]))
                             await ctx.bot.say(msg)
                             msg = ''
                             current_len = 0
                     except IndexError:
-                        print("INDEX ERROR")
                         return await ctx.bot.say(msg)
                    
 @bot.command(pass_context = True)
@@ -458,9 +482,11 @@ async def bleach(ctx):
     ]
     await ctx.bot.say(random.choice(eye_bleach))
 
+# todo
 # TIP System
 # Karma System
 
+# todo
 # #google calendar
 # @bot.command()
 # async def cal(ctx):
@@ -507,6 +533,7 @@ async def cmd_reddit(ctx, subreddit_raw):
     except:
        await ctx.bot.say(f'Error. Something didn\'t work out. Search for somthing else or some time else, <@{ctx.message.author.id}>')
 
+# todo exceptions
 @bot.command(name='wikipedia', pass_context = True)
 async def cmd_wikipedia(ctx, *wiki_keyword_raw):
     wiki_error = "Error. Specify/ check/ rephrase your search query"
@@ -532,6 +559,7 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
     # except wikipedia.exceptions.WikipediaException:
     #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
 
+# todo
 ##Movie Knights
 # https://i.imgur.com/QNiL6SP.gif
 # https://i.imgur.com/GDNyuPn.mp4
@@ -546,6 +574,7 @@ async def roles(ctx):
         roles_me = r.name
         await ctx.bot.say("`"+roles_me+"`")
 
+# todo get rid of all these and somehow call them somehow else
 @bot.event
 async def on_message(message):
     greeting = ['hello', 'hi', 'hey', 'greetings', 'sup', 'morning']
