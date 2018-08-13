@@ -7,7 +7,7 @@ Official Docs for discord.py: http://discordpy.readthedocs.io/en/latest/
 Official Docs for PRAW (reddit): https://praw.readthedocs.io/en/latest/  
 Official Docs for wikipedia: https://wikipedia.readthedocs.io/en/latest/  
 Official Docs for requests-xml: http://xml.python-requests.org/  
-Official Docs for requests-xml: https://pythonhosted.org/pytz/  
+Official Docs for pytz: https://pythonhosted.org/pytz/  
 
 Official Docs for Discord API: https://discordapp.com/developers/docs/intro
 
