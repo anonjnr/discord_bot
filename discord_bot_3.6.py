@@ -36,7 +36,7 @@ from discord.ext import commands
 #print(dir(message))
 #help(obj)
 
-with open('../bcad_data/data_bcad_beta.log') as json_file:  
+with open('credentials.log') as json_file:  
     data = json.load(json_file)
     for p in data['TOKEN']:
         TOKEN = p['value']
