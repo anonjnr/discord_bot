@@ -24,3 +24,4 @@ sudo unzip master.zip
 sudo chmod 777 credentials.log
 sudo chmod 777 members.log
 python3.6 setup.py
+python3.6 bcad_bot_3.6.py
