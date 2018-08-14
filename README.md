@@ -1,3 +1,6 @@
+PLEASE NOTICE THAT THIS IS BEING WORKED ON DAILY
+BUT ONLY PUSHED TO GITHUB EVERY FEW DAYS
+
 # discord_bot
 Discord bot tailored for the book club after dark.
 
@@ -6,7 +9,6 @@ Written for `Python3.6`.
 Official Docs for discord.py: http://discordpy.readthedocs.io/en/latest/  
 Official Docs for PRAW (reddit): https://praw.readthedocs.io/en/latest/  
 Official Docs for wikipedia: https://wikipedia.readthedocs.io/en/latest/  
-Official Docs for requests-xml: http://xml.python-requests.org/  
 Official Docs for pytz: https://pythonhosted.org/pytz/  
 
 Official Docs for Discord API: https://discordapp.com/developers/docs/intro
@@ -18,19 +20,26 @@ Also special thanks to @ir-3 and @Harrryyyy for helping with getting the second 
 ## Used Libs:
 
 ```
+import os
 import asyncio
 import discord
 import random
 import time
 import subprocess
-import requests
+import aiohttp
+import async_timeout
 import wikipedia
 import praw
 import json
 import pytz
+import datetime
+import utilities
+import memberList
+import importLog
+import requests
+from wiktionaryparser import WiktionaryParser
 from datetime import datetime
 from datetime import date
-from datetime import time
 from datetime import timedelta
 from pytz import timezone 
 from xml.etree import ElementTree
@@ -55,6 +64,7 @@ sudo python3.6 -m pip install --upgrade pip
 sudo python3.6 -m pip install -U discord.py
 sudo python3.6 -m pip install requests-xml
 sudo python3.6 -m pip install wikipedia
+sudo python3.6 -m pip install wiktionaryparser
 sudo python3.6 -m pip install praw
 sudo python -m pip install pytz
 cd /
@@ -64,12 +74,11 @@ sudo mkdir bcad_bot
 cd bcad_server
 sudo wget https://github.com/anonjnr/discord_bot/archive/master.zip
 sudo unzip ~/master.zip
-sudo chmod 777 data.txt
+sudo chmod 777 credentials.log
+sudo chmod 777 members.log
 ```
 
-Open `data_bcad.log` (`sudo nano logs/data_bcad.log`) and fill in the token for Discord, the role ID's for the administrators/ mods of your server (find out by `\@ROLE_MENTION` into chat on server), reddit api client ID/ client secret/ user agent, ID auf the author (same method as with roles `\@AUTHER_MENTION`) and the goodreads key.
-
-If you don't want to use one or more of those, just leave them blank in the `data_bcad.log`. In the `bcad_bot3.6.py` you will have to commend out/ delete everything, you don't want to use (for editing use `sudo nano bcad_bot3.6.py`).
+Open `setup.py` (`sudo python3.6 setup.py`) and fill in the token for Discord, the role ID's for the administrators/ mods of your server (find out by `\@ROLE_MENTION` into chat on server), reddit api client ID/ client secret/ user agent, ID auf the author (same method as with roles `\@AUTHER_MENTION`) and the goodreads key. The Discord Token is the only thin mandatory, you can leave the rest blank if you'd like. Most funtions will not work properly then.
 
 To start the bot simply use `python3.6 bcad_bot3.6.py`.
 
@@ -99,6 +108,33 @@ With this command you can let Henry post the `top 3 hot topics` of a subreddit o
 `wikipedia`
 Let's you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you're looking for
 
+`roll`
+You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!")
+
+`time`
+Gives you the current time for different timezones. For example use with `!time Berlin` or `!time EST`.
+
+`clear`
+With this command a Moderator can clear all messages in a channel if something NSFW or otherwise inapropriate got posted. Other users can use this command aswell - it automatically pings the Moderators for them. For the last 1000 messages purged `clear`, for a certains amount `clear NUMBER` with `NUMBER` being any number between 0 and 1000
+
+`members`
+With  this you can save a list of all users of your server
+
+`members_show`
+Shows the contains of the saved member list 
+
+`bleach`
+Applies eye bleach. Try it! (recommended after and/ or before clear)
+
+`roles`
+Shows you what roles you have
+
+`status`
+Change the status of the bot. `!status the guitar` to have his status changed to: `@Sir Henry Pickles Playing the guitar`
+
+`votecall`
+Calls a simple thumb up/ thumb down vote for the message.
+
 `greeting`
 Say Hi to Henry! Or Hello or Morning or something like this
 
@@ -116,22 +152,4 @@ Let Henry tell you a joke which most certainly is hilarious
 
 `8ball`
 Ask the oracle with this all time classic
-
-`roll`
-You can roll a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!
-
-`clear`
-With this command a Moderator can clear all messages in a channel if something NSFW or otherwise inapropriate got posted. Other users can use this command aswell - it automatically pings the Moderators for them. For the last 1000 messages purged `clear`, for a certains amount `clear NUMBER` with `NUMBER` being any number between 0 and 1000
-
-`time`
-Gives you the current time for all the places. Use for example with `!time UCT` or `!time Denver` or
-
-`bleach`
-Applies eye bleach. Try it! (recommended after and/ or before clear)
-
-`roles`
-Shows you what roles you have
-
-`votecall`
-Calls a simple thumb up/ thumb down vote for the message.
 
