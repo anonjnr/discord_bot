@@ -47,11 +47,16 @@ from discord.ext import commands
 ```
 ## Get started:
 
+You can download the `setup.sh` to install and start the setup up the bot with all you need automatically with:
+```
+sudo wget https://raw.githubusercontent.com/anonjnr/discord_bot/master/setup.sh ; sudo bash setup.sh
+```
+
+Else you can setup everything by manually:
 ```
 sudo apt-get update
 sudo apt-get upgrade
-cd /
-sudo mkdir python
+cd /opt
 sudo wget https://www.python.org/ftp/python/3.6.6/Python-3.6.6.tar.xz
 sudo tar xf Python-3.6.6.tar.xz
 cd Python-3.6.6/
@@ -67,20 +72,18 @@ sudo python3.6 -m pip install wikipedia
 sudo python3.6 -m pip install wiktionaryparser
 sudo python3.6 -m pip install praw
 sudo python -m pip install pytz
-cd /
-sudo mkdir server
-cd server
-sudo mkdir bcad_bot
-cd bcad_server
+cd ~
+sudo mkdir projects
+cd projects
 sudo wget https://github.com/anonjnr/discord_bot/archive/master.zip
-sudo unzip ~/master.zip
+sudo unzip master.zip
 sudo chmod 777 credentials.log
 sudo chmod 777 members.log
 ```
 
-Open `setup.py` (`sudo python3.6 setup.py`) and fill in the token for Discord, the role ID's for the administrators/ mods of your server (find out by `\@ROLE_MENTION` into chat on server), reddit api client ID/ client secret/ user agent, ID auf the author (same method as with roles `\@AUTHER_MENTION`) and the goodreads key. The Discord Token is the only thin mandatory, you can leave the rest blank if you'd like. Most funtions will not work properly then.
+Open `setup.py` (`sudo python3.6 setup.py`- will autoomatically be opened if you use the `setup.sh`) and fill in the token for Discord, the role ID's for the administrators/ mods of your server (find out by `\@ROLE_MENTION` into chat on server), reddit api client ID/ client secret/ user agent, ID auf the author (same method as with roles `\@AUTHER_MENTION`) and the goodreads key. The Discord Token is the only thin mandatory, you can leave the rest blank if you'd like. Most funtions will not work properly then.
 
-To start the bot simply use `python3.6 bcad_bot3.6.py`.
+To start the bot simply use `python3.6 bcad_bot3.6.py`(will automatically start if you use the `setup.sh`).
 
 If you run into any issues, look up the documentation as provided on top of this `readme.md` or file an issue.
 
