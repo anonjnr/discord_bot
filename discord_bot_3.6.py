@@ -2,62 +2,41 @@
 # -*- coding: utf-8 -*-
 # bot_bcad_3.6.py
 
+import os
 import asyncio
 import discord
 import random
 import time
 import subprocess
-import requests
+import aiohttp
+import async_timeout
 import wikipedia
 import praw
 import json
 import pytz
+import datetime
+import utilities
+import memberList
+import importLog
+import requests
+from wiktionaryparser import WiktionaryParser
 from datetime import datetime
 from datetime import date
-from datetime import time
 from datetime import timedelta
 from pytz import timezone 
 from xml.etree import ElementTree
 from discord.ext import commands
 
 #python3 -m pip install -U discord.py
-#python -m pip install requests-xml
 #python -m pip install wikipedia
 #python -m pip install praw
 #python -m pip install pytz
+#python -m pip install wiktionary
 
 #print(dir(message))
 #help(obj)
 
-# data = {}  
-# data['TOKEN'] = []  
-# data['TOKEN'].append({  
-#     'value': 'DISCORD_BOT_TOKEN_HERE'
-# })
-# data['MOD_ROLES'] = []
-# data['MOD_ROLES'].append({  
-#     'value_1': 'ADMIN_ROLE_ID_HERE',  
-#     'value_2': 'MOD_ROLEID_HERE'
-# })
-# data['REDDIT'] = []
-# data['REDDIT'].append({
-#     'client_id': 'REDDIT_CLIENT_ID_HERE',
-#     'client_secret': 'REDDIT_CLIENT_SECRET_HERE',
-#     'user_agent': 'REDDIT_USER_AGENT_HERE'
-# })
-# data['AUTHOR'] = []
-# data['AUTHOR'].append({
-#     'bot_author_id': 'DISCORD_BOT_AUTHER_ID_HERE'
-# })
-# data['GOODREADS'] = []
-# data['GOODREADS'].append({
-#     'goodreads_key': 'GOODREADS_KEY_HERE'
-# })
-# 
-# with open('./logs/data.log', 'w') as outfile:  
-#     json.dump(data, outfile)
-
-with open('./logs/data.log') as json_file:  
+with open('../bcad_data/data_bcad_beta.log') as json_file:  
     data = json.load(json_file)
     for p in data['TOKEN']:
         TOKEN = p['value']
@@ -72,6 +51,7 @@ with open('./logs/data.log') as json_file:
         json_bot_author_id = p['bot_author_id']
     for p in data['GOODREADS']:
         goodreads_key = p['goodreads_key']
+    
         
 description = 'Sir Henry Pickles, the pickly Bot!'
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
@@ -80,14 +60,14 @@ role_mod = [mod_role_1, mod_role_2]
 mention_mod = '<@&' + mod_role_1 + '>'
 reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret, user_agent=json_user_agent)
 bot_author = str("<@!" + json_bot_author_id + ">")
-ti_start = datetime.now()
 random.seed(a=None)
+start_time = time.time()
+# temp = (os.popen("vcgencmd measure_temp").readline().replace("temp=","").replace("'C","")) #RASPI
 
-# todo
-# ###########
-# import test
-# test.func()
-# ##########
+async def fetch(session, url):
+    with async_timeout.timeout(10):
+        async with session.get(url) as response:
+            return await response.text()
 
 @bot.event
 async def on_ready():
@@ -98,13 +78,73 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
+@bot.command(pass_context = True)
+async def status(ctx, *status_raw):
+    for r in ctx.message.author.roles:
+        pulled_roles = r.id
+        if pulled_roles in role_mod:
+            status_arg = ' '.join(status_raw)
+            activity = discord.Game(name=status_arg)
+            return await bot.change_presence(status=discord.Status.online, game=(activity))
+    return await ctx.bot.say(ctx.message.author.mention+', you\'re not a mod. You can\'t use this command.')
+
 # todo
 # @bot.event
-# async def on_member_join(ctx, member):
-#     welcome = ['Welcome to my kingdom, ']
-# 	string = random.choice(welcome) + str(member)
-# 	await ctx.bot.say(string)
-    
+# async def on_command_error(ctx, error):
+#     await ctx.bot.say("What now," + ctx.message.author.mention + "?")
+
+# todo
+# ###########
+# import test
+# test.func()
+# ##########
+
+# todo converter celsius kelvin farenheit
+# todo converter mile kilometer etc
+# @bot.command(pass_context = True)
+# async def convert(ctx, *keywords_raw):
+#     await ctx.bot.say("This is in the making.")
+
+# todo YT?
+
+# todo server count?
+
+# # todo
+# @bot.command(pass_context = True)
+# async def timer(ctx, number, unit):
+#     # print(number_unit_raw)
+#     # number_unit = number_unit_raw
+#     # print(number_unit)
+#     # number, unit = number_unit.split(" ")
+#     print(number)
+#     print(unit)
+#     if not unit:
+#         unit = minutes
+#     if unit == "seconds":
+#         unit = seconds
+#     if unit == "minutes":
+#         unit = minutes
+#     if unit == "hours":
+#         unit = minutes
+#     start_time_now = time.time()
+#     print(number)
+#     print(unit)
+#     print(time.time())
+#     timer_to = time.time() + (number * unit)
+#     print(timer_to)
+
+@bot.event
+async def on_member_join(member):
+    pm = (f"Welcome to `{member.server}`, <@!{member.id}>! <3")
+    dm = (f"Welcome to `{member.server}`, <@!{member.id}>! <3 Type `!help` to learn all my commands.")
+    if channel.name is "general":
+        await bot.send_message(member.server.channel, pm)
+        return await bot.send_message(member, dm)
+    else:
+        return await bot.send_message(member, dm)
+
+# todo Urban Dictionary
+
 @bot.command(pass_context = True)
 async def members(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `members`')
@@ -112,28 +152,43 @@ async def members(ctx):
     info.counter += 1
     for r in ctx.message.author.roles:
         pulled_roles = r.id
-        if pulled_roles in role_mod:
-            for server in bot.servers:
-                for member in server.members:
-                    print(f'ID: {member.id} Name: {member} ({member.name})')
-            await ctx.bot.say('List saved into logs.')
-            return
+        if pulled_roles in importLog.role_mod:
+            try:
+                await memberList.membersLog(ctx)
+            except:
+                await ctx.bot.say('Whoops, something went wrong ' + ctx.message.author.mention + '.')  
+            return 
     await ctx.bot.say(ctx.message.author.mention+', you\'re not a mod. You can\'t use this command.')
-    print('\n')
 
-# todo cmd count    
+@bot.command(pass_context = True)
+async def members_show(ctx):
+    print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `members_show`')
+    print('------')
+    info.counter += 1
+    for r in ctx.message.author.roles:
+        pulled_roles = r.id
+        if pulled_roles in importLog.role_mod:
+            try:
+                await memberList.membersDump(ctx)
+            except:
+                await ctx.bot.say('Whoops, something went wrong ' + ctx.message.author.mention + '.')  
+            return 
+    await ctx.bot.say(ctx.message.author.mention+', you\'re not a mod. You can\'t use this command.')
+   
 @bot.command(pass_context = True)
 async def info(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `info`')
     print('------')
     info.counter += 1
-    ti_del = str((datetime.now() - ti_start))
+    time_lapsed = (time.time() - start_time)
     embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
     embed.add_field(name="Author", value=bot_author)
-    embed.add_field(name="System Time:", value=str(datetime.now()))
-    embed.add_field(name="Uptime", value=ti_del)
+    embed.add_field(name="System Time:", value=utilities.epoch_to_custom_date(utilities.FMT_TIME))
+    embed.add_field(name="Uptime", value=timedelta(seconds=time_lapsed))
+    # embed.add_field(name="Henrys Temperature: ", value=(temp + " °C")) #RASPI
     embed.add_field(name="Command count: ", value=info.counter)
-    embed.add_field(name="Reaction count: ", value=reaction_trigger.counter)
+    embed.add_field(name="Message count: ", value=reaction_trigger.counter)
+    embed.add_field(name="Server count: ", value=len(bot.servers))
     await ctx.bot.say(embed=embed)
 info.counter = 0
 
@@ -151,8 +206,9 @@ async def cmd_time(ctx, *tz_keywords):
         await asyncio.sleep( 2 )
         return await ctx.bot.say(random.choice(moon_rep))
         sleep()
-    if tz_keyword is None:
-        return await ctx.bot.say("No keyword given, so here/'s UTC/GMT: " + datetime.now())
+    if tz_keyword is "":
+        tz_keyword = "GMT+0"
+        await ctx.bot.say("No keyword given, so I'll give you `GMT+0`. Try `!time GMT+0` or `!time Denver` next time.")
     valid_zones = []
     for zone in pytz.all_timezones:
         zones = zone.split('/')
@@ -179,6 +235,7 @@ async def cmd_time(ctx, *tz_keywords):
         if len(valid_zones) == 0:
             return await ctx.bot.say('{} is an invalid timezone'.format(tz_keyword))
         else:
+            # todo
             msg = '\n'.join(valid_zones)
             if len(msg) <= 2000:
                 await ctx.bot.say(msg)  
@@ -255,17 +312,18 @@ async def cmd_help(ctx):
     embed_use.add_field(name="`reddit`", value="With this command you can let Henry post the `top 3 hot topics` of a subreddit of your choosing. Simply use `@Sir Henry Pickles reddit SUBREDDIT` or `!reddit SUBREDDIT` with `subreddit` being the subreddit of your choosing. Subreddit")
     embed_use.add_field(name="`wikipedia`", value="Let\s you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you\'re looking for")
     embed_use.add_field(name="`roll`", value="You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!")
-    embed_use.add_field(name="`time`", value="Gives you the current time for different timezones. These are the possibilities: UTC, BST, CET, CEST, EET, EST, CT, DT, WST, WSST, HAST, SST, ADT, AST, EDT, EST, CDT, CST, MDT, MST, PDT, PST, ADT, AST, GMT")
+    embed_use.add_field(name="`time`", value="Gives you the current time for different timezones. For example use with `!time Berlin` or `!time EST`.")
 
     embed_mod=discord.Embed(title="MODERATION", description="", color=0x00ff00)
     embed_mod.add_field(name="`clear`", value="With this command a Moderator can clear all messages in a channel if something NSFW or otherwise inapropriate got posted. Other users can use this command aswell - it automatically pings the Moderators for them. For the last 1000 messages purged `clear`, for a certain amount `clear NUMBER` with `NUMBER` being any number between 0 and 1000")
     embed_mod.add_field(name="`bleach`", value="Applies eye bleach. *Try it!* (recommended after and/ or before `clear`)")
     embed_mod.add_field(name="`roles`", value="Shows you what roles you have")
+    embed_mod.add_field(name="`status`", value="Change the status of the bot. `!status the guitar` to have his status changed to: `@Sir Henry Pickles Playing the guitar`")
 
     embed_misc=discord.Embed(title="MISC", description="", color=0x00ff00)
     embed_misc.add_field(name="`votecall`", value="Calls a simple thumb up/ thumb down vote for the message.")
-    embed_misc.add_field(name="`greeting`", value="Say `Hi` to Henry! Or `Hello` or `Morning` or something like this")
-    embed_misc.add_field(name="`goodbye`", value="Same as with greeting. Responds to a variety of goodbyes")
+    embed_misc.add_field(name="`greeting`", value="Say `Hi` to Henry! Or `Hello` or `Morning` or something like this. `@Sir Henry Pickles Sup`")
+    embed_misc.add_field(name="`goodbye`", value="Same as with greeting. Responds to a variety of goodbyes. `@Sir Henry Pickles Nite`")
     embed_misc.add_field(name="`sleep`", value="Let\'s the Bot decide if you should go to bed")
     embed_misc.add_field(name="`shower`", value="Let\'s the Bot decide if you should take a shower")
     embed_misc.add_field(name="`joke`", value="Let Henry tell you a joke which most certainly is hilarious")
@@ -300,6 +358,7 @@ async def shower(ctx):
     shower = [' you reek already!', ' it`s about time...', ' nah, its cool.', ' I mean, have you already showered this week?',' but only a golden shower.']
     await ctx.bot.say(ctx.message.author.mention+ " " + random.choice(shower))
 
+# todo store jokes in json.log
 @bot.command(pass_context = True)
 async def joke(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `joke`')
@@ -463,7 +522,7 @@ async def roll(ctx, dice_string, mod: int = 0):
             num_ran_count_mod = num_ran_count+mod
             await ctx.bot.say("I rolled "+ str(num_ran_count) + " for you. That\'s a " + str(num_ran_count_mod) + " with your modifier.")
     except:
-        await ctx.bot.say(f'Error. Something didn\'t work out, <@{ctx.message.author.id}>. Check your formatting. Was it: `4d12 3`?')
+        await ctx.bot.say(f'Error. Something didn\'t work out, <@{ctx.message.author.id}>. Check your formatting. Should it have been `1d{dice_string} {mod}`?')
 
 @bot.command(pass_context = True)
 async def bleach(ctx):
@@ -499,6 +558,11 @@ async def bleach(ctx):
 # todo
 # TIP System
 # Karma System
+# given that karma systems are memory intent can you use the nickname system to hold the karma information. 
+# Example USER (0) and I get thanked the bot looks at the nickname takes the int 0 and increments 
+# it by one and renames me USER (1). The only caveat to this system  is you would have to restrict 
+# nicknames to the bot and build a request to change it. But it would display karma openly and free up 
+# memory as it's stored server side.
 
 # todo
 # #google calendar
@@ -512,8 +576,9 @@ async def goodreads(ctx, *keyword_raw):
     print('------')
     info.counter += 1
     keyword = str(keyword_raw)
-    xml = ElementTree.fromstring(
-        requests.get('https://www.goodreads.com/search.xml?key=' + goodreads_key + '&q=' + keyword + '&page=1').text)
+    async with aiohttp.ClientSession() as session:
+        html = await fetch(session, 'https://www.goodreads.com/search.xml?key=' + goodreads_key + '&q=' + keyword + '&page=1')
+        xml = ElementTree.fromstring(html)
 
     for i,v in enumerate(xml.find('search/results')):
         book = v.find('best_book')
@@ -549,34 +614,68 @@ async def cmd_reddit(ctx, subreddit_raw):
     except:
        await ctx.bot.say(f'Error. Something didn\'t work out. Search for somthing else or some time else, <@{ctx.message.author.id}>')
 
-# todo exceptions
 @bot.command(name='wikipedia', pass_context = True)
 async def cmd_wikipedia(ctx, *wiki_keyword_raw):
-    print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `wikipedia`, looking for: `'+wiki_keyword_raw+'`')
+    print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `wikipedia`')
     print('------')
     info.counter += 1
     wiki_error = "Error. Specify/ check/ rephrase your search query"
     try:
-        wiki_keyword = str(wiki_keyword_raw)
-        wiki_keyword_clean = str(*wiki_keyword_raw)
+        wiki_keyword = str(' '.join(wiki_keyword_raw))
         wiki_sum = wikipedia.summary(wiki_keyword, sentences=1, chars=100,auto_suggest=True, redirect=True)
         wiki_keyword_string = wikipedia.page(wiki_keyword)
         wiki_url = wiki_keyword_string.url
-        embed_wiki=discord.Embed(title="Wikipedia", description=wiki_keyword_clean, color=0x00ff00)
+        embed_wiki=discord.Embed(title="Wikipedia", description=wiki_keyword, color=0x00ff00)
         embed_wiki.add_field(name=wiki_sum, value=wiki_url)    
         await ctx.bot.say(embed=embed_wiki)
-    # except wikipedia.exceptions.DisambiguationError:
-    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
     except:
         await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    # except wikipedia.exceptions.PageError:
-    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    # except wikipedia.exceptions.HTTPTimeoutError:
-    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    # except wikipedia.exceptions.RedirectError:
-    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
-    # except wikipedia.exceptions.WikipediaException:
-    #     await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+        if not wikipedia.search(wiki_keyword, results=3):
+            return
+        await ctx.bot.say(f'Did you mean: {wikipedia.search(wiki_keyword, results=3)}?')
+
+# todo doesn't work at all
+@bot.command(pass_context = True)
+async def wiktionary(ctx, *wikti_keyword_raw):
+    # print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `wiktionary`')
+    # print('------')
+    info.counter += 1
+    wikti_keyword_clean = str(*wikti_keyword_raw)
+    parser = WiktionaryParser()
+    parser.set_default_language('english')
+ 
+    word = parser.fetch(wikti_keyword_clean, 'english')
+    await ctx.bot.say(str(word))
+
+ 
+    data = json.loads(parser.fetch(wikti_keyword_clean, 'english'))
+    print("DATA")
+    print(data)
+    for p in data['pronunciations']:
+        pro_text = p['text']
+        print("PRO_TEXT")
+        print(pro_text)
+
+    # [
+    #     {
+    #         'etymology': '',
+    #     'definitions': 
+    #     [
+    #         {
+    #             'partOfSpeech': 'noun',
+    #         'text': 'wikipedia (plural wikipedias)\n\nAlternative letter-case form of Wikipedia\n',
+    #         'relatedWords': [],
+    #         'examples': []
+    #         }
+    #     ],
+    #         'pronunciations': 
+            
+    #         {
+    #             'text': [],
+    #         'audio': []
+    #         }
+    #     }
+    # ]
 
 # todo
 ##Movie Knights
@@ -595,11 +694,11 @@ async def roles(ctx):
         await ctx.bot.say("`"+roles_me+"`")
 
 # todo get rid of all these and somehow call them somehow else
-
+# reaction is triggered on EVERY message :S
 def reaction_trigger():
     #print('ID: '+on_message.message.author.id+' (Name: '+on_message.message.author.name+') triggered a reaction with: *' + str(on_message.message) + '*')
-    # print('Triggered a reaction.')
-    # print('------')
+    print("Reaction Trigger")
+    print('------')
     reaction_trigger.counter += 1
 reaction_trigger.counter = 0
 
