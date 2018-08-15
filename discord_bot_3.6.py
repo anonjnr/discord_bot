@@ -55,6 +55,7 @@ with open('credentials.log') as json_file:
     for p in data['GOODREADS']:
         goodreads_key = p['goodreads_key']
     
+        
 description = 'Sir Henry Pickles, the pickly Bot!'
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
 bot.remove_command('help')
@@ -145,7 +146,7 @@ async def on_member_join(member):
         embed.set_thumbnail(url=ctx.message.author.avatar_url)
         await ctx.bot.say(embed=embed)
     else:
-        return
+return
 
 # todo 2000 char restriciton (time)
 @bot.command(pass_context = True)
@@ -605,9 +606,11 @@ async def cmd_reddit(ctx, subreddit_raw):
     x = int(0)
     try:
         for i, submission in enumerate(reddit.subreddit(subreddit_input).hot(limit=5)):
-            if submission.over_18:
+            if reddit.subreddit(subreddit_input).over18:
                 await ctx.bot.say("Please do not request NSFW results. "+mention_mod)
                 break
+            if submission.over_18:
+                continue
             if submission.stickied:
                 continue  
             result_list = (f'{submission.url}')
