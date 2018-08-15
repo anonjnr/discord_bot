@@ -49,7 +49,7 @@ from discord.ext import commands
 
 You can download the `setup.sh` to install and start the setup up the bot with all you need automatically with:
 ```
-sudo wget https://raw.githubusercontent.com/anonjnr/discord_bot/master/setup.sh ; sudo bash setup.sh
+sudo wget https://raw.githubusercontent.com/x3l51/discord_bot/master/setup.sh ; sudo bash setup.sh
 ```
 
 Else you can setup everything by manually:
@@ -75,7 +75,7 @@ sudo python -m pip install pytz
 cd ~
 sudo mkdir projects
 cd projects
-sudo wget https://github.com/anonjnr/discord_bot/archive/master.zip
+sudo wget https://github.com/x3l51/discord_bot/archive/master.zip
 sudo unzip master.zip
 sudo chmod 777 credentials.log
 sudo chmod 777 members.log
