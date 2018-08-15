@@ -20,30 +20,14 @@ Also special thanks to @ir-3 and @Harrryyyy for helping with getting the second 
 ## Used Libs:
 
 ```
-import os
-import asyncio
-import ast
 import discord
-import random
-import time
-import subprocess
 import aiohttp
-import async_timeout
 import wikipedia
 import praw
-import json
 import pytz
-import datetime
-import utilities
-import memberList
-import importLog
 import requests
 from wiktionaryparser import WiktionaryParser
-from datetime import datetime
-from datetime import date
-from datetime import timedelta
 from pytz import timezone 
-from xml.etree import ElementTree
 from discord.ext import commands
 ```
 ## Get started:
