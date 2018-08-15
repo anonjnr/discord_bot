@@ -52,7 +52,7 @@ You can download the `setup.sh` to install and start the setup up the bot with a
 sudo wget https://raw.githubusercontent.com/x3l51/discord_bot/master/setup.sh ; sudo bash setup.sh
 ```
 
-Else you can setup everything by manually:
+Else you can setup everything manually:
 ```
 sudo apt-get update
 sudo apt-get upgrade
