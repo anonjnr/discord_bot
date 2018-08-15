@@ -1,7 +1,7 @@
-import os
-import time
 import datetime
+import os
 import threading
+import time
 from calendar import timegm
 
 TIME_ZONE = 'Europe/Berlin'
@@ -10,7 +10,6 @@ SECONDS_IN_A_MINUTE = 60
 SECONDS_IN_AN_HOUR = SECONDS_IN_A_MINUTE * 60
 SECONDS_IN_A_DAY = SECONDS_IN_AN_HOUR * 24
 SECONDS_IN_A_WEEK = SECONDS_IN_A_DAY * 7
-
 
 DAILY = 'daily'
 WEEKLY = 'weekly'
@@ -23,21 +22,20 @@ MILITARY_TIME = '%H%M'
 FMT_TIME = '%Y-%m-%d %H:%M'
 
 
-
 # ALL TIME IS UTC
 
 # EXAMPLE DECORATOR
 def decorator(argument):
-
     def real_decorator(function):
-
         def wrapper(*args, **kwargs):
             print('1')
             print(argument)
             result = function(*args, **kwargs)
             print(2)
             return result
+
         return wrapper
+
     return real_decorator
 
 
@@ -47,7 +45,7 @@ def set_tz():
 
 
 # Wrapper
-def log_time(do_print: bool=False):
+def log_time(do_print: bool = False):
     def real_log_time(orig_func):
         def wrapper(*args, **kwargs):
             start_time = time.time()
@@ -57,12 +55,13 @@ def log_time(do_print: bool=False):
                 print('{} completed {} seconds.'.format(orig_func.__name__.upper(), round(time_lapsed, 5)))
 
             return result
+
         return wrapper
+
     return real_log_time
 
 
 def new_thread(funct: object) -> object:
-
     def wrapper(*args, **kwargs):
         print(funct.__name__.upper(), 'args:', args, 'kwargs:', kwargs)
         thr = threading.Thread(target=funct, args=args)
@@ -72,8 +71,7 @@ def new_thread(funct: object) -> object:
     return wrapper
 
 
-def epoch(epoch=None, future_in_seconds: int=0, custom_hhmm: int=None):
-
+def epoch(epoch=None, future_in_seconds: int = 0, custom_hhmm: int = None):
     if epoch is None:  # if epoch is None return epoch now
         # epoch = int(datetime.datetime.now().strftime("%s"))
         epoch = int(time.time())
@@ -93,7 +91,7 @@ def epoch(epoch=None, future_in_seconds: int=0, custom_hhmm: int=None):
         return int(epoch_time)
 
 
-def epoch_to_custom_date(fmt: str, _epoch: int=None):
+def epoch_to_custom_date(fmt: str, _epoch: int = None):
     if _epoch is None:
         _epoch = epoch()
     return datetime.datetime.fromtimestamp(_epoch).strftime(fmt)

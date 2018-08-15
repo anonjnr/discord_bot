@@ -1,8 +1,9 @@
 import json
 
-def credentials():  
-    with open('credentials.log') as json_file:  
-        data = json.load(json_file)            
+
+def credentials():
+    with open('credentials.log') as json_file:
+        data = json.load(json_file)
         for x in range(3):
             if x == 0:
                 y = ("[1st Try] ")
@@ -13,11 +14,14 @@ def credentials():
             token_input = input(y + "Please enter your Discord Token now: ")
             if token_input != "":
                 bot_author_id_input = input("Please enter the authors discord user ID now: ")
-                admin_role_1_input = input("Please enter the ID of the Administrator Role now: ") 
-                admin_role_2_input = input("Please enter the ID of another Administrator Role now (leave blank if not needed): ")
+                admin_role_1_input = input("Please enter the ID of the Administrator Role now: ")
+                admin_role_2_input = input(
+                    "Please enter the ID of another Administrator Role now (leave blank if not needed): ")
                 reddit_client_id_input = input("Please enter the Reddit client ID now (leave blank if not needed): ")
-                reddit_client_secret_input = input("Please enter the Reddit client secret now (leave blank if not needed): ")
-                reddit_user_agent_input = input("Please enter the Reddit client user agent info now (leave blank if not needed): ")
+                reddit_client_secret_input = input(
+                    "Please enter the Reddit client secret now (leave blank if not needed): ")
+                reddit_user_agent_input = input(
+                    "Please enter the Reddit client user agent info now (leave blank if not needed): ")
                 goodreads_key_input = input("Please enter the Goodreads Key now (leave blank if not needed): ")
                 data = {
                     'TOKEN': [
@@ -49,22 +53,22 @@ def credentials():
                         }
                     ],
                     'TOKEN': [
-                        {  
+                        {
                             'value': token_input
                         }
                     ],
                     'MOD_ROLES': [
-                        {  
-                            'value_1': admin_role_1_input,  
+                        {
+                            'value_1': admin_role_1_input,
                             'value_2': admin_role_2_input
                         }
                     ]
-                } 
-                with open('credentials.log', 'w') as outfile:  
+                }
+                with open('credentials.log', 'w') as outfile:
                     json.dump(data, outfile)
                     print("Data successfully written to logfile.")
                     end()
-                with open('credentials.log') as json_file:  
+                with open('credentials.log') as json_file:
                     data = json.load(json_file)
                     for p in data['TOKEN']:
                         TOKEN = p['value']
@@ -80,36 +84,38 @@ def credentials():
                     for p in data['GOODREADS']:
                         goodreads_key = p['goodreads_key']
                 return
-        with open('credentials.log') as json_file:  
-                    data = json.load(json_file)
-                    for p in data['TOKEN']:
-                        TOKEN = p['value']        
-                        if not TOKEN:
-                            print("Please get your Discord Token ready and start again.")
-                            end()
-                        else:
-                            unchanged_token = input("You already have an Discord Token saved. Leave it unchanged? (y/n/exit) ")
-                            if unchanged_token == "y":
-                                start()
-                            elif unchanged_token == "n":
-                                        credentials()
-                            elif unchanged_token == "exit":
-                                end()
-                            else:
-                                print("Invalid input")
-                                start()        
-          
+        with open('credentials.log') as json_file:
+            data = json.load(json_file)
+            for p in data['TOKEN']:
+                TOKEN = p['value']
+                if not TOKEN:
+                    print("Please get your Discord Token ready and start again.")
+                    end()
+                else:
+                    unchanged_token = input("You already have an Discord Token saved. Leave it unchanged? (y/n/exit) ")
+                    if unchanged_token == "y":
+                        start()
+                    elif unchanged_token == "n":
+                        credentials()
+                    elif unchanged_token == "exit":
+                        end()
+                    else:
+                        print("Invalid input")
+                        start()
+
+
 def welcome():
     print("This is the setup file for the Discord Bot.")
     print("Here you can enter, change or view all credentials needed to run it.\n")
     start()
 
+
 def start():
-    start_question = input("Do you want to enter your credentials or make changes? (y/n/exit) ")   
+    start_question = input("Do you want to enter your credentials or make changes? (y/n/exit) ")
     if start_question == "y":
         credentials()
     elif start_question == "n":
-        with open('credentials.log') as json_file:  
+        with open('credentials.log') as json_file:
             data = json.load(json_file)
             for p in data['TOKEN']:
                 TOKEN = p['value']
@@ -124,10 +130,11 @@ def start():
         print("Invalid input")
         start()
 
+
 def credentials_view():
     start_question_no = input("Do you want to view you credentials? (y/n/exit) ")
     if start_question_no == "y":
-        with open('credentials.log') as json_file:  
+        with open('credentials.log') as json_file:
             data = json.load(json_file)
             for p in data['TOKEN']:
                 TOKEN = p['value']
@@ -159,8 +166,10 @@ def credentials_view():
         print("Invalid input. Starting over.")
         start()
 
+
 def end():
     print("Ending script now.")
     return
+
 
 welcome()
