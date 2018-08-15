@@ -4,6 +4,7 @@
 
 import os
 import asyncio
+import ast
 import discord
 import random
 import time
@@ -36,6 +37,8 @@ from discord.ext import commands
 #print(dir(message))
 #help(obj)
 
+#https://discordapp.com/oauth2/authorize?client_id= bot.user.id &scope=bot&permissions=8
+
 with open('credentials.log') as json_file:  
     data = json.load(json_file)
     for p in data['TOKEN']:
@@ -52,7 +55,6 @@ with open('credentials.log') as json_file:
     for p in data['GOODREADS']:
         goodreads_key = p['goodreads_key']
     
-        
 description = 'Sir Henry Pickles, the pickly Bot!'
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
 bot.remove_command('help')
@@ -85,7 +87,9 @@ async def status(ctx, *status_raw):
         if pulled_roles in role_mod:
             status_arg = ' '.join(status_raw)
             activity = discord.Game(name=status_arg)
-            return await bot.change_presence(status=discord.Status.online, game=(activity))
+            await bot.change_presence(status=discord.Status.online, game=(activity))
+            embed = discord.Embed(title="Status changed to: ", description=("@Sir Henry Pickles playing " + status_arg), color=0xeee657)
+            return await ctx.bot.say(embed=embed)
     return await ctx.bot.say(ctx.message.author.mention+', you\'re not a mod. You can\'t use this command.')
 
 # todo
@@ -106,8 +110,6 @@ async def status(ctx, *status_raw):
 #     await ctx.bot.say("This is in the making.")
 
 # todo YT?
-
-# todo server count?
 
 # # todo
 # @bot.command(pass_context = True)
@@ -135,16 +137,17 @@ async def status(ctx, *status_raw):
 
 @bot.event
 async def on_member_join(member):
-    pm = (f"Welcome to `{member.server}`, <@!{member.id}>! <3")
-    dm = (f"Welcome to `{member.server}`, <@!{member.id}>! <3 Type `!help` to learn all my commands.")
+    member = ctx.message.author
+    welm = (f"Welcome to `{member.server}`!")
+    desm = (f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, <@!{member.id}> <3')
     if channel.name is "general":
-        await bot.send_message(member.server.channel, pm)
-        return await bot.send_message(member, dm)
+        embed = discord.Embed(title=welm, description=desm, color=0xeee657)
+        embed.set_thumbnail(url=ctx.message.author.avatar_url)
+        await ctx.bot.say(embed=embed)
     else:
-        return await bot.send_message(member, dm)
+        return
 
-# todo Urban Dictionary
-
+# todo 2000 char restriciton (time)
 @bot.command(pass_context = True)
 async def members(ctx):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `members`')
@@ -182,17 +185,18 @@ async def info(ctx):
     info.counter += 1
     time_lapsed = (time.time() - start_time)
     embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
-    embed.add_field(name="Author", value=bot_author)
+    embed.set_thumbnail(url=bot.user.avatar_url)
     embed.add_field(name="System Time:", value=utilities.epoch_to_custom_date(utilities.FMT_TIME))
     embed.add_field(name="Uptime", value=timedelta(seconds=time_lapsed))
     # embed.add_field(name="Henrys Temperature: ", value=(temp + " °C")) #RASPI
     embed.add_field(name="Command count: ", value=info.counter)
     embed.add_field(name="Message count: ", value=reaction_trigger.counter)
     embed.add_field(name="Server count: ", value=len(bot.servers))
+    embed.add_field(name="Author", value=bot_author)
+    embed.add_field(name="Next features I'll get and progress:", value="https://github.com/x3l51/discord_bot/projects/1#column-3212654", inline=True)  
     await ctx.bot.say(embed=embed)
 info.counter = 0
 
-# todo restrict output to n lines
 @bot.command(name="time", pass_context = True, ignore_extras = False)
 async def cmd_time(ctx, *tz_keywords):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `time`')
@@ -210,7 +214,7 @@ async def cmd_time(ctx, *tz_keywords):
         tz_keyword = "GMT+0"
         await ctx.bot.say("No keyword given, so I'll give you `GMT+0`. Try `!time GMT+0` or `!time Denver` next time.")
     valid_zones = []
-    for zone in pytz.all_timezones:
+    for i, zone in enumerate(pytz.all_timezones):
         zones = zone.split('/')
         region = ''
         region_tz = ''
@@ -222,20 +226,19 @@ async def cmd_time(ctx, *tz_keywords):
             region, region_tz = zones[0], zones[1]
         else:
             region, region_tz, region_city = zones[0], zones[1], zones[2]
-        found = False
+            found = False
         if region.lower().startswith(tz_keyword.lower()) and not found:
             valid_zones.append('Time Zone: {} is {}'.format(zone, datetime.now(tz=timezone(zone))))
-            found = True        
+            found = True       
         if region_tz.lower().startswith(tz_keyword.lower()) and not found:
             valid_zones.append('Time Zone: {} is {}'.format(zone, datetime.now(tz=timezone(zone))))
             found = True 
         if region_city.lower().startswith(tz_keyword.lower()) and not found:
-            valid_zones.append('Time Zone: {} is {}'.format(zone, datetime.now(tz=timezone(zone))))           
+            valid_zones.append('Time Zone: {} is {}'.format(zone, datetime.now(tz=timezone(zone))))
     else:
         if len(valid_zones) == 0:
             return await ctx.bot.say('{} is an invalid timezone'.format(tz_keyword))
         else:
-            # todo
             msg = '\n'.join(valid_zones)
             if len(msg) <= 2000:
                 await ctx.bot.say(msg)  
@@ -310,7 +313,8 @@ async def cmd_help(ctx):
     embed_use=discord.Embed(title="USEFUL", description="", color=0x00ff00)
     embed_use.add_field(name="`goodreads`", value="Let\'s you look for authors and books on Goodread.com. For this you can use an authors name, book title, ISBN or even all together. Example: `@Sir Henry Pickles goodreads Neil Gaiman Norse Mythology` or `!goodreads Neil Gaiman Norse Mythology`")
     embed_use.add_field(name="`reddit`", value="With this command you can let Henry post the `top 3 hot topics` of a subreddit of your choosing. Simply use `@Sir Henry Pickles reddit SUBREDDIT` or `!reddit SUBREDDIT` with `subreddit` being the subreddit of your choosing. Subreddit")
-    embed_use.add_field(name="`wikipedia`", value="Let\s you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you\'re looking for")
+    embed_use.add_field(name="`wikipedia`", value="Let\'s you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you\'re looking for")
+    embed_use.add_field(name="`wiktionary`", value="Let\'s you search wiktionary for anything. Basicalle the same as `Wikipedia` but only for word definition")
     embed_use.add_field(name="`roll`", value="You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!")
     embed_use.add_field(name="`time`", value="Gives you the current time for different timezones. For example use with `!time Berlin` or `!time EST`.")
 
@@ -487,7 +491,8 @@ async def joke(ctx):
         'Nothing, pickles can\'t talk.',
 
         ]
-    await ctx.bot.say(random.choice(joke))
+    embed=discord.Embed(title="Joke", description=random.choice(joke), color=0x00ff00)   
+    await ctx.bot.say(embed=embed)
 
 @bot.command(name='8ball', pass_context = True)
 async def cmd_8ball(ctx):
@@ -495,7 +500,9 @@ async def cmd_8ball(ctx):
     print('------')
     info.counter += 1
     ball_res = ['It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes - definitely.', 'You may rely on it.', 'As I see it, yes.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.', 'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Connot predict now.', 'Concentrate and ask again.', 'Don`t count on it.', 'My reply is no.', 'My sources say no.', 'Outlook not so good.']
-    await ctx.bot.say(random.choice(ball_res))
+    embed=discord.Embed(title="8Ball", description=random.choice(ball_res), color=0x00ff00)   
+    await ctx.bot.say(embed=embed)
+
 
 @bot.command(pass_context = True)
 async def roll(ctx, dice_string, mod: int = 0):
@@ -579,7 +586,6 @@ async def goodreads(ctx, *keyword_raw):
     async with aiohttp.ClientSession() as session:
         html = await fetch(session, 'https://www.goodreads.com/search.xml?key=' + goodreads_key + '&q=' + keyword + '&page=1')
         xml = ElementTree.fromstring(html)
-
     for i,v in enumerate(xml.find('search/results')):
         book = v.find('best_book')
         author = book.find('author/name').text
@@ -587,7 +593,6 @@ async def goodreads(ctx, *keyword_raw):
         book_id = book.find('id').text
         result_list = (f'**{author}**: {title} - https://www.goodreads.com/book/show/{book_id}.It')
         await ctx.bot.say(result_list)
-
         if i == 2:
             break
     
@@ -619,7 +624,7 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `wikipedia`')
     print('------')
     info.counter += 1
-    wiki_error = "Error. Specify/ check/ rephrase your search query"
+    wiki_error = "Error. Specify/ check/ rephrase your search query,"
     try:
         wiki_keyword = str(' '.join(wiki_keyword_raw))
         wiki_sum = wikipedia.summary(wiki_keyword, sentences=1, chars=100,auto_suggest=True, redirect=True)
@@ -629,59 +634,32 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
         embed_wiki.add_field(name=wiki_sum, value=wiki_url)    
         await ctx.bot.say(embed=embed_wiki)
     except:
-        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>')
+        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>!')
         if not wikipedia.search(wiki_keyword, results=3):
             return
         await ctx.bot.say(f'Did you mean: {wikipedia.search(wiki_keyword, results=3)}?')
 
-# todo doesn't work at all
-@bot.command(pass_context = True)
-async def wiktionary(ctx, *wikti_keyword_raw):
-    # print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `wiktionary`')
-    # print('------')
+@bot.command(pass_context=True)
+async def wiktionary(ctx, *wikti_keyword_list):
+    wikti_keyword_raw = " ".join(wikti_keyword_list)
+    print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `wiktionary`')
+    print('------')
     info.counter += 1
-    wikti_keyword_clean = str(*wikti_keyword_raw)
+    wiki_error = "Error. Specify/ check/ rephrase your search query,"
     parser = WiktionaryParser()
-    parser.set_default_language('english')
- 
-    word = parser.fetch(wikti_keyword_clean, 'english')
-    await ctx.bot.say(str(word))
-
- 
-    data = json.loads(parser.fetch(wikti_keyword_clean, 'english'))
-    print("DATA")
-    print(data)
-    for p in data['pronunciations']:
-        pro_text = p['text']
-        print("PRO_TEXT")
-        print(pro_text)
-
-    # [
-    #     {
-    #         'etymology': '',
-    #     'definitions': 
-    #     [
-    #         {
-    #             'partOfSpeech': 'noun',
-    #         'text': 'wikipedia (plural wikipedias)\n\nAlternative letter-case form of Wikipedia\n',
-    #         'relatedWords': [],
-    #         'examples': []
-    #         }
-    #     ],
-    #         'pronunciations': 
-            
-    #         {
-    #             'text': [],
-    #         'audio': []
-    #         }
-    #     }
-    # ]
-
-# todo
-##Movie Knights
-# https://i.imgur.com/QNiL6SP.gif
-# https://i.imgur.com/GDNyuPn.mp4
-# https://i.imgur.com/DKJhx9l.gif
+    try:
+        def wiktionary__dict(the_fetch):
+            return ast.literal_eval(str(the_fetch).encode('ascii', 'ignore').decode('ascii'))[0]
+        word_to_define = wikti_keyword_raw.title()
+        response = wiktionary__dict(parser.fetch(word_to_define))['definitions'][0]
+        layout = '**{}** - ({})\n{}\n'.format(word_to_define, response['partOfSpeech'], response['text'])
+        word_to_define = wikti_keyword_raw.lower()
+        _response = wiktionary__dict(parser.fetch(word_to_define))['definitions'][0]
+        layout += '**{}** - ({})\n{}\n'.format(word_to_define, _response['partOfSpeech'], _response['text'])
+        embed_wikti=discord.Embed(title="Wiktionary", description=layout, color=0x00ff00)    
+        await ctx.bot.say(embed=embed_wikti)
+    except:
+        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>!')
 
 @bot.command(pass_context = True)
 async def roles(ctx):
@@ -696,9 +674,6 @@ async def roles(ctx):
 # todo get rid of all these and somehow call them somehow else
 # reaction is triggered on EVERY message :S
 def reaction_trigger():
-    #print('ID: '+on_message.message.author.id+' (Name: '+on_message.message.author.name+') triggered a reaction with: *' + str(on_message.message) + '*')
-    print("Reaction Trigger")
-    print('------')
     reaction_trigger.counter += 1
 reaction_trigger.counter = 0
 
