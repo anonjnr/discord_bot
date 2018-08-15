@@ -56,7 +56,7 @@ with open('credentials.log') as json_file:
         goodreads_key = p['goodreads_key']
         
 description = 'Sir Henry Pickles, the pickly Bot!'
-bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
+bot = commands.Bot(case_insensitive=True, command_prefix=commands.when_mentioned_or('!'))
 bot.remove_command('help')
 role_mod = [mod_role_1, mod_role_2]
 mention_mod = '<@&' + mod_role_1 + '>'
