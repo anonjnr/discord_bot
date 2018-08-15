@@ -6,6 +6,7 @@ import ast
 import asyncio
 import datetime
 import json
+import logging
 import random
 import time
 from datetime import datetime
@@ -25,6 +26,13 @@ from wiktionaryparser import WiktionaryParser
 import memberList
 import messages
 import utilities
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 with open('credentials.log') as json_file:
     data = json.load(json_file)
@@ -51,6 +59,8 @@ reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret,
 bot_author = str("<@!" + json_bot_author_id + ">")
 random.seed(a=None)
 start_time = time.time()
+
+logger.info("Config loaded")
 
 
 # temp = (os.popen("vcgencmd measure_temp").readline().replace("temp=","").replace("'C","")) #RASPI
@@ -451,31 +461,8 @@ async def bleach(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `bleach`')
     print('------')
     info.counter += 1
-    eye_bleach = [
-        'https://imgur.com/gallery/O1busfY',
-        'https://i.imgur.com/cQBeAjw.mp4',
-        'https://i.imgur.com/p40Hwwi.jpg',
-        'https://i.imgur.com/Onyvdgh.mp4',
-        'https://i.imgur.com/bGtlZbl.jpg',
-        'https://i.imgur.com/kTmRulV.jpg',
-        'https://i.imgur.com/lmnpp5K.mp4',
-        'https://i.imgur.com/fcRvoJn.jpg',
-        'https://i.imgur.com/07lceng.mp4',
-        'https://i.imgur.com/J1EPxUk.jpg',
-        'https://i.imgur.com/JxO5seE.jpg',
-        'https://i.imgur.com/ViNjAKD.mp4',
-        'https://i.imgur.com/vpDxduH.jpg',
-        'https://i.imgur.com/ngTloKH.jpg',
-        'https://i.imgur.com/IiMIW1h.jpg',
-        'https://i.imgur.com/aC8xiz5.mp4',
-        'https://i.imgur.com/rq56D4o.jpg',
-        'https://i.imgur.com/wwOM7kU.mp4',
-        'https://i.imgur.com/cXP94NP.mp4',
-        'https://i.imgur.com/10b9Y12.mp4',
-        "https://i.imgur.com/KnXrY6R.jpg",
-        "https://imgur.com/gallery/u61qJad"
-    ]
-    await ctx.bot.say(random.choice(eye_bleach))
+
+    await ctx.bot.say(random.choice(messages.BLEACHES))
 
 
 # todo
@@ -550,7 +537,7 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
     wiki_error = "Error. Specify/ check/ rephrase your search query,"
     try:
         wiki_keyword = str(' '.join(wiki_keyword_raw))
-        wiki_sum = wikipedia.summary(wiki_keyword, sentences=1, chars=100, auto_suggest=True, redirect=True)
+        wiki_sum = wikipedia.summary(wiki_keyword, sentences=1, chars=100)
         wiki_keyword_string = wikipedia.page(wiki_keyword)
         wiki_url = wiki_keyword_string.url
         embed_wiki = discord.Embed(title="Wikipedia", description=wiki_keyword, color=0x00ff00)
@@ -609,70 +596,29 @@ reaction_trigger.counter = 0
 
 @bot.event
 async def on_message(message):
-    greeting = ['hello', 'hi', 'hey', 'greetings', 'sup', 'morning']
-    greeting_res = ['Quite the *lingo* of the youth, eh? Hi to you too!', 'I bid you pickly greetings!',
-                    'Sup brooooooo. Or sis, idc. <3', 'Shama-Lama-Ding-Dong right back at you!', 'hi', 'hey',
-                    'greetings', 'sup']
-    bye = ['bye', 'see you', 'see ya', 'cya', 'nite', 'good night']
-    bye_res = ['Farewell!', 'bye', 'see you', 'see ya', 'cya', 'nite']
-    usa_reac = ['🇺🇸', '🍔', '🌭', '🔫']
-    str_mcl = message.content.lower()
+    content_lower = message.content.lower()
 
     if message.author == bot.user:
         return
 
-    if any:
-        if bot.user.mentioned_in(message) and not message.mention_everyone:
-            if any(x in str_mcl for x in greeting):
-                await bot.send_message(message.channel, random.choice(greeting_res))
-            elif any(x in str_mcl for x in bye):
-                await bot.send_message(message.channel, random.choice(bye_res))
-            # else:
-            #     await message.add_reaction('👀')
-        if 'votecall' in message.clean_content.lower():
-            await bot.add_reaction(message, '👍')
-            await bot.add_reaction(message, '👎')
-        if 'usa' in message.clean_content.lower():
-            await bot.add_reaction(message, random.choice(usa_reac))
-        if 'australia' in message.clean_content.lower():
-            await bot.add_reaction(message, '🇦🇺')
-        if 'mexico' in message.clean_content.lower():
-            await bot.add_reaction(message, '🌮')
-        if 'ireland' in message.clean_content.lower():
-            await bot.add_reaction(message, '🇮🇪')
-        if 'scotland' in message.clean_content.lower():
-            await bot.add_reaction(message, '🏴')
-        if 'europe' in message.clean_content.lower():
-            await bot.add_reaction(message, '🇪🇺')
-        if 'germany' in message.clean_content.lower():
-            await bot.add_reaction(message, '🇩🇪')
-        if 'united kingdom' in message.clean_content.lower():
-            await bot.add_reaction(message, '🇬🇧')
-        if 'facepalm' in message.clean_content.lower():
-            await bot.add_reaction(message, '🤦')
-        if 'canada' in message.clean_content.lower():
-            await bot.add_reaction(message, '🇨🇦')
-        if 'sweden' in message.clean_content.lower():
-            await bot.add_reaction(message, '🇸🇪')
-        if 'norway' in message.clean_content.lower():
-            await bot.add_reaction(message, '🇳🇴')
-        if 'finland' in message.clean_content.lower():
-            await bot.add_reaction(message, '🇫🇮')
-        if 'sleep' in message.clean_content.lower():
-            await bot.add_reaction(message, '💤')
-        if 'sushi' in message.clean_content.lower():
-            await bot.add_reaction(message, '🍣')
-        if 'shower' in message.clean_content.lower():
-            await bot.add_reaction(message, '🚿')
-        if 'love' in message.clean_content.lower():
-            await bot.add_reaction(message, '💓')
-        if 'goodest robot' in message.clean_content.lower():
-            await bot.add_reaction(message, '🤖')
-            await bot.add_reaction(message, '🇮')
-            await bot.add_reaction(message, '🇦')
-            await bot.add_reaction(message, '🇲')
-        if 'nani' in message.clean_content.lower():
-            await bot.send_message(message.channel, 'NAAAAANNNIIIIII!?!?!?!11')
+    if bot.user.mentioned_in(message) and not message.mention_everyone:
+        if any(x in content_lower for x in messages.USER_GREETINGS):
+            await bot.send_message(message.channel, random.choice(messages.BOT_GREETINGS))
+        elif any(x in content_lower for x in messages.USER_BYES):
+            await bot.send_message(message.channel, random.choice(messages.BOT_BYES))
+        # else:
+        #     await message.add_reaction('👀')
+    if 'nani' in content_lower:
+        await bot.send_message(message.channel, 'NAAAAANNNIIIIII!?!?!?!11')
+
+    # if 'votecall' in message.clean_content.lower():
+    #     await bot.add_reaction(message, '👍')
+    #     await bot.add_reaction(message, '👎')
+
+    for t in messages.TRIGGERS:
+        if t in content_lower:
+            for reaction in messages.TRIGGERS[t]:
+                await bot.add_reaction(message, reaction)
 
     reaction_trigger()
 

@@ -199,3 +199,60 @@ JOKES = (
     Nothing, pickles can't talk.
     """
 )
+
+BLEACHES = (
+    'https://imgur.com/gallery/O1busfY',
+    'https://i.imgur.com/cQBeAjw.mp4',
+    'https://i.imgur.com/p40Hwwi.jpg',
+    'https://i.imgur.com/Onyvdgh.mp4',
+    'https://i.imgur.com/bGtlZbl.jpg',
+    'https://i.imgur.com/kTmRulV.jpg',
+    'https://i.imgur.com/lmnpp5K.mp4',
+    'https://i.imgur.com/fcRvoJn.jpg',
+    'https://i.imgur.com/07lceng.mp4',
+    'https://i.imgur.com/J1EPxUk.jpg',
+    'https://i.imgur.com/JxO5seE.jpg',
+    'https://i.imgur.com/ViNjAKD.mp4',
+    'https://i.imgur.com/vpDxduH.jpg',
+    'https://i.imgur.com/ngTloKH.jpg',
+    'https://i.imgur.com/IiMIW1h.jpg',
+    'https://i.imgur.com/aC8xiz5.mp4',
+    'https://i.imgur.com/rq56D4o.jpg',
+    'https://i.imgur.com/wwOM7kU.mp4',
+    'https://i.imgur.com/cXP94NP.mp4',
+    'https://i.imgur.com/10b9Y12.mp4',
+    "https://i.imgur.com/KnXrY6R.jpg",
+    "https://imgur.com/gallery/u61qJad"
+)
+
+USER_GREETINGS = ('hello', 'hi', 'hey', 'greetings', 'sup', 'morning')
+
+BOT_GREETINGS = ('Quite the *lingo* of the youth, eh? Hi to you too!', 'I bid you pickly greetings!',
+                 'Sup brooooooo. Or sis, idc. <3', 'Shama-Lama-Ding-Dong right back at you!', 'hi', 'hey',
+                 'greetings', 'sup')
+
+USER_BYES = ('bye', 'see you', 'see ya', 'cya', 'nite', 'good night')
+
+BOT_BYES = ('Farewell!', 'bye', 'see you', 'see ya', 'cya', 'nite')
+
+TRIGGERS = {
+    'votecall': ('👍', '👎'),
+    'usa': ('🇺🇸', '🍔', '🌭', '🔫'),
+    'australia': ('🇦🇺',),
+    'mexico': ('🌮',),
+    'ireland': ('🇮🇪',),
+    'scotland': ('🏴',),
+    'europe': ('🇪🇺',),
+    'germany': ('🇩🇪',),
+    'united kingdom': ('🇬🇧,'),
+    'facepalm': ('🤦',),
+    'canada': ('🇨🇦',),
+    'sweden': ('🇸🇪',),
+    'norway': ('🇳🇴',),
+    'finland': ('🇫🇮',),
+    'sleep': ('💤',),
+    'shower': ('🚿'),
+    'love': ('💓'),
+    'goodest robot': ('🤖', '🇮', '🇦', '🇲'),
+    'sushi': ('🍣'),
+}
