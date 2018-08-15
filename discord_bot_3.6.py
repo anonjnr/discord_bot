@@ -54,7 +54,6 @@ with open('credentials.log') as json_file:
         json_bot_author_id = p['bot_author_id']
     for p in data['GOODREADS']:
         goodreads_key = p['goodreads_key']
-    
         
 description = 'Sir Henry Pickles, the pickly Bot!'
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
@@ -138,15 +137,17 @@ async def status(ctx, *status_raw):
 
 @bot.event
 async def on_member_join(member):
+    print("gets called")
     member = ctx.message.author
     welm = (f"Welcome to `{member.server}`!")
     desm = (f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, <@!{member.id}> <3')
     if channel.name is "general":
+        print("channel is general")
         embed = discord.Embed(title=welm, description=desm, color=0xeee657)
         embed.set_thumbnail(url=ctx.message.author.avatar_url)
         await ctx.bot.say(embed=embed)
     else:
-return
+        return
 
 # todo 2000 char restriciton (time)
 @bot.command(pass_context = True)
