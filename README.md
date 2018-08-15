@@ -17,33 +17,17 @@ Official Docs for Discord API: https://discordapp.com/developers/docs/intro
 Special thanks to @sharkbound for the help with fetching and pulling apart the data off goodreads.com (their "API" is a joke btw.)
 Also special thanks to @ir-3 and @Harrryyyy for helping with getting the second prefix running, testing misc stuff
 
-## Used Libs:
+## Used External Libs:
 
 ```
-import os
-import asyncio
-import ast
 import discord
-import random
-import time
-import subprocess
 import aiohttp
-import async_timeout
 import wikipedia
 import praw
-import json
 import pytz
-import datetime
-import utilities
-import memberList
-import importLog
 import requests
 from wiktionaryparser import WiktionaryParser
-from datetime import datetime
-from datetime import date
-from datetime import timedelta
 from pytz import timezone 
-from xml.etree import ElementTree
 from discord.ext import commands
 ```
 ## Get started:
