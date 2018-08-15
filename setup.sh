@@ -19,7 +19,7 @@ sudo python -m pip install pytz
 cd ~
 sudo mkdir projects
 cd projects
-sudo wget https://github.com/anonjnr/discord_bot/archive/master.zip
+sudo wget https://github.com/x3l51/discord_bot/archive/master.zip
 sudo unzip master.zip
 sudo chmod 777 credentials.log
 sudo chmod 777 members.log
