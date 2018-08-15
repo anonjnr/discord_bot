@@ -22,6 +22,7 @@ Also special thanks to @ir-3 and @Harrryyyy for helping with getting the second 
 ```
 import os
 import asyncio
+import ast
 import discord
 import random
 import time
