@@ -100,12 +100,6 @@ async def status(ctx, *status_raw):
 # async def on_command_error(ctx, error):
 #     await ctx.bot.say("What now," + ctx.message.author.mention + "?")
 
-# todo
-# ###########
-# import test
-# test.func()
-# ##########
-
 # todo converter celsius kelvin farenheit
 # todo converter mile kilometer etc
 # @bot.command(pass_context = True)
@@ -139,12 +133,12 @@ async def status(ctx, *status_raw):
 #     print(timer_to)
 
 @bot.event
-async def on_member_join(member):
+async def on_member_join(ctx):
     print("gets called")
     member = ctx.message.author
     welm = (f"Welcome to `{member.server}`!")
     desm = (f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, <@!{member.id}> <3')
-    if channel.name is "general":
+    if ctx.channel.name is "general":
         print("channel is general")
         embed = discord.Embed(title=welm, description=desm, color=0xeee657)
         embed.set_thumbnail(url=ctx.message.author.avatar_url)
@@ -326,46 +320,6 @@ async def cmd_help(ctx):
     print('------')
     info.counter += 1
 
-    embed_cmd = discord.Embed(title="COMMANDS",
-                              description="You can call a command by typing `@Sir Henry Pickles COMMAND` or `!COMMAND`",
-                              color=0x00ff00)
-    embed_cmd.add_field(name="`help`", value="Sends this per DM. It's the basic commands you can use the Bot for")
-    embed_cmd.add_field(name="`info`", value="Basic information on the Bot such as name and author")
-    embed_cmd.add_field(name="`test`", value="Tests if the Bot works properly. Has no other purpose")
-
-    embed_use = discord.Embed(title="USEFUL", description="", color=0x00ff00)
-    embed_use.add_field(name="`goodreads`",
-                        value="Let\'s you look for authors and books on Goodread.com. For this you can use an authors name, book title, ISBN or even all together. Example: `@Sir Henry Pickles goodreads Neil Gaiman Norse Mythology` or `!goodreads Neil Gaiman Norse Mythology`")
-    embed_use.add_field(name="`reddit`",
-                        value="With this command you can let Henry post the `top 3 hot topics` of a subreddit of your choosing. Simply use `@Sir Henry Pickles reddit SUBREDDIT` or `!reddit SUBREDDIT` with `subreddit` being the subreddit of your choosing. Subreddit")
-    embed_use.add_field(name="`wikipedia`",
-                        value="Let\'s you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you\'re looking for")
-    embed_use.add_field(name="`wiktionary`",
-                        value="Let\'s you search wiktionary for anything. Basicalle the same as `Wikipedia` but only for word definition")
-    embed_use.add_field(name="`roll`",
-                        value="You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!")
-    embed_use.add_field(name="`time`",
-                        value="Gives you the current time for different timezones. For example use with `!time Berlin` or `!time EST`.")
-
-    embed_mod = discord.Embed(title="MODERATION", description="", color=0x00ff00)
-    embed_mod.add_field(name="`clear`",
-                        value="With this command a Moderator can clear all messages in a channel if something NSFW or otherwise inapropriate got posted. Other users can use this command aswell - it automatically pings the Moderators for them. For the last 1000 messages purged `clear`, for a certain amount `clear NUMBER` with `NUMBER` being any number between 0 and 1000")
-    embed_mod.add_field(name="`bleach`",
-                        value="Applies eye bleach. *Try it!* (recommended after and/ or before `clear`)")
-    embed_mod.add_field(name="`roles`", value="Shows you what roles you have")
-    embed_mod.add_field(name="`status`",
-                        value="Change the status of the bot. `!status the guitar` to have his status changed to: `@Sir Henry Pickles Playing the guitar`")
-
-    embed_misc = discord.Embed(title="MISC", description="", color=0x00ff00)
-    embed_misc.add_field(name="`votecall`", value="Calls a simple thumb up/ thumb down vote for the message.")
-    embed_misc.add_field(name="`greeting`",
-                         value="Say `Hi` to Henry! Or `Hello` or `Morning` or something like this. `@Sir Henry Pickles Sup`")
-    embed_misc.add_field(name="`goodbye`",
-                         value="Same as with greeting. Responds to a variety of goodbyes. `@Sir Henry Pickles Nite`")
-    embed_misc.add_field(name="`sleep`", value="Let\'s the Bot decide if you should go to bed")
-    embed_misc.add_field(name="`shower`", value="Let\'s the Bot decide if you should take a shower")
-    embed_misc.add_field(name="`joke`", value="Let Henry tell you a joke which most certainly is hilarious")
-    embed_misc.add_field(name="`8ball`", value="Ask the oracle with this all time classic")
     await bot.send_message(member,
                            "If you are in need of immediate assistance, I kindly suggest you to call the emergency "
                            "services.\n "
@@ -375,10 +329,9 @@ async def cmd_help(ctx):
                            "**Name**: Sir Henry Pickles\n"
                            "**Description:** *Does his best.*\n"
                            )
-    await bot.send_message(member, embed=embed_cmd)
-    await bot.send_message(member, embed=embed_use)
-    await bot.send_message(member, embed=embed_mod)
-    await bot.send_message(member, embed=embed_misc)
+    for embed in messages.HELP_EMBEDS:
+        await bot.send_message(member, embed=embed)
+
     await bot.send_message(member, "If you still have questions, please ping the `@Mods`")
 
 
@@ -625,4 +578,4 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-bot.run('NDc5MzA2ODU5MTY2MTcxMTM2.DlYTLQ.DyLfIkjztb6H2xzXFSqoV71Lf84')
+bot.run(TOKEN)

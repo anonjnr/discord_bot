@@ -1,3 +1,5 @@
+import discord
+
 JOKES = (
     """
     If you relish the idea of pickle puns, then you'll be pickled by these jokes. They're i-dill for anyone looking for some pickle fun.
@@ -256,3 +258,46 @@ TRIGGERS = {
     'goodest robot': ('🤖', '🇮', '🇦', '🇲'),
     'sushi': ('🍣'),
 }
+
+embed_cmd = discord.Embed(title="COMMANDS",
+                          description="You can call a command by typing `@Sir Henry Pickles COMMAND` or `!COMMAND`",
+                          color=0x00ff00)
+embed_cmd.add_field(name="`help`", value="Sends this per DM. It's the basic commands you can use the Bot for")
+embed_cmd.add_field(name="`info`", value="Basic information on the Bot such as name and author")
+embed_cmd.add_field(name="`test`", value="Tests if the Bot works properly. Has no other purpose")
+
+embed_use = discord.Embed(title="USEFUL", description="", color=0x00ff00)
+embed_use.add_field(name="`goodreads`",
+                    value="Let\'s you look for authors and books on Goodread.com. For this you can use an authors name, book title, ISBN or even all together. Example: `@Sir Henry Pickles goodreads Neil Gaiman Norse Mythology` or `!goodreads Neil Gaiman Norse Mythology`")
+embed_use.add_field(name="`reddit`",
+                    value="With this command you can let Henry post the `top 3 hot topics` of a subreddit of your choosing. Simply use `@Sir Henry Pickles reddit SUBREDDIT` or `!reddit SUBREDDIT` with `subreddit` being the subreddit of your choosing. Subreddit")
+embed_use.add_field(name="`wikipedia`",
+                    value="Let\'s you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you\'re looking for")
+embed_use.add_field(name="`wiktionary`",
+                    value="Let\'s you search wiktionary for anything. Basicalle the same as `Wikipedia` but only for word definition")
+embed_use.add_field(name="`roll`",
+                    value="You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!")
+embed_use.add_field(name="`time`",
+                    value="Gives you the current time for different timezones. For example use with `!time Berlin` or `!time EST`.")
+
+embed_mod = discord.Embed(title="MODERATION", description="", color=0x00ff00)
+embed_mod.add_field(name="`clear`",
+                    value="With this command a Moderator can clear all messages in a channel if something NSFW or otherwise inapropriate got posted. Other users can use this command aswell - it automatically pings the Moderators for them. For the last 1000 messages purged `clear`, for a certain amount `clear NUMBER` with `NUMBER` being any number between 0 and 1000")
+embed_mod.add_field(name="`bleach`",
+                    value="Applies eye bleach. *Try it!* (recommended after and/ or before `clear`)")
+embed_mod.add_field(name="`roles`", value="Shows you what roles you have")
+embed_mod.add_field(name="`status`",
+                    value="Change the status of the bot. `!status the guitar` to have his status changed to: `@Sir Henry Pickles Playing the guitar`")
+
+embed_misc = discord.Embed(title="MISC", description="", color=0x00ff00)
+embed_misc.add_field(name="`votecall`", value="Calls a simple thumb up/ thumb down vote for the message.")
+embed_misc.add_field(name="`greeting`",
+                     value="Say `Hi` to Henry! Or `Hello` or `Morning` or something like this. `@Sir Henry Pickles Sup`")
+embed_misc.add_field(name="`goodbye`",
+                     value="Same as with greeting. Responds to a variety of goodbyes. `@Sir Henry Pickles Nite`")
+embed_misc.add_field(name="`sleep`", value="Let\'s the Bot decide if you should go to bed")
+embed_misc.add_field(name="`shower`", value="Let\'s the Bot decide if you should take a shower")
+embed_misc.add_field(name="`joke`", value="Let Henry tell you a joke which most certainly is hilarious")
+embed_misc.add_field(name="`8ball`", value="Ask the oracle with this all time classic")
+
+HELP_EMBEDS = (embed_cmd, embed_use, embed_mod, embed_misc)
