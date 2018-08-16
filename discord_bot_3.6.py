@@ -56,7 +56,7 @@ with open('credentials.log') as json_file:
         goodreads_key = p['goodreads_key']
         
 description = 'Sir Henry Pickles, the pickly Bot!'
-bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'))
+bot = commands.Bot(max_messages=10000, command_prefix=commands.when_mentioned_or('!'))
 bot.remove_command('help')
 role_mod = [mod_role_1, mod_role_2]
 mention_mod = '<@&' + mod_role_1 + '>'
@@ -71,6 +71,17 @@ async def fetch(session, url):
         async with session.get(url) as response:
             return await response.text()
 
+async def create_chan_log():
+    for server in bot.servers:
+        for channel in server.channels:
+            if channel.name == 'logs':
+                return
+        everyone_perms = discord.PermissionOverwrite(read_messages=False)
+        my_perms = discord.PermissionOverwrite(read_messages=True)
+        everyone = discord.ChannelPermissions(target=server.default_role, overwrite=everyone_perms)
+        mine = discord.ChannelPermissions(target=server.me, overwrite=my_perms)
+        return await bot.create_channel(server, 'logs', everyone, mine)
+
 @bot.event
 async def on_ready():
     activity = discord.Game(name="with pickles.")
@@ -79,9 +90,73 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
+    await create_chan_log()
+
+@bot.event
+async def on_member_join(member):
+    for server in member.servers:
+        for channel in server.channels:
+            if channel.name == 'general':
+                welm = (f"Welcome to `{server}`!")
+                desm = (f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, {member.mention} <3')
+                embed = discord.Embed(title=welm, description=desm, color=0xeee657)
+                embed.set_thumbnail(url=member.avatar_url)
+                return await bot.send_message(channel, embed=embed)
+
+@bot.event
+async def on_message_delete(message):
+    await create_chan_log()
+    try:
+        for server in bot.servers:
+            for channel in server.channels:
+                if channel.name == 'logs':       
+                    auth = (f'{message.author.name} ({message.author})')
+                    embed = discord.Embed(title="Message deleted", color=0xeee657)
+                    embed.add_field(name="Channel", value=message.channel)
+                    embed.add_field(name="Message Author", value=auth)
+                    embed.add_field(name="Message Author ID", value=message.author.id)
+                    embed.add_field(name="Message", value=message.content)
+                    return await bot.send_message(channel, embed=embed)
+    except:
+        return
+
+@bot.event
+async def on_message_edit(before, after):
+    await create_chan_log()
+    try:
+        for server in bot.servers:
+            for channel in server.channels:
+                if channel.name == 'logs':
+                    auth = (f'{before.author.name} ({before.author})')
+                    embed = discord.Embed(title="Message edited", color=0xeee657)
+                    embed.add_field(name="Channel", value=before.channel)
+                    embed.add_field(name="Message Author", value=auth)
+                    embed.add_field(name="Message Author ID", value=before.author.id)
+                    embed.add_field(name="Message before", value=before.content)
+                    embed.add_field(name="Message after", value=after.content)
+                    return await bot.send_message(channel, embed=embed)
+    except:
+        return # this has to stay because when a link is sent, it will be edited automatically and would trigger this
+
+@bot.command(pass_context = True)
+async def testing(ctx):
+    for server in bot.servers:
+        for channel in server.channels:
+            if channel.name == 'logs':
+                tit = (f'Message deleted')
+                msg = (f'in Channel')
+                embed = discord.Embed(title=tit, description=msg, color=0xeee657)
+                #embed.set_thumbnail(url=member.avatar_url)
+                embed.add_field(name="Name", value="USERNAME")
+                embed.add_field(name="ID", value="USERID")
+                embed.add_field(name="Message", value="MESSAGE")
+                return await bot.send_message(channel, embed=embed)
+
 
 @bot.command(pass_context = True)
 async def status(ctx, *status_raw):
+    print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `status`')
+    print('------')
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
@@ -135,20 +210,6 @@ async def status(ctx, *status_raw):
 #     timer_to = time.time() + (number * unit)
 #     print(timer_to)
 
-@bot.event
-async def on_member_join(member):
-    print("gets called")
-    member = ctx.message.author
-    welm = (f"Welcome to `{member.server}`!")
-    desm = (f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, <@!{member.id}> <3')
-    if channel.name is "general":
-        print("channel is general")
-        embed = discord.Embed(title=welm, description=desm, color=0xeee657)
-        embed.set_thumbnail(url=ctx.message.author.avatar_url)
-        await ctx.bot.say(embed=embed)
-    else:
-        return
-
 # todo 2000 char restriciton (time)
 @bot.command(pass_context = True)
 async def members(ctx):
@@ -195,7 +256,9 @@ async def info(ctx):
     embed.add_field(name="Message count: ", value=reaction_trigger.counter)
     embed.add_field(name="Server count: ", value=len(bot.servers))
     embed.add_field(name="Author", value=bot_author)
-    embed.add_field(name="Next features I'll get and progress:", value="https://github.com/x3l51/discord_bot/projects/1#column-3212654", inline=True)  
+    embed.add_field(name="GitHub:", value="https://github.com/x3l51/discord_bot", inline=True) 
+    embed.add_field(name="Next features I'll get and progress on me:", value="https://github.com/x3l51/discord_bot/projects/1", inline=True)  
+    embed.add_field(name="Direct invite to the Developers Discord:", value="https://discordapp.com/invite/5raBJUU", inline=True)  
     await ctx.bot.say(embed=embed)
 info.counter = 0
 
@@ -257,15 +320,23 @@ async def cmd_time(ctx, *tz_keywords):
                             current_len = 0
                     except IndexError:
                         return await ctx.bot.say(msg)
+
                    
 @bot.command(pass_context = True)
 async def clear(ctx, cle: int = 1000):
     print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `clear` in channel: '+ctx.message.channel.name)
     print('------')
     info.counter += 1
+    #check if there's a channel "logs"
+    #if not, create one
+    #if yes grab all messages that are about
+    #to being purged and copy them there
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
+            # this prints a log of channel
+            # async for m in bot.logs_from(ctx.message.channel):
+            #     print(m.clean_content)
             await bot.purge_from(ctx.message.channel, limit=cle+1)
             cle_num = str(cle)
             if cle == 1000:
@@ -630,9 +701,12 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
     info.counter += 1
     wiki_error = "Error. Specify/ check/ rephrase your search query,"
     try:
-        wiki_keyword = str(' '.join(wiki_keyword_raw))
+        print(wiki_keyword_raw)
+        wiki_keyword = ' '.join(wiki_keyword_raw)
+        print(wiki_keyword)
         wiki_sum = wikipedia.summary(wiki_keyword, sentences=1, chars=100,auto_suggest=True, redirect=True)
         wiki_keyword_string = wikipedia.page(wiki_keyword)
+        print(wiki_keyword_string)
         wiki_url = wiki_keyword_string.url
         embed_wiki=discord.Embed(title="Wikipedia", description=wiki_keyword, color=0x00ff00)
         embed_wiki.add_field(name=wiki_sum, value=wiki_url)    
@@ -679,6 +753,9 @@ async def roles(ctx):
 # reaction is triggered on EVERY message :S
 def reaction_trigger():
     reaction_trigger.counter += 1
+    # if reaction_trigger.counter == 100:
+    #     open json
+    #     save
 reaction_trigger.counter = 0
 
 @bot.event
