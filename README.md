@@ -15,7 +15,7 @@ Official Docs for Discord API: https://discordapp.com/developers/docs/intro
 
 
 Special thanks to @sharkbound for the help with fetching and pulling apart the data off goodreads.com (their "API" is a joke btw.)
-Also special thanks to @VasilyKovalev (thanks so much!), @ir-3 and @Harrryyyy for helping with getting the second prefix running, testing misc stuff
+Also special thanks to @vasiliykovalev (thanks so much!), @ir-3 and @Harrryyyy for helping with getting the second prefix running, testing misc stuff
 
 ## Used External Libs:
 
