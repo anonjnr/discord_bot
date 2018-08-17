@@ -239,7 +239,6 @@ BOT_BYES = ('Farewell!', 'bye', 'see you', 'see ya', 'cya', 'nite')
 
 TRIGGERS = {
     'votecall': ('👍', '👎'),
-    'usa': ('🇺🇸', '🍔', '🌭', '🔫'),
     'australia': ('🇦🇺',),
     'mexico': ('🌮',),
     'ireland': ('🇮🇪',),

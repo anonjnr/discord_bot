@@ -6,7 +6,6 @@ import ast
 import asyncio
 import datetime
 import json
-import logging
 import random
 import time
 from datetime import datetime
@@ -26,13 +25,6 @@ from wiktionaryparser import WiktionaryParser
 import memberList
 import messages
 import utilities
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
 
 with open('credentials.log') as json_file:
     data = json.load(json_file)
@@ -60,8 +52,6 @@ bot_author = str("<@!" + json_bot_author_id + ">")
 random.seed(a=None)
 start_time = time.time()
 
-logger.info("Config loaded")
-
 
 # temp = (os.popen("vcgencmd measure_temp").readline().replace("temp=","").replace("'C","")) #RASPI
 
@@ -69,6 +59,7 @@ async def fetch(session, url):
     with async_timeout.timeout(10):
         async with session.get(url) as response:
             return await response.text()
+
 
 async def create_chan_log():
     for server in bot.servers:
@@ -81,6 +72,7 @@ async def create_chan_log():
         mine = discord.ChannelPermissions(target=server.me, overwrite=my_perms)
         return await bot.create_channel(server, 'logs', everyone, mine)
 
+
 @bot.event
 async def on_ready():
     activity = discord.Game(name="with pickles.")
@@ -91,16 +83,19 @@ async def on_ready():
     print('------')
     await create_chan_log()
 
+
 @bot.event
 async def on_member_join(member):
     for server in member.servers:
         for channel in server.channels:
             if channel.name == 'general':
                 welm = (f"Welcome to `{server}`!")
-                desm = (f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, {member.mention} <3')
+                desm = (
+                    f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, {member.mention} <3')
                 embed = discord.Embed(title=welm, description=desm, color=0xeee657)
                 embed.set_thumbnail(url=member.avatar_url)
                 return await bot.send_message(channel, embed=embed)
+
 
 @bot.event
 async def on_message_delete(message):
@@ -119,6 +114,7 @@ async def on_message_delete(message):
     except:
         return
 
+
 @bot.event
 async def on_message_edit(before, after):
     await create_chan_log()
@@ -135,9 +131,10 @@ async def on_message_edit(before, after):
                     embed.add_field(name="Message after", value=after.content)
                     return await bot.send_message(channel, embed=embed)
     except:
-        return # this has to stay because when a link is sent, it will be edited automatically and would trigger this
+        return  # this has to stay because when a link is sent, it will be edited automatically and would trigger this
 
-@bot.command(pass_context = True)
+
+@bot.command(pass_context=True)
 async def testing(ctx):
     for server in bot.servers:
         for channel in server.channels:
@@ -145,17 +142,16 @@ async def testing(ctx):
                 tit = (f'Message deleted')
                 msg = (f'in Channel')
                 embed = discord.Embed(title=tit, description=msg, color=0xeee657)
-                #embed.set_thumbnail(url=member.avatar_url)
+                # embed.set_thumbnail(url=member.avatar_url)
                 embed.add_field(name="Name", value="USERNAME")
                 embed.add_field(name="ID", value="USERID")
                 embed.add_field(name="Message", value="MESSAGE")
                 return await bot.send_message(channel, embed=embed)
 
 
-
 @bot.command(pass_context=True)
 async def status(ctx, *status_raw):
-    print('ID: '+ctx.message.author.id+' (Name: '+ctx.message.author.name+') used `status`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `status`')
     print('------')
     for r in ctx.message.author.roles:
         pulled_roles = r.id
@@ -270,8 +266,10 @@ async def info(ctx):
     embed.add_field(name="Server count: ", value=len(bot.servers))
     embed.add_field(name="Author", value=bot_author)
     embed.add_field(name="GitHub:", value="https://github.com/x3l51/discord_bot", inline=True)
-    embed.add_field(name="Next features I'll get and progress on me:", value="https://github.com/x3l51/discord_bot/projects/1", inline=True)
-    embed.add_field(name="Direct invite to the Developers Discord:", value="https://discordapp.com/invite/5raBJUU", inline=True)
+    embed.add_field(name="Next features I'll get and progress on me:",
+                    value="https://github.com/x3l51/discord_bot/projects/1", inline=True)
+    embed.add_field(name="Direct invite to the Developers Discord:", value="https://discordapp.com/invite/5raBJUU",
+                    inline=True)
     await ctx.bot.say(embed=embed)
 
 
@@ -340,23 +338,23 @@ async def cmd_time(ctx, *tz_keywords):
                         return await ctx.bot.say(msg)
 
 
-@bot.command(pass_context = True)
+@bot.command(pass_context=True)
 async def clear(ctx, cle: int = 1000):
     print(
         'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `clear` in channel: ' + ctx.message.channel.name)
     print('------')
     info.counter += 1
-    #check if there's a channel "logs"
-    #if not, create one
-    #if yes grab all messages that are about
-    #to being purged and copy them there
+    # check if there's a channel "logs"
+    # if not, create one
+    # if yes grab all messages that are about
+    # to being purged and copy them there
     for r in ctx.message.author.roles:
         pulled_roles = r.id
         if pulled_roles in role_mod:
             # this prints a log of channel
             # async for m in bot.logs_from(ctx.message.channel):
             #     print(m.clean_content)
-            await bot.purge_from(ctx.message.channel, limit=cle+1)
+            await bot.purge_from(ctx.message.channel, limit=cle + 1)
             cle_num = str(cle)
             if cle == 1000:
                 num_cleared = "up to 1000 messages"
@@ -574,7 +572,7 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
         print(wiki_keyword_raw)
         wiki_keyword = ' '.join(wiki_keyword_raw)
         print(wiki_keyword)
-        wiki_sum = wikipedia.summary(wiki_keyword, sentences=1, chars=100,auto_suggest=True, redirect=True)
+        wiki_sum = wikipedia.summary(wiki_keyword, sentences=1, chars=100, auto_suggest=True, redirect=True)
         wiki_keyword_string = wikipedia.page(wiki_keyword)
         print(wiki_keyword_string)
         wiki_url = wiki_keyword_string.url
@@ -630,6 +628,8 @@ def reaction_trigger():
     # if reaction_trigger.counter == 100:
     #     open json
     #     save
+
+
 reaction_trigger.counter = 0
 
 
@@ -647,6 +647,9 @@ async def on_message(message):
             await bot.send_message(message.channel, random.choice(messages.BOT_BYES))
         # else:
         #     await message.add_reaction('👀')
+
+    if 'usa' in content_lower:
+        await bot.add_reaction(message, random.choice(('🇺🇸', '🍔', '🌭', '🔫')))
     if 'nani' in content_lower:
         await bot.send_message(message.channel, 'NAAAAANNNIIIIII!?!?!?!11')
 
