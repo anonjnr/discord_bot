@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # bot_bcad_3.6.py
 
+import os
 import ast
 import asyncio
 import datetime
@@ -52,8 +53,6 @@ bot_author = str("<@!" + json_bot_author_id + ">")
 random.seed(a=None)
 start_time = time.time()
 
-
-# temp = (os.popen("vcgencmd measure_temp").readline().replace("temp=","").replace("'C","")) #RASPI
 
 async def fetch(session, url):
     with async_timeout.timeout(10):
@@ -118,21 +117,22 @@ async def on_message_delete(message):
 @bot.event
 async def on_message_edit(before, after):
     await create_chan_log()
-    try:
-        for server in bot.servers:
-            for channel in server.channels:
-                if channel.name == 'logs':
-                    auth = (f'{before.author.name} ({before.author})')
-                    embed = discord.Embed(title="Message edited", color=0xeee657)
-                    embed.add_field(name="Channel", value=before.channel)
-                    embed.add_field(name="Message Author", value=auth)
-                    embed.add_field(name="Message Author ID", value=before.author.id)
-                    embed.add_field(name="Message before", value=before.content)
-                    embed.add_field(name="Message after", value=after.content)
-                    return await bot.send_message(channel, embed=embed)
-    except:
-        return  # this has to stay because when a link is sent, it will be edited automatically and would trigger this
-
+    if before.author != bot.user:
+        if before.content != after.content:
+            try:
+                for server in bot.servers:
+                    for channel in server.channels:
+                        if channel.name == 'logs':
+                            auth = (f'{before.author.name} ({before.author})')
+                            embed = discord.Embed(title="Message edited", color=0xeee657)
+                            embed.add_field(name="Channel", value=before.channel)
+                            embed.add_field(name="Message Author", value=auth)
+                            embed.add_field(name="Message Author ID", value=before.author.id)
+                            embed.add_field(name="Message before", value=before.content)
+                            embed.add_field(name="Message after", value=after.content)
+                            return await bot.send_message(channel, embed=embed)
+            except:
+                return
 
 @bot.command(pass_context=True)
 async def testing(ctx):
@@ -260,7 +260,7 @@ async def info(ctx):
     embed.set_thumbnail(url=bot.user.avatar_url)
     embed.add_field(name="System Time:", value=utilities.epoch_to_custom_date(utilities.FMT_TIME))
     embed.add_field(name="Uptime", value=timedelta(seconds=time_lapsed))
-    # embed.add_field(name="Henrys Temperature: ", value=(temp + " °C")) #RASPI
+    # embed.add_field(name="Henrys Temperature: ", value=(os.popen("vcgencmd measure_temp").readline().replace("temp=","").replace("'C","")) #RASPI
     embed.add_field(name="Command count: ", value=info.counter)
     embed.add_field(name="Message count: ", value=reaction_trigger.counter)
     embed.add_field(name="Server count: ", value=len(bot.servers))
@@ -652,10 +652,6 @@ async def on_message(message):
         await bot.add_reaction(message, random.choice(('🇺🇸', '🍔', '🌭', '🔫')))
     if 'nani' in content_lower:
         await bot.send_message(message.channel, 'NAAAAANNNIIIIII!?!?!?!11')
-
-    # if 'votecall' in message.clean_content.lower():
-    #     await bot.add_reaction(message, '👍')
-    #     await bot.add_reaction(message, '👎')
 
     for t in messages.TRIGGERS:
         if t in content_lower:
