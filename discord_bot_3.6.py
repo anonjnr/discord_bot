@@ -72,6 +72,18 @@ async def create_chan_log():
         return await bot.create_channel(server, 'logs', everyone, mine)
 
 
+async def create_chan_suggestion():
+    for server in bot.servers:
+        for channel in server.channels:
+            if channel.name == 'suggestion':
+                return
+        everyone_perms = discord.PermissionOverwrite(read_messages=False)
+        my_perms = discord.PermissionOverwrite(read_messages=True)
+        everyone = discord.ChannelPermissions(target=server.default_role, overwrite=everyone_perms)
+        mine = discord.ChannelPermissions(target=server.me, overwrite=my_perms)
+        return await bot.create_channel(server, 'suggestion', everyone, mine)
+
+
 @bot.event
 async def on_ready():
     activity = discord.Game(name="with pickles.")
@@ -135,18 +147,18 @@ async def on_message_edit(before, after):
                 return
 
 @bot.command(pass_context=True)
-async def testing(ctx):
-    for server in bot.servers:
-        for channel in server.channels:
-            if channel.name == 'logs':
-                tit = (f'Message deleted')
-                msg = (f'in Channel')
-                embed = discord.Embed(title=tit, description=msg, color=0xeee657)
-                # embed.set_thumbnail(url=member.avatar_url)
-                embed.add_field(name="Name", value="USERNAME")
-                embed.add_field(name="ID", value="USERID")
-                embed.add_field(name="Message", value="MESSAGE")
-                return await bot.send_message(channel, embed=embed)
+async def suggestion(ctx):
+    await create_chan_suggestion()
+    try:
+        for server in bot.servers:
+            for channel in server.channels:
+                if channel.name == 'suggestion':
+                    embed = discord.Embed(title="Suggestion received", color=0xeee657)
+                    embed.add_field(name="Suggestion Author", value=ctx.message.author.name)
+                    embed.add_field(name="Suggestion Message", value=ctx.message.content)
+                    return await ctx.bot.say(channel, embed=embed)
+    except:
+        return
 
 
 @bot.command(pass_context=True)

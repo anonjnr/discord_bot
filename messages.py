@@ -263,6 +263,7 @@ embed_cmd = discord.Embed(title="COMMANDS",
                           color=0x00ff00)
 embed_cmd.add_field(name="`help`", value="Sends this per DM. It's the basic commands you can use the Bot for")
 embed_cmd.add_field(name="`info`", value="Basic information on the Bot such as name and author")
+embed_cmd.add_field(name="`suggestion`", value="Suggest a new funtion or improvement for the Bot. Use with `!suggestion More pickles!`")
 embed_cmd.add_field(name="`test`", value="Tests if the Bot works properly. Has no other purpose")
 
 embed_use = discord.Embed(title="USEFUL", description="", color=0x00ff00)
