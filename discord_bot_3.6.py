@@ -266,7 +266,7 @@ async def info(ctx):
     embed.set_thumbnail(url=bot.user.avatar_url)
     embed.add_field(name="System Time:", value=utilities.epoch_to_custom_date(utilities.FMT_TIME))
     embed.add_field(name="Uptime", value=timedelta(seconds=time_lapsed))
-    # embed.add_field(name="Henrys Temperature: ", value=(os.popen("vcgencmd measure_temp").readline().replace("temp=","").replace("'C","")) #RASPI
+    # embed.add_field(name="Henrys Temperature: ", value=(os.popen("vcgencmd measure_temp").readline().replace("temp=","").replace("'C",""))) #RASPI
     embed.add_field(name="Command count: ", value=info.counter)
     embed.add_field(name="Message count: ", value=reaction_trigger.counter)
     embed.add_field(name="Server count: ", value=len(bot.servers))
