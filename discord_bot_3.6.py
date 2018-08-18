@@ -35,19 +35,18 @@ with open('credentials.log') as json_file:
         json_client_id = p['client_id']
         json_client_secret = p['client_secret']
         json_user_agent = p['user_agent']
-    for p in data['AUTHOR']:
-        json_bot_author_id = p['bot_author_id']
     for p in data['GOODREADS']:
         goodreads_key = p['goodreads_key']
+    for p in data ['PREFIX']:
+        prefix_choice = p['prefix']
+
 
 description = 'Sir Henry Pickles, the pickly Bot!'
-bot = commands.Bot(max_messages=10000, command_prefix=commands.when_mentioned_or('!'))
-bot.remove_command('help')
-mention_mod = '<@&123>' ##### TODO
+bot = commands.Bot(max_messages=10000, command_prefix=commands.when_mentioned_or(prefix_choice))
 reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret, user_agent=json_user_agent)
-bot_author = str("<@!" + json_bot_author_id + ">")
-random.seed(a=None)
 start_time = time.time()
+bot.remove_command('help')
+random.seed(a=None)
 
 
 async def fetch(session, url):
@@ -150,6 +149,30 @@ async def suggestion(ctx):
                 return await bot.send_message(channel, embed=embed)
     except:
         return
+
+
+@bot.command(pass_context=True)
+async def prefix(ctx, prefix_raw):
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `prefix`') # TODO cmd auto grab
+    print('------')
+    if ctx.message.author.server_permissions.administrator:
+        try:
+            with open('credentials.log', 'r') as json_file:
+                data = json.load(json_file)    
+                for p in data ['PREFIX']:
+                    prefix_choice = p['prefix']
+                    if prefix_raw == "show":
+                        return await ctx.bot.say("Actual prefix is: " + prefix_choice)
+                    else:
+                        data["PREFIX"][0]["prefix"] = prefix_raw
+                        with open('credentials.log', 'w') as outfile:
+                            json.dump(data, outfile)
+                            bot.command_prefix = commands.when_mentioned_or(prefix_raw)
+                            return await ctx.bot.say("Prefix successfully set.")
+        except IndexError:
+            return await ctx.bot.say("Index error when grabbing first obj")
+    else:
+        return await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
 
 
 @bot.command(pass_context=True)
@@ -262,7 +285,7 @@ async def info(ctx):
     embed.add_field(name="Command count: ", value=info.counter)
     embed.add_field(name="Message count: ", value=reaction_trigger.counter)
     embed.add_field(name="Server count: ", value=len(bot.servers))
-    embed.add_field(name="Author", value=bot_author)
+    embed.add_field(name="Author", value="<@!410406332143763466>")
     embed.add_field(name="GitHub:", value="https://github.com/x3l51/discord_bot", inline=True)
     embed.add_field(name="Next features I'll get and progress on me:",
                     value="https://github.com/x3l51/discord_bot/projects/1", inline=True)
@@ -367,7 +390,7 @@ async def clear(ctx, cle: int = 1000):
         return
     else:
         return await ctx.bot.say(
-        ctx.message.author.mention + ', you\'re not part of ' + mention_mod + '. You can\'t use this command.')
+        ctx.message.author.mention + ', you have no permission to use this command.')
 
 
 @bot.command(pass_context=True)
@@ -540,7 +563,7 @@ async def cmd_reddit(ctx, subreddit_raw):
     try:
         for i, submission in enumerate(reddit.subreddit(subreddit_input).hot(limit=5)):
             if reddit.subreddit(subreddit_input).over18:
-                await ctx.bot.say("Please do not request NSFW results. " + mention_mod)
+                await ctx.bot.say("Please do not request NSFW results.")
                 break
             if submission.over_18:
                 continue
