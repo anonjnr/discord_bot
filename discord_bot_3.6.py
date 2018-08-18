@@ -31,10 +31,6 @@ with open('credentials.log') as json_file:
     data = json.load(json_file)
     for p in data['TOKEN']:
         TOKEN = p['value']
-    for p in data['MOD_ROLES']:
-        mod_role_1 = p['value_1']
-        mod_role_2 = p['value_2']
-        mod_role_3 = p['value_3']
     for p in data['REDDIT']:
         json_client_id = p['client_id']
         json_client_secret = p['client_secret']
@@ -47,8 +43,7 @@ with open('credentials.log') as json_file:
 description = 'Sir Henry Pickles, the pickly Bot!'
 bot = commands.Bot(max_messages=10000, command_prefix=commands.when_mentioned_or('!'))
 bot.remove_command('help')
-role_mod = [mod_role_1, mod_role_2, mod_role_3]
-mention_mod = '<@&' + mod_role_1 + '>'
+mention_mod = '<@&123>' ##### TODO
 reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret, user_agent=json_user_agent)
 bot_author = str("<@!" + json_bot_author_id + ">")
 random.seed(a=None)
@@ -161,16 +156,15 @@ async def suggestion(ctx):
 async def status(ctx, *status_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `status`')
     print('------')
-    for r in ctx.message.author.roles:
-        pulled_roles = r.id
-        if pulled_roles in role_mod:
-            status_arg = ' '.join(status_raw)
-            activity = discord.Game(name=status_arg)
-            await bot.change_presence(status=discord.Status.online, game=(activity))
-            embed = discord.Embed(title="Status changed to: ", description=("@Sir Henry Pickles playing " + status_arg),
-                                  color=0xeee657)
-            return await ctx.bot.say(embed=embed)
-    return await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
+    if ctx.message.author.server_permissions.administrator:
+        status_arg = ' '.join(status_raw)
+        activity = discord.Game(name=status_arg)
+        await bot.change_presence(status=discord.Status.online, game=(activity))
+        embed = discord.Embed(title="Status changed to: ", description=("@Sir Henry Pickles playing " + status_arg),
+                            color=0xeee657)
+        return await ctx.bot.say(embed=embed)
+    else:
+        return await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
 
 
 # todo
@@ -229,15 +223,14 @@ async def members(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `members`')
     print('------')
     info.counter += 1
-    for r in ctx.message.author.roles:
-        pulled_roles = r.id
-        if pulled_roles in role_mod:
-            try:
-                await memberList.membersLog(ctx)
-            except:
-                await ctx.bot.say('Whoops, something went wrong ' + ctx.message.author.mention + '.')
-            return
-    await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
+    if ctx.message.author.server_permissions.administrator:
+        try:
+            await memberList.membersLog(ctx)
+        except:
+            await ctx.bot.say('Whoops, something went wrong ' + ctx.message.author.mention + '.')
+        return
+    else:
+        return await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
 
 
 @bot.command(pass_context=True)
@@ -245,15 +238,14 @@ async def members_show(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `members_show`')
     print('------')
     info.counter += 1
-    for r in ctx.message.author.roles:
-        pulled_roles = r.id
-        if pulled_roles in role_mod:
-            try:
-                await memberList.membersDump(ctx)
-            except:
-                await ctx.bot.say('Whoops, something went wrong ' + ctx.message.author.mention + '.')
-            return
-    await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
+    if ctx.message.author.server_permissions.administrator:
+        try:
+            await memberList.membersDump(ctx)
+        except:
+            await ctx.bot.say('Whoops, something went wrong ' + ctx.message.author.mention + '.')
+        return
+    else:
+        return await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
 
 
 @bot.command(pass_context=True)
@@ -354,28 +346,27 @@ async def clear(ctx, cle: int = 1000):
     # if not, create one
     # if yes grab all messages that are about
     # to being purged and copy them there
-    for r in ctx.message.author.roles:
-        pulled_roles = r.id
-        if pulled_roles in role_mod:
-            # this prints a log of channel
-            # async for m in bot.logs_from(ctx.message.channel):
-            #     print(m.clean_content)
-            await bot.purge_from(ctx.message.channel, limit=cle + 1)
-            cle_num = str(cle)
-            if cle == 1000:
-                num_cleared = "up to 1000 messages"
-            elif cle <= 0:
-                num_cleared = "your message because why would you want to clear " + cle_num + " messages!?"
-            elif cle == 1:
-                num_cleared = "1 message"
-            else:
-                num_cleared = str(cle) + " messages"
-            embed = discord.Embed(title="Channel has been cleared of " + num_cleared, color=0x00ff00)
-            embed.set_image(
-                url="https://cdn.discordapp.com/attachments/474903005523869715/474903418100645898/FwxbY6j.gif")
-            await ctx.bot.say(embed=embed)
-            return
-    await ctx.bot.say(
+    if ctx.message.author.server_permissions.administrator:
+        # this prints a log of channel
+        # async for m in bot.logs_from(ctx.message.channel):
+        #     print(m.clean_content)
+        await bot.purge_from(ctx.message.channel, limit=cle + 1)
+        cle_num = str(cle)
+        if cle == 1000:
+            num_cleared = "up to 1000 messages"
+        elif cle <= 0:
+            num_cleared = "your message because why would you want to clear " + cle_num + " messages!?"
+        elif cle == 1:
+            num_cleared = "1 message"
+        else:
+            num_cleared = str(cle) + " messages"
+        embed = discord.Embed(title="Channel has been cleared of " + num_cleared, color=0x00ff00)
+        embed.set_image(
+            url="https://cdn.discordapp.com/attachments/474903005523869715/474903418100645898/FwxbY6j.gif")
+        await ctx.bot.say(embed=embed)
+        return
+    else:
+        return await ctx.bot.say(
         ctx.message.author.mention + ', you\'re not part of ' + mention_mod + '. You can\'t use this command.')
 
 
@@ -391,12 +382,10 @@ async def test(ctx):
 async def mod(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `mod`')
     print('------')
-    info.counter += 1
-    for r in ctx.message.author.roles:
-        pulled_roles = r.id
-        if pulled_roles in role_mod:
-            return await ctx.bot.say(ctx.message.author.mention + ', you\'re a mod.')
-    await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod.')
+    if ctx.message.author.server_permissions.administrator:
+        return await ctx.bot.say(ctx.message.author.mention + ', you\'re a mod.')
+    else:
+        return await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod.')
 
 
 @bot.command(name='help', pass_context=True)
