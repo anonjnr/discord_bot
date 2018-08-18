@@ -286,6 +286,7 @@ embed_mod.add_field(name="`clear`",
 embed_mod.add_field(name="`bleach`",
                     value="Applies eye bleach. *Try it!* (recommended after and/ or before `clear`)")
 embed_mod.add_field(name="`roles`", value="Shows you what roles you have")
+embed_mod.add_field(name="`prefix`", value="Let\'s you change the used prefix of the Bot")
 embed_mod.add_field(name="`status`",
                     value="Change the status of the bot. `!status the guitar` to have his status changed to: `@Sir Henry Pickles Playing the guitar`")
 
