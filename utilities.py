@@ -101,4 +101,4 @@ def get_week_number():
     now = datetime.datetime.now()
     return datetime.date(now.year, now.month, now.day).isocalendar()[1]
 
-# set_tz()
+set_tz()
