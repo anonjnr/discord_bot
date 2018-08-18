@@ -365,14 +365,11 @@ async def clear(ctx, cle: int = 1000):
         'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `clear` in channel: ' + ctx.message.channel.name)
     print('------')
     info.counter += 1
-    # check if there's a channel "logs"
-    # if not, create one
-    # if yes grab all messages that are about
-    # to being purged and copy them there
     if ctx.message.author.server_permissions.administrator:
-        # this prints a log of channel
-        # async for m in bot.logs_from(ctx.message.channel):
-        #     print(m.clean_content)
+        async for m in bot.logs_from(ctx.message.channel):
+            list_all = (f'Time (CET): {utilities.epoch_to_custom_date(utilities.FMT_TIME)} ID: {m.author.id} Name: {m.author} ({m.author.name}) Content: {m.clean_content}\n')
+            with open('clear.log', 'a+') as file:
+                file.write(list_all)
         await bot.purge_from(ctx.message.channel, limit=cle + 1)
         cle_num = str(cle)
         if cle == 1000:
