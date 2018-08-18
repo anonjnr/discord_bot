@@ -13,10 +13,7 @@ def credentials():
                 y = ("[3rd Try] ")
             token_input = input(y + "Please enter your Discord Token now: ")
             if token_input != "":
-                bot_author_id_input = input("Please enter the authors discord user ID now: ")
-                admin_role_1_input = input("Please enter the ID of the Administrator Role now: ")
-                admin_role_2_input = input(
-                    "Please enter the ID of another Administrator Role now (leave blank if not needed): ")
+                prefix_input = input("Please set a command prefix now: ")
                 reddit_client_id_input = input("Please enter the Reddit client ID now (leave blank if not needed): ")
                 reddit_client_secret_input = input(
                     "Please enter the Reddit client secret now (leave blank if not needed): ")
@@ -29,12 +26,6 @@ def credentials():
                             'value': token_input
                         }
                     ],
-                    'MOD_ROLES': [
-                        {
-                            'value_1': admin_role_1_input,
-                            'value_2': admin_role_1_input
-                        }
-                    ],
                     'REDDIT': [
                         {
                             'client_id': reddit_client_id_input,
@@ -42,9 +33,9 @@ def credentials():
                             'user_agent': reddit_user_agent_input
                         }
                     ],
-                    'AUTHOR': [
+                    'PREFIX': [
                         {
-                            'bot_author_id': bot_author_id_input
+                            'prefix': prefix_input
                         }
                     ],
                     'GOODREADS': [
@@ -56,12 +47,6 @@ def credentials():
                         {
                             'value': token_input
                         }
-                    ],
-                    'MOD_ROLES': [
-                        {
-                            'value_1': admin_role_1_input,
-                            'value_2': admin_role_2_input
-                        }
                     ]
                 }
                 with open('credentials.log', 'w') as outfile:
@@ -72,15 +57,12 @@ def credentials():
                     data = json.load(json_file)
                     for p in data['TOKEN']:
                         TOKEN = p['value']
-                    for p in data['MOD_ROLES']:
-                        mod_role_1 = p['value_1']
-                        mod_role_2 = p['value_2']
                     for p in data['REDDIT']:
                         json_client_id = p['client_id']
                         json_client_secret = p['client_secret']
                         json_user_agent = p['user_agent']
-                    for p in data['AUTHOR']:
-                        json_bot_author_id = p['bot_author_id']
+                    for p in data['PREFIX']:
+                        prefix_input = p['prefix']
                     for p in data['GOODREADS']:
                         goodreads_key = p['goodreads_key']
                 return
@@ -138,21 +120,16 @@ def credentials_view():
             data = json.load(json_file)
             for p in data['TOKEN']:
                 TOKEN = p['value']
-            for p in data['MOD_ROLES']:
-                mod_role_1 = p['value_1']
-                mod_role_2 = p['value_2']
             for p in data['REDDIT']:
                 json_client_id = p['client_id']
                 json_client_secret = p['client_secret']
                 json_user_agent = p['user_agent']
-            for p in data['AUTHOR']:
-                json_bot_author_id = p['bot_author_id']
+            for p in data['PREFIX']:
+                prefix_input = p['prefix']
             for p in data['GOODREADS']:
                 goodreads_key = p['goodreads_key']
         print("Token: " + TOKEN)
-        print("Discord Author ID: " + json_bot_author_id)
-        print("Mod Role 1: " + mod_role_1)
-        print("Mod Role 2: " + mod_role_2)
+        print("Prefix: " + prefix_input)
         print("Reddit Client ID: " + json_client_id)
         print("Reddit Client Secret: " + json_client_secret)
         print("Reddit User Agent Info: " + json_user_agent)
