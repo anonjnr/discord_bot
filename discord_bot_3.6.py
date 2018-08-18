@@ -70,7 +70,7 @@ async def create_chan_log():
         my_perms = discord.PermissionOverwrite(read_messages=True)
         everyone = discord.ChannelPermissions(target=server.default_role, overwrite=everyone_perms)
         mine = discord.ChannelPermissions(target=server.me, overwrite=my_perms)
-        return await bot.create_channel(server, 'logs', everyone, mine)
+        await bot.create_channel(server, 'logs', everyone, mine)
 
 
 async def create_chan_suggestion():
@@ -82,7 +82,7 @@ async def create_chan_suggestion():
         my_perms = discord.PermissionOverwrite(read_messages=True)
         everyone = discord.ChannelPermissions(target=server.default_role, overwrite=everyone_perms)
         mine = discord.ChannelPermissions(target=server.me, overwrite=my_perms)
-        return await bot.create_channel(server, 'suggestion', everyone, mine)
+        await bot.create_channel(server, 'suggestion', everyone, mine)
 
 
 @bot.event
@@ -94,56 +94,52 @@ async def on_ready():
     print(bot.user.id)
     print('------')
     await create_chan_log()
+    await create_chan_suggestion()
 
 
 @bot.event
 async def on_member_join(member):
-    for server in member.servers:
-        for channel in server.channels:
-            if channel.name == 'general':
-                welm = (f"Welcome to `{server}`!")
-                desm = (
-                    f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, {member.mention} <3')
-                embed = discord.Embed(title=welm, description=desm, color=0xeee657)
-                embed.set_thumbnail(url=member.avatar_url)
-                return await bot.send_message(channel, embed=embed)
+    for channel in member.server.channels:
+        if channel.name == 'general':
+            welm = (f"Welcome to `{server}`!")
+            desm = (
+                f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, {member.mention} <3')
+            embed = discord.Embed(title=welm, description=desm, color=0xeee657)
+            embed.set_thumbnail(url=member.avatar_url)
+            return await bot.send_message(channel, embed=embed)
 
 
 @bot.event
 async def on_message_delete(message):
-    await create_chan_log()
     try:
-        for server in bot.servers:
-            for channel in server.channels:
-                if channel.name == 'logs':
-                    auth = (f'{message.author.name} ({message.author})')
-                    embed = discord.Embed(title="Message deleted", color=0xeee657)
-                    embed.add_field(name="Channel", value=message.channel)
-                    embed.add_field(name="Message Author", value=auth)
-                    embed.add_field(name="Message Author ID", value=message.author.id)
-                    embed.add_field(name="Message", value=message.content)
-                    return await bot.send_message(channel, embed=embed)
+        for channel in message.server.channels:
+            if channel.name == 'logs':
+                auth = (f'{message.author.name} ({message.author})')
+                embed = discord.Embed(title="Message deleted", color=0xeee657)
+                embed.add_field(name="Channel", value=message.channel)
+                embed.add_field(name="Message Author", value=auth)
+                embed.add_field(name="Message Author ID", value=message.author.id)
+                embed.add_field(name="Message", value=message.content)
+                return await bot.send_message(channel, embed=embed)
     except:
         return
 
 
 @bot.event
 async def on_message_edit(before, after):
-    await create_chan_log()
     if before.author != bot.user:
         if before.content != after.content:
             try:
-                for before.server in bot.servers:
-                    for channel in server.channels:
-                        if channel.name == 'logs':
-                            auth = (f'{before.author.name} ({before.author})')
-                            embed = discord.Embed(title="Message edited", color=0xeee657)
-                            embed.add_field(name="Channel", value=before.channel)
-                            embed.add_field(name="Message Author", value=auth)
-                            embed.add_field(name="Message Author ID", value=before.author.id)
-                            embed.add_field(name="Message before", value=before.content)
-                            embed.add_field(name="Message after", value=after.content)
-                            return await bot.send_message(channel, embed=embed)
+                for channel in before.server.channels:
+                    if channel.name == 'logs':
+                        auth = (f'{before.author.name} ({before.author})')
+                        embed = discord.Embed(title="Message edited", color=0xeee657)
+                        embed.add_field(name="Channel", value=before.channel)
+                        embed.add_field(name="Message Author", value=auth)
+                        embed.add_field(name="Message Author ID", value=before.author.id)
+                        embed.add_field(name="Message before", value=before.content)
+                        embed.add_field(name="Message after", value=after.content)
+                        return await bot.send_message(channel, embed=embed)
             except:
                 return
 
@@ -151,14 +147,12 @@ async def on_message_edit(before, after):
 async def suggestion(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `suggestion`')
     print('------')
-    await create_chan_suggestion()
     try:
-        for server in bot.servers:
-            for channel in server.channels:
-                if channel.name == 'suggestion':
-                    embed = discord.Embed(title="Suggestion Author", description=ctx.message.author.name, color=0xeee657)
-                    embed.add_field(name="Suggestion Message", value=ctx.message.content)
-                    return await bot.send_message(channel, embed=embed)
+        for channel in ctx.message.server.channels:
+            if channel.name == 'suggestion':
+                embed = discord.Embed(title="Suggestion Author", description=ctx.message.author.name, color=0xeee657)
+                embed.add_field(name="Suggestion Message", value=ctx.message.content)
+                return await bot.send_message(channel, embed=embed)
     except:
         return
 
