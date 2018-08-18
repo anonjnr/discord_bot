@@ -73,16 +73,16 @@ async def create_chan_log():
         await bot.create_channel(server, 'logs', everyone, mine)
 
 
-async def create_chan_suggestion():
+async def create_chan_suggestions():
     for server in bot.servers:
         for channel in server.channels:
-            if channel.name == 'suggestion':
+            if channel.name == 'suggestions':
                 return
         everyone_perms = discord.PermissionOverwrite(read_messages=False)
         my_perms = discord.PermissionOverwrite(read_messages=True)
         everyone = discord.ChannelPermissions(target=server.default_role, overwrite=everyone_perms)
         mine = discord.ChannelPermissions(target=server.me, overwrite=my_perms)
-        await bot.create_channel(server, 'suggestion', everyone, mine)
+        await bot.create_channel(server, 'suggestions', everyone, mine)
 
 
 @bot.event
@@ -94,7 +94,7 @@ async def on_ready():
     print(bot.user.id)
     print('------')
     await create_chan_log()
-    await create_chan_suggestion()
+    await create_chan_suggestions()
 
 
 @bot.event
@@ -149,7 +149,7 @@ async def suggestion(ctx):
     print('------')
     try:
         for channel in ctx.message.server.channels:
-            if channel.name == 'suggestion':
+            if channel.name == 'suggestions':
                 embed = discord.Embed(title="Suggestion Author", description=ctx.message.author.name, color=0xeee657)
                 embed.add_field(name="Suggestion Message", value=ctx.message.content)
                 return await bot.send_message(channel, embed=embed)
