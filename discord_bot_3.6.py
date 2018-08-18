@@ -27,13 +27,14 @@ import memberList
 import messages
 import utilities
 
-with open('credentials.log') as json_file:
+with open('/media/xl4/ESS/bcad_bot/bcad_data/data_bcad_beta.log') as json_file:
     data = json.load(json_file)
     for p in data['TOKEN']:
         TOKEN = p['value']
     for p in data['MOD_ROLES']:
         mod_role_1 = p['value_1']
         mod_role_2 = p['value_2']
+        mod_role_3 = p['value_3']
     for p in data['REDDIT']:
         json_client_id = p['client_id']
         json_client_secret = p['client_secret']
@@ -46,7 +47,7 @@ with open('credentials.log') as json_file:
 description = 'Sir Henry Pickles, the pickly Bot!'
 bot = commands.Bot(max_messages=10000, command_prefix=commands.when_mentioned_or('!'))
 bot.remove_command('help')
-role_mod = [mod_role_1, mod_role_2]
+role_mod = [mod_role_1, mod_role_2, mod_role_3]
 mention_mod = '<@&' + mod_role_1 + '>'
 reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret, user_agent=json_user_agent)
 bot_author = str("<@!" + json_bot_author_id + ">")
@@ -132,7 +133,7 @@ async def on_message_edit(before, after):
     if before.author != bot.user:
         if before.content != after.content:
             try:
-                for server in bot.servers:
+                for before.server in bot.servers:
                     for channel in server.channels:
                         if channel.name == 'logs':
                             auth = (f'{before.author.name} ({before.author})')
@@ -148,15 +149,16 @@ async def on_message_edit(before, after):
 
 @bot.command(pass_context=True)
 async def suggestion(ctx):
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `suggestion`')
+    print('------')
     await create_chan_suggestion()
     try:
         for server in bot.servers:
             for channel in server.channels:
                 if channel.name == 'suggestion':
-                    embed = discord.Embed(title="Suggestion received", color=0xeee657)
-                    embed.add_field(name="Suggestion Author", value=ctx.message.author.name)
+                    embed = discord.Embed(title="Suggestion Author", description=ctx.message.author.name, color=0xeee657)
                     embed.add_field(name="Suggestion Message", value=ctx.message.content)
-                    return await ctx.bot.say(channel, embed=embed)
+                    return await bot.send_message(channel, embed=embed)
     except:
         return
 
@@ -216,12 +218,10 @@ async def status(ctx, *status_raw):
 
 @bot.event
 async def on_member_join(ctx):
-    print("gets called")
     member = ctx.message.author
     welm = (f"Welcome to `{member.server}`!")
     desm = (f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, <@!{member.id}> <3')
     if ctx.channel.name is "general":
-        print("channel is general")
         embed = discord.Embed(title=welm, description=desm, color=0xeee657)
         embed.set_thumbnail(url=ctx.message.author.avatar_url)
         await ctx.bot.say(embed=embed)
