@@ -27,7 +27,7 @@ import memberList
 import messages
 import utilities
 
-with open('credentials.log') as json_file:
+with open('config.json') as json_file:
     data = json.load(json_file)
     for p in data['TOKEN']:
         TOKEN = p['value']
@@ -157,7 +157,7 @@ async def prefix(ctx, prefix_raw):
     print('------')
     if ctx.message.author.server_permissions.administrator:
         try:
-            with open('credentials.log', 'r') as json_file:
+            with open('config.json', 'r') as json_file:
                 data = json.load(json_file)    
                 for p in data ['PREFIX']:
                     prefix_choice = p['prefix']
@@ -165,7 +165,7 @@ async def prefix(ctx, prefix_raw):
                         return await ctx.bot.say("Actual prefix is: " + prefix_choice)
                     else:
                         data["PREFIX"][0]["prefix"] = prefix_raw
-                        with open('credentials.log', 'w') as outfile:
+                        with open('config.json', 'w') as outfile:
                             json.dump(data, outfile)
                             bot.command_prefix = commands.when_mentioned_or(prefix_raw)
                             return await ctx.bot.say("Prefix successfully set.")
