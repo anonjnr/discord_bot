@@ -155,6 +155,7 @@ async def suggestion(ctx):
 async def prefix(ctx, prefix_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `prefix`') # TODO cmd auto grab
     print('------')
+    bo_au = "410406332143763466"
     if ctx.message.author.server_permissions.administrator:
         try:
             with open('config.json', 'r') as json_file:
@@ -164,11 +165,14 @@ async def prefix(ctx, prefix_raw):
                     if prefix_raw == "show":
                         return await ctx.bot.say("Actual prefix is: " + prefix_choice)
                     else:
-                        data["PREFIX"][0]["prefix"] = prefix_raw
-                        with open('config.json', 'w') as outfile:
-                            json.dump(data, outfile)
-                            bot.command_prefix = commands.when_mentioned_or(prefix_raw)
-                            return await ctx.bot.say("Prefix successfully set.")
+                        if ctx.message.author.id == bo_au:
+                            data["PREFIX"][0]["prefix"] = prefix_raw
+                            with open('config.json', 'w') as outfile:
+                                json.dump(data, outfile)
+                                bot.command_prefix = commands.when_mentioned_or(prefix_raw)
+                                return await ctx.bot.say("Prefix successfully set.")
+                        else:
+                            await ctx.bot.say("<@!"+bo_au+">, " + ctx.message.author.mention + " wants to have the prefix changed to " + prefix_raw + ".")
         except IndexError:
             return await ctx.bot.say("Index error when grabbing first obj")
     else:
@@ -659,8 +663,6 @@ def reaction_trigger():
     # if reaction_trigger.counter == 100:
     #     open json
     #     save
-
-
 reaction_trigger.counter = 0
 
 
