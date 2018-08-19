@@ -227,18 +227,6 @@ async def status(ctx, *status_raw):
 #     timer_to = time.time() + (number * unit)
 #     print(timer_to)
 
-@bot.event
-async def on_member_join(ctx):
-    member = ctx.message.author
-    welm = (f"Welcome to `{member.server}`!")
-    desm = (f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, <@!{member.id}> <3')
-    if ctx.channel.name is "general":
-        embed = discord.Embed(title=welm, description=desm, color=0xeee657)
-        embed.set_thumbnail(url=ctx.message.author.avatar_url)
-        await ctx.bot.say(embed=embed)
-    else:
-        return
-
 
 # todo 2000 char restriciton (time)
 @bot.command(pass_context=True)
@@ -360,16 +348,34 @@ async def cmd_time(ctx, *tz_keywords):
 
 
 @bot.command(pass_context=True)
+async def archive(ctx):
+    print(
+        'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `archive` in channel: ' + ctx.message.channel.name)
+    print('------')
+    return await log_messages(ctx)
+
+async def log_messages(ctx):
+    info.counter += 1
+    log_path = ("./logs/archive" + "-server-" + ctx.message.server.name + "-channel-" + ctx.message.channel.name + "-" + (utilities.epoch_to_custom_date(utilities.FMT_TIME_FILE)) + ".log")
+    if ctx.message.author.server_permissions.administrator:
+        async for m in bot.logs_from(ctx.message.channel):
+            list_all = (f'Time (CET): {utilities.epoch_to_custom_date(utilities.FMT_TIME)}\nID: {m.author.id}\nName: {m.author} ({m.author.name})\nContent: {m.content}\n\n')
+            with open(log_path, 'a') as file:
+                file.write(list_all)
+        for channel in ctx.message.server.channels:
+            if channel.name == 'logs':
+                        await ctx.bot.send_file(channel, log_path)
+        await ctx.bot.send_file(ctx.message.author, log_path)
+
+
+@bot.command(pass_context=True)
 async def clear(ctx, cle: int = 1000):
     print(
         'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `clear` in channel: ' + ctx.message.channel.name)
     print('------')
     info.counter += 1
     if ctx.message.author.server_permissions.administrator:
-        async for m in bot.logs_from(ctx.message.channel):
-            list_all = (f'Time (CET): {utilities.epoch_to_custom_date(utilities.FMT_TIME)} ID: {m.author.id} Name: {m.author} ({m.author.name}) Content: {m.clean_content}\n')
-            with open('clear.log', 'a+') as file:
-                file.write(list_all)
+        await log_messages(ctx)
         await bot.purge_from(ctx.message.channel, limit=cle + 1)
         cle_num = str(cle)
         if cle == 1000:

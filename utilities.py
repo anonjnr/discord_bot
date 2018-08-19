@@ -20,6 +20,7 @@ DOY = '%j'
 YEAR = '%Y'
 MILITARY_TIME = '%H%M'
 FMT_TIME = '%Y-%m-%d %H:%M'
+FMT_TIME_FILE = '%Y-%m-%d-%H-%M'
 
 
 # ALL TIME IS UTC

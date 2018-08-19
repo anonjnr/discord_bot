@@ -283,10 +283,12 @@ embed_use.add_field(name="`time`",
 embed_mod = discord.Embed(title="MODERATION", description="", color=0x00ff00)
 embed_mod.add_field(name="`clear`",
                     value="With this command a Moderator can clear all messages in a channel if something NSFW or otherwise inapropriate got posted. Other users can use this command aswell - it automatically pings the Moderators for them. For the last 1000 messages purged `clear`, for a certain amount `clear NUMBER` with `NUMBER` being any number between 0 and 1000")
+embed_mod.add_field(name="`archive`", value="Creates an archive of the current channel")
+embed_mod.add_field(name="`prefix`", value="Let\'s you change the used prefix of the Bot")
 embed_mod.add_field(name="`bleach`",
                     value="Applies eye bleach. *Try it!* (recommended after and/ or before `clear`)")
 embed_mod.add_field(name="`roles`", value="Shows you what roles you have")
-embed_mod.add_field(name="`prefix`", value="Let\'s you change the used prefix of the Bot")
+embed_mod.add_field(name="`mod`", value="Checks if you're a moderator/ administrator")
 embed_mod.add_field(name="`status`",
                     value="Change the status of the bot. `!status the guitar` to have his status changed to: `@Sir Henry Pickles Playing the guitar`")
 
