@@ -362,7 +362,7 @@ async def archive(ctx):
 
 async def log_messages(ctx):
     info.counter += 1
-    log_path = ("./logs/archive" + "-server-" + ctx.message.server.name + "-channel-" + ctx.message.channel.name + "-" + (utilities.epoch_to_custom_date(utilities.FMT_TIME_FILE)) + ".log")
+    log_path = ("./logs/archive" + "-server-" + ctx.message.server.name.replace(' ', '-') + "-channel-" + ctx.message.channel.name + "-" + (utilities.epoch_to_custom_date(utilities.FMT_TIME_FILE)) + ".log")
     if ctx.message.author.server_permissions.administrator:
         async for m in bot.logs_from(ctx.message.channel):
             list_all = (f'Time (CET): {utilities.epoch_to_custom_date(utilities.FMT_TIME)}\nID: {m.author.id}\nName: {m.author} ({m.author.name})\nContent: {m.content}\n\n')
