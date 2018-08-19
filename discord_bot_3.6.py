@@ -19,6 +19,7 @@ import discord
 import praw
 import pytz
 import wikipedia
+import requests
 from discord.ext import commands
 from pytz import timezone
 from wiktionaryparser import WiktionaryParser
@@ -565,10 +566,12 @@ async def goodreads(ctx, *keyword_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `goodreads`')
     print('------')
     info.counter += 1
-    keyword = str(keyword_raw)
+    keyword = "+".join(keyword_raw)
+    print(keyword_raw)
+    print(keyword)
     async with aiohttp.ClientSession() as session:
-        html = await fetch(session,
-                           'https://www.goodreads.com/search.xml?key=' + goodreads_key + '&q=' + keyword + '&page=1')
+        html = await fetch(session,'https://www.goodreads.com/search.xml?key=' + goodreads_key + '&q=' + keyword + '&page=1')
+        print(html)
         xml = ElementTree.fromstring(html)
     for i, v in enumerate(xml.find('search/results')):
         book = v.find('best_book')
@@ -617,8 +620,8 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
     wiki_error = "Error. Specify/ check/ rephrase your search query,"
     try:
         wiki_keyword = ' '.join(wiki_keyword_raw)
-        wiki_sum = wikipedia.summary(wiki_keyword, sentences=1, chars=100, auto_suggest=True, redirect=True)
         wiki_keyword_string = wikipedia.page(wiki_keyword)
+        wiki_sum = wikipedia.summary(wiki_keyword_string, sentences=1, chars=100, auto_suggest=True, redirect=True)
         wiki_url = wiki_keyword_string.url
         embed_wiki = discord.Embed(title="Wikipedia", description=wiki_keyword, color=0x00ff00)
         embed_wiki.add_field(name=wiki_sum, value=wiki_url)
@@ -678,7 +681,7 @@ reaction_trigger.counter = 0
 
 @bot.event
 async def on_message(message):
-    message.content = message.content.lower()
+    # message.content = message.content.lower()
     await bot.process_commands(message)
 
     if message.author == bot.user:
