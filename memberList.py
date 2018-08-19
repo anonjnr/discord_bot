@@ -12,7 +12,7 @@ async def membersDump(ctx):
 
 
 async def membersLog(ctx):
-    log_path = ("./logs/members" + "-server-" + ctx.message.server.name + "-" + (utilities.epoch_to_custom_date(utilities.FMT_TIME_FILE)) + ".log")
+    log_path = ("./logs/members" + "-server-" + ctx.message.server.name.replace(' ', '-') + "-" + (utilities.epoch_to_custom_date(utilities.FMT_TIME_FILE)) + ".log")
     for i, member in enumerate(ctx.message.server.members):
         list_mem_num = (f'{i}')
         list_mem_id = (f'{member.id}')
