@@ -352,7 +352,11 @@ async def archive(ctx):
     print(
         'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `archive` in channel: ' + ctx.message.channel.name)
     print('------')
-    return await log_messages(ctx)
+    for channel in ctx.message.server.channels:
+            if channel.name == 'logs':
+                msg = (f'{ctx.message.author.mention} just created an archive of {ctx.message.channel.name}!')
+                await ctx.bot.send_message(channel, msg)
+                return await log_messages(ctx)
 
 async def log_messages(ctx):
     info.counter += 1
@@ -375,22 +379,26 @@ async def clear(ctx, cle: int = 1000):
     print('------')
     info.counter += 1
     if ctx.message.author.server_permissions.administrator:
-        await log_messages(ctx)
-        await bot.purge_from(ctx.message.channel, limit=cle + 1)
-        cle_num = str(cle)
-        if cle == 1000:
-            num_cleared = "up to 1000 messages"
-        elif cle <= 0:
-            num_cleared = "your message because why would you want to clear " + cle_num + " messages!?"
-        elif cle == 1:
-            num_cleared = "1 message"
-        else:
-            num_cleared = str(cle) + " messages"
-        embed = discord.Embed(title="Channel has been cleared of " + num_cleared, color=0x00ff00)
-        embed.set_image(
-            url="https://cdn.discordapp.com/attachments/474903005523869715/474903418100645898/FwxbY6j.gif")
-        await ctx.bot.say(embed=embed)
-        return
+        for channel in ctx.message.server.channels:
+            if channel.name == 'logs':
+                msg = (f'{ctx.message.author.mention} just created an archive of {ctx.message.channel.name} and cleared it!')
+                await ctx.bot.send_message(channel, msg)
+                await log_messages(ctx)
+                await bot.purge_from(ctx.message.channel, limit=cle + 1)
+                cle_num = str(cle)
+                if cle == 1000:
+                    num_cleared = "up to 1000 messages"
+                elif cle <= 0:
+                    num_cleared = "your message because why would you want to clear " + cle_num + " messages!?"
+                elif cle == 1:
+                    num_cleared = "1 message"
+                else:
+                    num_cleared = str(cle) + " messages"
+                embed = discord.Embed(title="Channel has been cleared of " + num_cleared, color=0x00ff00)
+                embed.set_image(
+                    url="https://cdn.discordapp.com/attachments/474903005523869715/474903418100645898/FwxbY6j.gif")
+                await ctx.bot.say(embed=embed)
+                return
     else:
         return await ctx.bot.say(
         ctx.message.author.mention + ', you have no permission to use this command.')
