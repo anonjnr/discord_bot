@@ -567,11 +567,8 @@ async def goodreads(ctx, *keyword_raw):
     print('------')
     info.counter += 1
     keyword = "+".join(keyword_raw)
-    print(keyword_raw)
-    print(keyword)
     async with aiohttp.ClientSession() as session:
         html = await fetch(session,'https://www.goodreads.com/search.xml?key=' + goodreads_key + '&q=' + keyword + '&page=1')
-        print(html)
         xml = ElementTree.fromstring(html)
     for i, v in enumerate(xml.find('search/results')):
         book = v.find('best_book')
