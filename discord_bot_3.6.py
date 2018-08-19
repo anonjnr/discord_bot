@@ -190,10 +190,10 @@ async def status(ctx, *status_raw):
         return await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
 
 
-# todo
+# # todo
 # @bot.event
-# async def on_command_error(ctx, error):
-#     await ctx.bot.say("What now," + ctx.message.author.mention + "?")
+# async def on_command_error(error):
+#     await bot.send_message(error.channel, "What now," + error.author.mention + "?")
 
 # todo converter celsius kelvin farenheit
 # todo converter mile kilometer etc
@@ -273,12 +273,14 @@ async def info(ctx):
     embed.add_field(name="Command count: ", value=info.counter)
     embed.add_field(name="Message count: ", value=reaction_trigger.counter)
     embed.add_field(name="Server count: ", value=len(bot.servers))
-    embed.add_field(name="Author", value="<@!410406332143763466>")
     embed.add_field(name="GitHub:", value="https://github.com/x3l51/discord_bot", inline=True)
     embed.add_field(name="Next features I'll get and progress on me:",
                     value="https://github.com/x3l51/discord_bot/projects/1", inline=True)
     embed.add_field(name="Direct invite to the Developers Discord:", value="https://discordapp.com/invite/5raBJUU",
                     inline=True)
+    embed.add_field(name="Invite the Bot to your Discord Server:", value="https://discordapp.com/oauth2/authorize?client_id=" + bot.user.id + "&scope=bot&permissions=8",
+                    inline=True)
+    embed.add_field(name="Author", value="<@!410406332143763466>")
     await ctx.bot.say(embed=embed)
 
 
@@ -368,7 +370,7 @@ async def log_messages(ctx):
                 file.write(list_all)
         for channel in ctx.message.server.channels:
             if channel.name == 'logs':
-                        await ctx.bot.send_file(channel, log_path)
+                await ctx.bot.send_file(channel, log_path)
         await ctx.bot.send_file(ctx.message.author, log_path)
 
 
