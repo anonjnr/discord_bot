@@ -678,7 +678,7 @@ reaction_trigger.counter = 0
 
 @bot.event
 async def on_message(message):
-    # message.content = message.content.lower()
+    message.content = message.content.lower()
     await bot.process_commands(message)
 
     if message.author == bot.user:
