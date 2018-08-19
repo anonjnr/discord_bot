@@ -2,7 +2,7 @@ import json
 
 
 def credentials():
-    with open('credentials.log') as json_file:
+    with open('config.json') as json_file:
         data = json.load(json_file)
         for x in range(3):
             if x == 0:
@@ -49,11 +49,11 @@ def credentials():
                         }
                     ]
                 }
-                with open('credentials.log', 'w') as outfile:
+                with open('config.json', 'w') as outfile:
                     json.dump(data, outfile)
                     print("Data successfully written to logfile.")
                     end()
-                with open('credentials.log') as json_file:
+                with open('config.json') as json_file:
                     data = json.load(json_file)
                     for p in data['TOKEN']:
                         TOKEN = p['value']
@@ -66,7 +66,7 @@ def credentials():
                     for p in data['GOODREADS']:
                         goodreads_key = p['goodreads_key']
                 return
-        with open('credentials.log') as json_file:
+        with open('config.json') as json_file:
             data = json.load(json_file)
             for p in data['TOKEN']:
                 TOKEN = p['value']
@@ -97,7 +97,7 @@ def start():
     if start_question == "y":
         credentials()
     elif start_question == "n":
-        with open('credentials.log') as json_file:
+        with open('config.json') as json_file:
             data = json.load(json_file)
             for p in data['TOKEN']:
                 TOKEN = p['value']
@@ -116,7 +116,7 @@ def start():
 def credentials_view():
     start_question_no = input("Do you want to view you credentials? (y/n/exit) ")
     if start_question_no == "y":
-        with open('credentials.log') as json_file:
+        with open('config.json') as json_file:
             data = json.load(json_file)
             for p in data['TOKEN']:
                 TOKEN = p['value']
