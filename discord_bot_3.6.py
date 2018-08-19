@@ -616,12 +616,9 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
     info.counter += 1
     wiki_error = "Error. Specify/ check/ rephrase your search query,"
     try:
-        print(wiki_keyword_raw)
         wiki_keyword = ' '.join(wiki_keyword_raw)
-        print(wiki_keyword)
         wiki_sum = wikipedia.summary(wiki_keyword, sentences=1, chars=100, auto_suggest=True, redirect=True)
         wiki_keyword_string = wikipedia.page(wiki_keyword)
-        print(wiki_keyword_string)
         wiki_url = wiki_keyword_string.url
         embed_wiki = discord.Embed(title="Wikipedia", description=wiki_keyword, color=0x00ff00)
         embed_wiki.add_field(name=wiki_sum, value=wiki_url)
@@ -630,7 +627,8 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
         await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>!')
         if not wikipedia.search(wiki_keyword, results=3):
             return
-        await ctx.bot.say(f'Did you mean: {wikipedia.search(wiki_keyword, results=3)}?')
+        wiki_choice = ', '.join(wikipedia.search(wiki_keyword, results=3))
+        await ctx.bot.say(f'Did you mean: {wiki_choice}?')
 
 
 @bot.command(pass_context=True)
