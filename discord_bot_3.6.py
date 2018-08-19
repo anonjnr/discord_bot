@@ -76,7 +76,7 @@ async def create_chan_suggestions():
         my_perms = discord.PermissionOverwrite(read_messages=True)
         everyone = discord.ChannelPermissions(target=server.default_role, overwrite=everyone_perms)
         mine = discord.ChannelPermissions(target=server.me, overwrite=my_perms)
-        await bot.create_channel(server, 'suggestions', everyone, mine)
+        await bot.create_channel(server, 'suggestions', everyone, mine)          
 
 
 @bot.event
@@ -146,7 +146,9 @@ async def suggestion(ctx):
             if channel.name == 'suggestions':
                 embed = discord.Embed(title="Suggestion Author", description=ctx.message.author.name, color=0xeee657)
                 embed.add_field(name="Suggestion Message", value=ctx.message.content)
-                return await bot.send_message(channel, embed=embed)
+                await bot.send_message(channel, embed=embed)
+        embed = discord.Embed(title="Suggestion received", color=0xeee657)
+        return await ctx.bot.say(embed=embed)  
     except:
         return
 
@@ -163,20 +165,30 @@ async def prefix(ctx, prefix_raw):
                 for p in data ['PREFIX']:
                     prefix_choice = p['prefix']
                     if prefix_raw == "show":
-                        return await ctx.bot.say("Actual prefix is: " + prefix_choice)
+                        embed = discord.Embed(title="Prefix", description=("Actual prefix is: " + prefix_choice),
+                            color=0xeee657)
+                        return await ctx.bot.say(embed=embed)
                     else:
                         if ctx.message.author.id == bo_au:
                             data["PREFIX"][0]["prefix"] = prefix_raw
                             with open('config.json', 'w') as outfile:
                                 json.dump(data, outfile)
                                 bot.command_prefix = commands.when_mentioned_or(prefix_raw)
-                                return await ctx.bot.say("Prefix successfully set.")
+                                embed = discord.Embed(title="Return", description=("Prefix successfully set."),
+                            color=0xeee657)
+                                return await ctx.bot.say(embed=embed)
                         else:
-                            await ctx.bot.say("<@!"+bo_au+">, " + ctx.message.author.mention + " wants to have the prefix changed to " + prefix_raw + ".")
+                            embed = discord.Embed(title="Notification", description=("<@!"+bo_au+">, " + ctx.message.author.mention + " wants to have the prefix changed to " + prefix_raw + "."),
+                            color=0xeee657)
+                            return await ctx.bot.say(embed=embed)
         except IndexError:
-            return await ctx.bot.say("Index error when grabbing first obj")
+            embed = discord.Embed(title="Error", description=("Index error when grabbing first obj"),
+                            color=0xeee657)
+            return await ctx.bot.say(embed=embed)
     else:
-        return await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
+        embed = discord.Embed(title="Permission", description=(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.'),
+                            color=0xeee657)
+        return await ctx.bot.say(embed=embed)
 
 
 @bot.command(pass_context=True)
@@ -668,32 +680,31 @@ reaction_trigger.counter = 0
 
 @bot.event
 async def on_message(message):
-    content_lower = message.content.lower()
+    message.content = message.content.lower()
+    await bot.process_commands(message)
 
     if message.author == bot.user:
         return
 
     if bot.user.mentioned_in(message) and not message.mention_everyone:
-        if any(x in content_lower for x in messages.USER_GREETINGS):
+        if any(x in message.content for x in messages.USER_GREETINGS):
             await bot.send_message(message.channel, random.choice(messages.BOT_GREETINGS))
-        elif any(x in content_lower for x in messages.USER_BYES):
+        elif any(x in message.content for x in messages.USER_BYES):
             await bot.send_message(message.channel, random.choice(messages.BOT_BYES))
         # else:
         #     await message.add_reaction('👀')
 
-    if 'usa' in content_lower:
+    if 'usa' in message.content:
         await bot.add_reaction(message, random.choice(('🇺🇸', '🍔', '🌭', '🔫')))
-    if 'nani' in content_lower:
+    if 'nani' in message.content:
         await bot.send_message(message.channel, 'NAAAAANNNIIIIII!?!?!?!11')
 
     for t in messages.TRIGGERS:
-        if t in content_lower:
+        if t in message.content:
             for reaction in messages.TRIGGERS[t]:
                 await bot.add_reaction(message, reaction)
 
     reaction_trigger()
-
-    await bot.process_commands(message)
 
 
 bot.run(TOKEN)
