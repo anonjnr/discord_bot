@@ -3,6 +3,7 @@
  "REDDIT": [{"client_id": "", "client_secret": "", "user_agent": ""}], 
  "GOODREADS": [{"goodreads_key": ""}], 
  "PREFIX": [{"prefix": "!"}], 
+ "BOT_OWNER_ID": [{"bot_owner_id": "410406332143763466"}], 
  "COUNTER": [{"counter_reac": "1", "counter_cmd": "1"}], 
  "UPTIME": [{"uptime": 1}]
 }
