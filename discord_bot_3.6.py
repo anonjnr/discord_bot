@@ -104,12 +104,23 @@ async def on_ready():
 async def on_member_join(member):
     for channel in member.server.channels:
         if channel.name == 'general':
-            welm = (f"Welcome to `{server}`!")
+            welm = (f"Welcome to `{member.server}`!")
             desm = (
                 f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, {member.mention} <3')
             embed = discord.Embed(title=welm, description=desm, color=0xeee657)
             embed.set_thumbnail(url=member.avatar_url)
             return await bot.send_message(channel, embed=embed)
+
+
+@bot.event
+async def on_server_join(server):
+    msg = (f'Sir Henry just joined the Server: `{server}` `(Server ID: {server.id})`')
+    user = None
+    for guild in bot.servers:
+        user = discord.utils.get(guild.members, id = "410406332143763466")
+        if user is not None:
+            break
+    await bot.send_message(user, msg)
 
 
 @bot.event
@@ -161,6 +172,25 @@ async def say(ctx, serv_raw, chan, *mes_raw):
                     await bot.send_message(channel, mes)
                     all = (f'"{mes}" sent to channel {channel} on server {serv}\n')
                     return print(all)
+
+
+@bot.command(pass_context=True)
+async def leave(server, ID):
+    serv = bot.get_server(ID)
+    msg = (f'Sir Henry just left the Server: `{serv}` `(Server ID: {serv.id})`')
+    user = None
+    await bot.leave_server(serv)
+    for guild in bot.servers:
+        user = discord.utils.get(guild.members, id = bot_owner_id)
+        if user is not None:
+            break
+    await bot.send_message(user, msg)
+
+
+@bot.command(pass_context=True)
+async def userinfo(ctx, member : discord.Member = None):
+    if member is None: member = ctx.message.author
+    await ctx.bot.say(f"Here is what the information I found on {member.name}!", embed=discord.Embed(title=f"{member.name}'s User Information'", color = 0x36393f).add_field(name="Name", value=member.name, inline = False).add_field(name="Discriminator", value=member.discriminator, inline = False).add_field(name="ID", value=member.id, inline = False).add_field(name="Highest Role", value=member.top_role.name, inline = False).add_field(name="Avatar Url", value=member.avatar_url, inline = False).add_field(name="Joined Discord", value=member.created_at, inline = False).add_field(name="Joined Server", value=member.joined_at, inline = False).add_field(name="Bot", value=member.bot, inline = False).set_thumbnail(url=member.avatar_url).set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
 
 
 @bot.command(pass_context=True)
@@ -764,7 +794,7 @@ def reaction_trigger_save():
 def reaction_trigger():
     reaction_trigger.counter += 1
     if reaction_trigger.counter == int(reaction_trigger_pull) + 100:
-        return save()
+        return reaction_trigger_save()
 reaction_trigger.counter = int(reaction_trigger_pull)
 
 
@@ -777,7 +807,7 @@ def cmd_trigger_save():
 def cmd_trigger():
     cmd_trigger.Counter += 1
     if cmd_trigger.Counter == int(cmd_trigger_pull) + 10:
-        return save()
+        return cmd_trigger_save()
 cmd_trigger.Counter = int(cmd_trigger_pull)
 
 
