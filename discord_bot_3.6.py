@@ -3,12 +3,14 @@
 # bot_bcad_3.6.py
 
 import os
+import sys
 import ast
 import asyncio
 import datetime
 import json
 import random
 import time
+import importlib
 from datetime import datetime
 from datetime import timedelta
 from xml.etree import ElementTree
@@ -40,11 +42,17 @@ with open('config.json') as json_file:
         goodreads_key = p['goodreads_key']
     for p in data ['PREFIX']:
         prefix_choice = p['prefix']
+    for p in data ['COUNTER']:
+        reaction_trigger_pull = p['counter_reac']
+        cmd_trigger_pull = p['counter_cmd']
+    for p in data ['UPTIME']:
+        uptime_pull = p['uptime']
 
 
 description = 'Sir Henry Pickles, the pickly Bot!'
 bot = commands.Bot(max_messages=10000, command_prefix=commands.when_mentioned_or(prefix_choice))
 reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret, user_agent=json_user_agent)
+bo_au = "410406332143763466"
 start_time = time.time()
 bot.remove_command('help')
 random.seed(a=None)
@@ -90,7 +98,7 @@ async def on_ready():
     print('------')
     await create_chan_log()
     await create_chan_suggestions()
-
+    
 
 @bot.event
 async def on_member_join(member):
@@ -138,10 +146,41 @@ async def on_message_edit(before, after):
             except:
                 return
 
+
+@bot.command(pass_context=True)
+async def reload(ctx):
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `reload`')
+    print('------')
+    cmd_trigger()
+    if ctx.message.author.server_permissions.administrator:
+        try:
+            if ctx.message.author.id == bo_au:
+                await ctx.bot.say("`Reloading modules. Restarting connection.`")
+                try:
+                    total_uptime_save()
+                    reaction_trigger_save()
+                    cmd_trigger_save()
+                    os.execv(sys.executable, ['python3.6'] + sys.argv)
+                except:
+                    await ctx.bot.say("`Something did go wrong. Please read the log.`")
+            else:
+                embed = discord.Embed(title="Notification", description=("<@!"+bo_au+">, " + ctx.message.author.mention + " wants to reload the bot."),
+                            color=0xeee657)
+                return await ctx.bot.say(embed=embed)
+        except:
+            await ctx.bot.say("`Something did go wrong. Please read the log.`")
+    else:
+        embed = discord.Embed(title="Permission", description=(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.'),
+                            color=0xeee657)
+        return await ctx.bot.say(embed=embed)
+
+
+
 @bot.command(pass_context=True)
 async def suggestion(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `suggestion`')
     print('------')
+    cmd_trigger()
     try:
         for channel in ctx.message.server.channels:
             if channel.name == 'suggestions':
@@ -158,7 +197,7 @@ async def suggestion(ctx):
 async def prefix(ctx, prefix_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `prefix`') # TODO cmd auto grab
     print('------')
-    bo_au = "410406332143763466"
+    cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
         try:
             with open('config.json', 'r') as json_file:
@@ -166,8 +205,7 @@ async def prefix(ctx, prefix_raw):
                 for p in data ['PREFIX']:
                     prefix_choice = p['prefix']
                     if prefix_raw == "show":
-                        embed = discord.Embed(title="Prefix", description=("Actual prefix is: " + prefix_choice),
-                            color=0xeee657)
+                        embed = discord.Embed(title="Prefix", description=("Actual prefix is: " + prefix_choice), color=0xeee657)
                         return await ctx.bot.say(embed=embed)
                     else:
                         if ctx.message.author.id == bo_au:
@@ -183,8 +221,7 @@ async def prefix(ctx, prefix_raw):
                             color=0xeee657)
                             return await ctx.bot.say(embed=embed)
         except IndexError:
-            embed = discord.Embed(title="Error", description=("Index error when grabbing first obj"),
-                            color=0xeee657)
+            embed = discord.Embed(title="Error", description=("Index error when grabbing first obj"), color=0xeee657)
             return await ctx.bot.say(embed=embed)
     else:
         embed = discord.Embed(title="Permission", description=(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.'),
@@ -196,6 +233,7 @@ async def prefix(ctx, prefix_raw):
 async def status(ctx, *status_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `status`')
     print('------')
+    cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
         status_arg = ' '.join(status_raw)
         activity = discord.Game(name=status_arg)
@@ -250,7 +288,7 @@ async def status(ctx, *status_raw):
 async def members(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `members`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
         try:
             await memberList.membersLog(ctx)
@@ -265,7 +303,7 @@ async def members(ctx):
 async def members_show(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `members_show`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
         try:
             await memberList.membersDump(ctx)
@@ -276,22 +314,32 @@ async def members_show(ctx):
         return await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
 
 
+def total_uptime_save():
+    time_lapsed = (time.time() - start_time)
+    total_uptime = time_lapsed + uptime_pull
+    data["UPTIME"][0]["uptime"] = total_uptime
+    with open('config.json', 'w') as outfile:
+        json.dump(data, outfile)
+
 @bot.command(pass_context=True)
 async def info(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `info`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
+    total_uptime_save()
     time_lapsed = (time.time() - start_time)
+    total_uptime = time_lapsed + uptime_pull
     embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
     embed.set_thumbnail(url=bot.user.avatar_url)
     embed.add_field(name="System Time:", value=utilities.epoch_to_custom_date(utilities.FMT_TIME))
-    embed.add_field(name="Uptime", value=timedelta(seconds=time_lapsed))
-    # embed.add_field(name="Henrys Temperature: ", value=(os.popen("vcgencmd measure_temp").readline().replace("temp=","").replace("'C",""))) #RASPI
-    embed.add_field(name="Command count: ", value=info.counter)
+    # embed.add_field(name="Henrys Temperature: ", value=(os.popen("vcgencmd measure_temp").readline().replace("temp=","").replace("'C","°C"))) #RASPI
+    embed.add_field(name="Command count: ", value=cmd_trigger.Counter)
     embed.add_field(name="Message count: ", value=reaction_trigger.counter)
     embed.add_field(name="Server count: ", value=len(bot.servers))
-    embed.add_field(name="GitHub:", value="https://github.com/x3l51/discord_bot", inline=True)
-    embed.add_field(name="Next features I'll get and progress on me:",
+    embed.add_field(name="Uptime", value=timedelta(seconds=time_lapsed))
+    embed.add_field(name="Total Uptime", value=timedelta(seconds=total_uptime))
+    embed.add_field(name="GitHub Project Page:", value="https://github.com/x3l51/discord_bot", inline=True)
+    embed.add_field(name="Next features and progress on them:",
                     value="https://github.com/x3l51/discord_bot/projects/1", inline=True)
     embed.add_field(name="Direct invite to the Developers Discord:", value="https://discordapp.com/invite/5raBJUU",
                     inline=True)
@@ -301,14 +349,11 @@ async def info(ctx):
     await ctx.bot.say(embed=embed)
 
 
-info.counter = 0
-
-
 @bot.command(name="time", pass_context=True, ignore_extras=False)
 async def cmd_time(ctx, *tz_keywords):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `time`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     tz_keyword = '_'.join(tz_keywords)
     moon = ('Moon', 'moon')
     moon_rep = ('Very funny, ' + ctx.message.author.mention, 'Wow, ' + ctx.message.author.mention,
@@ -378,7 +423,7 @@ async def archive(ctx):
                 return await log_messages(ctx)
 
 async def log_messages(ctx):
-    info.counter += 1
+    cmd_trigger()
     log_path = ("./logs/archive" + "-server-" + ctx.message.server.name.replace(' ', '-') + "-channel-" + ctx.message.channel.name + "-" + (utilities.epoch_to_custom_date(utilities.FMT_TIME_FILE)) + ".log")
     if ctx.message.author.server_permissions.administrator:
         async for m in bot.logs_from(ctx.message.channel):
@@ -396,7 +441,7 @@ async def clear(ctx, cle: int = 1000):
     print(
         'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `clear` in channel: ' + ctx.message.channel.name)
     print('------')
-    info.counter += 1
+    cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
         for channel in ctx.message.server.channels:
             if channel.name == 'logs':
@@ -427,7 +472,7 @@ async def clear(ctx, cle: int = 1000):
 async def test(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `test`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     await ctx.bot.say("successful")
 
 
@@ -446,7 +491,7 @@ async def cmd_help(ctx):
     member = ctx.message.author
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `help`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
 
     await bot.send_message(member,
                            "If you are in need of immediate assistance, I kindly suggest you to call the emergency "
@@ -467,7 +512,7 @@ async def cmd_help(ctx):
 async def sleep(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `sleep`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     sleep = ['Yes, you should use the sleep.', 'But mooooom idonwanna!', 'Whatevs, man.', 'JA!']
     await ctx.bot.say(random.choice(sleep))
 
@@ -476,7 +521,7 @@ async def sleep(ctx):
 async def shower(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `shower`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     shower = [' you reek already!', ' it`s about time...', ' nah, its cool.',
               ' I mean, have you already showered this week?', ' but only a golden shower.']
     await ctx.bot.say(ctx.message.author.mention + " " + random.choice(shower))
@@ -487,7 +532,7 @@ async def shower(ctx):
 async def joke(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `joke`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
 
     embed = discord.Embed(title="Joke", description=random.choice(messages.JOKES), color=0x00ff00)
     await ctx.bot.say(embed=embed)
@@ -497,7 +542,7 @@ async def joke(ctx):
 async def cmd_8ball(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `8ball`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     ball_res = ['It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes - definitely.', 'You may rely on it.',
                 'As I see it, yes.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.',
                 'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Connot predict now.',
@@ -511,7 +556,7 @@ async def cmd_8ball(ctx):
 async def roll(ctx, dice_string, mod: int = 0):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `roll`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     try:
         count_raw, num_raw = dice_string.split("d")
         if not count_raw:
@@ -541,7 +586,7 @@ async def roll(ctx, dice_string, mod: int = 0):
 async def bleach(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `bleach`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
 
     await ctx.bot.say(random.choice(messages.BLEACHES))
 
@@ -565,7 +610,7 @@ async def bleach(ctx):
 async def goodreads(ctx, *keyword_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `goodreads`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     keyword = "+".join(keyword_raw)
     async with aiohttp.ClientSession() as session:
         html = await fetch(session,'https://www.goodreads.com/search.xml?key=' + goodreads_key + '&q=' + keyword + '&page=1')
@@ -587,7 +632,7 @@ async def cmd_reddit(ctx, subreddit_raw):
     print(
         'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `reddit`, looking for the subreddit: `' + subreddit_input + '`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     x = int(0)
     try:
         for i, submission in enumerate(reddit.subreddit(subreddit_input).hot(limit=5)):
@@ -613,11 +658,11 @@ async def cmd_reddit(ctx, subreddit_raw):
 async def cmd_wikipedia(ctx, *wiki_keyword_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `wikipedia`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     wiki_error = "Error. Specify/ check/ rephrase your search query,"
     try:
         wiki_keyword = ' '.join(wiki_keyword_raw)
-        wiki_keyword_string = wikipedia.page(wiki_keyword)
+        wiki_keyword_string = wikipedia.page(wiki_keyword, auto_suggest=True, redirect=True)
         wiki_sum = wikipedia.summary(wiki_keyword_string, sentences=1, chars=100, auto_suggest=True, redirect=True)
         wiki_url = wiki_keyword_string.url
         embed_wiki = discord.Embed(title="Wikipedia", description=wiki_keyword, color=0x00ff00)
@@ -636,7 +681,7 @@ async def wiktionary(ctx, *wikti_keyword_list):
     wikti_keyword_raw = " ".join(wikti_keyword_list)
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `wiktionary`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     wiki_error = "Error. Specify/ check/ rephrase your search query,"
     parser = WiktionaryParser()
     try:
@@ -659,25 +704,44 @@ async def wiktionary(ctx, *wikti_keyword_list):
 async def roles(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `roles`')
     print('------')
-    info.counter += 1
+    cmd_trigger()
     await ctx.bot.say(ctx.message.author.mention + "\'s roles are:")
     for r in ctx.message.author.roles:
         roles_me = r.name
         await ctx.bot.say("`" + roles_me + "`")
 
 
-# todo get rid of all these and somehow call them somehow else
-# reaction is triggered on EVERY message :S
+def reaction_trigger_save():
+    data["COUNTER"][0]["counter_reac"] = str(reaction_trigger.counter)
+    with open('config.json', 'w') as outfile:
+        json.dump(data, outfile)
+    reaction_trigger.counter = reaction_trigger_pull
+
 def reaction_trigger():
     reaction_trigger.counter += 1
-    # if reaction_trigger.counter == 100:
-    #     open json
-    #     save
-reaction_trigger.counter = 0
+    if reaction_trigger.counter == int(reaction_trigger_pull) + 100:
+        return save()
+reaction_trigger.counter = int(reaction_trigger_pull)
+
+
+def cmd_trigger_save():
+    data["COUNTER"][0]["counter_cmd"] = str(cmd_trigger.Counter)
+    with open('config.json', 'w') as outfile:
+        json.dump(data, outfile)
+    cmd_trigger.Counter = cmd_trigger_pull
+
+def cmd_trigger():
+    cmd_trigger.Counter += 1
+    if cmd_trigger.Counter == int(cmd_trigger_pull) + 10:
+        return save()
+cmd_trigger.Counter = int(cmd_trigger_pull)
 
 
 @bot.event
 async def on_message(message):
+
+    reaction_trigger()
+
     message.content = message.content.lower()
     await bot.process_commands(message)
 
@@ -701,8 +765,6 @@ async def on_message(message):
         if t in message.content:
             for reaction in messages.TRIGGERS[t]:
                 await bot.add_reaction(message, reaction)
-
-    reaction_trigger()
 
 
 bot.run(TOKEN)
