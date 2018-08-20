@@ -106,7 +106,7 @@ async def on_member_join(member):
         if channel.name == 'general':
             welm = (f"Welcome to `{member.server}`!")
             desm = (
-                f'Enjoy the server. Type `!help` so learn all my commands.\n Now go and have some fun, {member.mention} <3')
+                f'Enjoy the server.\n Type `!help` to learn all my commands.\n Now go and have some fun, {member.mention} <3')
             embed = discord.Embed(title=welm, description=desm, color=0xeee657)
             embed.set_thumbnail(url=member.avatar_url)
             return await bot.send_message(channel, embed=embed)
@@ -173,24 +173,45 @@ async def say(ctx, serv_raw, chan, *mes_raw):
                     all = (f'"{mes}" sent to channel {channel} on server {serv}\n')
                     return print(all)
 
-
+# todo
 @bot.command(pass_context=True)
-async def leave(server, ID):
-    serv = bot.get_server(ID)
-    msg = (f'Sir Henry just left the Server: `{serv}` `(Server ID: {serv.id})`')
-    user = None
-    await bot.leave_server(serv)
-    for guild in bot.servers:
-        user = discord.utils.get(guild.members, id = bot_owner_id)
-        if user is not None:
-            break
-    await bot.send_message(user, msg)
+async def leave(ctx, ID):
+    if ctx.message.author.server_permissions.administrator:
+        try:
+            if ctx.message.author.id == bot_owner_id:
+                serv = bot.get_server(ID)
+                msg = (f'Sir Henry just left the Server: `{serv}` `(Server ID: {serv.id})`')
+                user = None
+                await bot.leave_server(serv)
+                for guild in bot.servers:
+                    user = discord.utils.get(guild.members, id = bot_owner_id)
+                    if user is not None:
+                        break
+                await bot.send_message(user, msg)
+        except:
+            await ctx.bot.say("`Something did go wrong. Please read the log.`")
+    else:
+        embed = discord.Embed(title="Permission", description=(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.'),
+                            color=0xeee657)
+        return await ctx.bot.say(embed=embed)
 
 
 @bot.command(pass_context=True)
 async def userinfo(ctx, member : discord.Member = None):
     if member is None: member = ctx.message.author
-    await ctx.bot.say(f"Here is what the information I found on {member.name}!", embed=discord.Embed(title=f"{member.name}'s User Information'", color = 0x36393f).add_field(name="Name", value=member.name, inline = False).add_field(name="Discriminator", value=member.discriminator, inline = False).add_field(name="ID", value=member.id, inline = False).add_field(name="Highest Role", value=member.top_role.name, inline = False).add_field(name="Avatar Url", value=member.avatar_url, inline = False).add_field(name="Joined Discord", value=member.created_at, inline = False).add_field(name="Joined Server", value=member.joined_at, inline = False).add_field(name="Bot", value=member.bot, inline = False).set_thumbnail(url=member.avatar_url).set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
+    await ctx.bot.say(f"Here is what the information I found on {member.name}!", 
+    embed=discord.Embed(title=f"{member.name}'s User Information'", 
+    color = 0x36393f).add_field(name="Name", value=member.name, inline = False)
+    .add_field(name="Discriminator", value=member.discriminator, inline = False)
+    .add_field(name="ID", value=member.id, inline = False)
+    .add_field(name="This Server's ID", value=ctx.message.server.id, inline = False)
+    .add_field(name="Highest Role", value=member.top_role.name, inline = False)
+    .add_field(name="Avatar Url", value=member.avatar_url, inline = False)
+    .add_field(name="Joined Discord", value=member.created_at, inline = False)
+    .add_field(name="Joined Server", value=member.joined_at, inline = False)
+    .add_field(name="Bot", value=member.bot, inline = False)
+    .set_thumbnail(url=member.avatar_url)
+    .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
 
 
 @bot.command(pass_context=True)
@@ -395,6 +416,7 @@ def total_uptime_save():
     with open('config.json', 'w') as outfile:
         json.dump(data, outfile)
 
+
 @bot.command(pass_context=True)
 async def info(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `info`')
@@ -403,24 +425,21 @@ async def info(ctx):
     total_uptime_save()
     time_lapsed = (time.time() - start_time)
     total_uptime = time_lapsed + uptime_pull
+    await ctx.bot.say(f"Here is the information on {bot.user.name}!",
     embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
-    embed.set_thumbnail(url=bot.user.avatar_url)
-    embed.add_field(name="System Time:", value=utilities.epoch_to_custom_date(utilities.FMT_TIME))
-    # embed.add_field(name="Henrys Temperature: ", value=(os.popen("vcgencmd measure_temp").readline().replace("temp=","").replace("'C","°C"))) #RASPI
-    embed.add_field(name="Command count: ", value=cmd_trigger.Counter)
-    embed.add_field(name="Message count: ", value=reaction_trigger.counter)
-    embed.add_field(name="Server count: ", value=len(bot.servers))
-    embed.add_field(name="Uptime", value=timedelta(seconds=time_lapsed))
-    embed.add_field(name="Total Uptime", value=timedelta(seconds=total_uptime))
-    embed.add_field(name="GitHub Project Page:", value="https://github.com/x3l51/discord_bot", inline=True)
-    embed.add_field(name="Next features and progress on them:",
-                    value="https://github.com/x3l51/discord_bot/projects/1", inline=True)
-    embed.add_field(name="Direct invite to the Developers Discord:", value="https://discordapp.com/invite/5raBJUU",
-                    inline=True)
-    embed.add_field(name="Invite the Bot to your Discord Server:", value="https://discordapp.com/oauth2/authorize?client_id=" + bot.user.id + "&scope=bot&permissions=8",
-                    inline=True)
-    embed.add_field(name="Author", value="<@!410406332143763466>")
-    await ctx.bot.say(embed=embed)
+    .set_thumbnail(url=bot.user.avatar_url)
+    .add_field(name="System Time:", value=utilities.epoch_to_custom_date(utilities.FMT_TIME), inline=False)
+    .add_field(name="Command count: ", value=cmd_trigger.Counter, inline=False)
+    .add_field(name="Message count: ", value=reaction_trigger.counter, inline=False)
+    .add_field(name="Server count: ", value=len(bot.servers), inline=False)
+    .add_field(name="Uptime", value=timedelta(seconds=time_lapsed), inline=False)
+    .add_field(name="Total Uptime", value=timedelta(seconds=total_uptime), inline=False)
+    .add_field(name="GitHub Project Page:", value="https://github.com/x3l51/discord_bot", inline=False)
+    .add_field(name="Next features and progress on them:", value="https://github.com/x3l51/discord_bot/projects/1", inline=False)
+    .add_field(name="Direct invite to the Developers Discord:", value="https://discordapp.com/invite/5raBJUU", inline=False)
+    .add_field(name="Invite the Bot to your Discord Server:", value="https://discordapp.com/oauth2/authorize?client_id=" + bot.user.id + "&scope=bot&permissions=8", inline=False)
+    .add_field(name="Author", value="<@!"+bot_owner_id+">")
+    .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
 
 
 @bot.command(name="time", pass_context=True, ignore_extras=False)
