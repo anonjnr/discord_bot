@@ -10,7 +10,6 @@ import datetime
 import json
 import random
 import time
-import importlib
 from datetime import datetime
 from datetime import timedelta
 from xml.etree import ElementTree
