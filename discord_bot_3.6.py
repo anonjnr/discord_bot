@@ -46,12 +46,13 @@ with open('config.json') as json_file:
         cmd_trigger_pull = p['counter_cmd']
     for p in data ['UPTIME']:
         uptime_pull = p['uptime']
+    for p in data ['BOT_OWNER_ID']:
+        bot_owner_id = p['bot_owner_id']
 
 
 description = 'Sir Henry Pickles, the pickly Bot!'
 bot = commands.Bot(max_messages=10000, command_prefix=commands.when_mentioned_or(prefix_choice))
 reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret, user_agent=json_user_agent)
-bo_au = "410406332143763466"
 start_time = time.time()
 bot.remove_command('help')
 random.seed(a=None)
@@ -147,23 +148,40 @@ async def on_message_edit(before, after):
 
 
 @bot.command(pass_context=True)
+async def say(ctx, serv_raw, chan, *mes_raw):
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `say`')
+    print('------')
+    if ctx.message.author.server_permissions.administrator:
+        if ctx.message.author.id == bot_owner_id:
+            serv = serv_raw.replace("-"," ")
+            mes = ' '.join(mes_raw)
+            for server in bot.servers:
+                if server.name == serv:
+                    channel = discord.utils.get(server.channels, name=chan)
+                    await bot.send_message(channel, mes)
+                    all = (f'"{mes}" sent to channel {channel} on server {serv}\n')
+                    return print(all)
+
+
+@bot.command(pass_context=True)
 async def reload(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `reload`')
     print('------')
     cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
         try:
-            if ctx.message.author.id == bo_au:
+            if ctx.message.author.id == bot_owner_id:
                 await ctx.bot.say("`Reloading modules. Restarting connection.`")
                 try:
                     total_uptime_save()
                     reaction_trigger_save()
                     cmd_trigger_save()
                     os.execv(sys.executable, ['python3.6'] + sys.argv)
+                    # os.execv(sys.executable, ['sudo nohup python3.6'] + sys.argv)
                 except:
                     await ctx.bot.say("`Something did go wrong. Please read the log.`")
             else:
-                embed = discord.Embed(title="Notification", description=("<@!"+bo_au+">, " + ctx.message.author.mention + " wants to reload the bot."),
+                embed = discord.Embed(title="Notification", description=("<@!"+bot_owner_id+">, " + ctx.message.author.mention + " wants to reload the bot."),
                             color=0xeee657)
                 return await ctx.bot.say(embed=embed)
         except:
@@ -173,6 +191,33 @@ async def reload(ctx):
                             color=0xeee657)
         return await ctx.bot.say(embed=embed)
 
+
+@bot.command(pass_context=True)
+async def quit(ctx):
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `quit`')
+    print('------')
+    cmd_trigger()
+    if ctx.message.author.server_permissions.administrator:
+        try:
+            if ctx.message.author.id == bot_owner_id:
+                await ctx.bot.say("`Shutdown requested`")
+                total_uptime_save()
+                reaction_trigger_save()
+                cmd_trigger_save()
+                await ctx.bot.say("`Values saved`")
+                await ctx.bot.say("`Logout`")
+                try:
+                    await bot.logout()
+                    await bot.close()
+                    print("Exit script now.")
+                    sys.exit()
+                except:
+                    return ctx.bot.say("Something did not work out. Read log.")
+
+        except:
+            embed = discord.Embed(title="Permission", description=(ctx.message.author.mention + "you have no permission to use this command."),
+                            color=0xeee657)
+            return await ctx.bot.say(embed=embed)
 
 
 @bot.command(pass_context=True)
@@ -207,7 +252,7 @@ async def prefix(ctx, prefix_raw):
                         embed = discord.Embed(title="Prefix", description=("Actual prefix is: " + prefix_choice), color=0xeee657)
                         return await ctx.bot.say(embed=embed)
                     else:
-                        if ctx.message.author.id == bo_au:
+                        if ctx.message.author.id == bot_owner_id:
                             data["PREFIX"][0]["prefix"] = prefix_raw
                             with open('config.json', 'w') as outfile:
                                 json.dump(data, outfile)
@@ -216,7 +261,7 @@ async def prefix(ctx, prefix_raw):
                             color=0xeee657)
                                 return await ctx.bot.say(embed=embed)
                         else:
-                            embed = discord.Embed(title="Notification", description=("<@!"+bo_au+">, " + ctx.message.author.mention + " wants to have the prefix changed to " + prefix_raw + "."),
+                            embed = discord.Embed(title="Notification", description=("<@!"+bot_owner_id+">, " + ctx.message.author.mention + " wants to have the prefix changed to " + prefix_raw + "."),
                             color=0xeee657)
                             return await ctx.bot.say(embed=embed)
         except IndexError:
