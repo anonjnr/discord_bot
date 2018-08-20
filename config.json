@@ -1,1 +1,8 @@
-{"TOKEN": [{"value": ""}], "REDDIT": [{"client_id": "", "client_secret": "", "user_agent": ""}], "GOODREADS": [{"goodreads_key": ""}], "PREFIX": [{"prefix": "!"}]}
+{
+  "TOKEN": [{"value": ""}], 
+ "REDDIT": [{"client_id": "", "client_secret": "", "user_agent": ""}], 
+ "GOODREADS": [{"goodreads_key": ""}], 
+ "PREFIX": [{"prefix": "!"}], 
+ "COUNTER": [{"counter_reac": "1", "counter_cmd": "1"}], 
+ "UPTIME": [{"uptime": 1}]
+}
