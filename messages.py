@@ -279,6 +279,8 @@ embed_use.add_field(name="`roll`",
                     value="You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!")
 embed_use.add_field(name="`time`",
                     value="Gives you the current time for different timezones. For example use with `!time Berlin` or `!time EST`.")
+embed_use.add_field(name="`userinfo`",
+                    value="Posts info about a given user. `!userinfo @USER` posts all details available")
 
 embed_mod = discord.Embed(title="MODERATION", description="", color=0x00ff00)
 embed_mod.add_field(name="`clear`",
@@ -286,6 +288,8 @@ embed_mod.add_field(name="`clear`",
 embed_mod.add_field(name="`archive`", value="Creates an archive of the current channel and sends it via direct message")
 embed_mod.add_field(name="`prefix`", value="Let\'s you change the used prefix of the Bot. Changes it for all servers so better not use this")
 embed_mod.add_field(name="`reload`", value="Shuts down the Bot for every server and restarts it. But why would you do that?")
+embed_mod.add_field(name="`quit`", value="Let\'s the bot go offline without coming online again.")
+embed_mod.add_field(name="`leave`", value="Makes the Bot leave a server. `!leave SERVER_ID`")
 embed_mod.add_field(name="`bleach`",
                     value="Applies eye bleach. *Try it!* (recommended after and/ or before `clear`)")
 embed_mod.add_field(name="`roles`", value="Lists every role you have. Sometimes it\'s useful")
