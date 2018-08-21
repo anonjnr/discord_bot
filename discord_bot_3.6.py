@@ -161,7 +161,7 @@ async def on_message_edit(before, after):
 
 @bot.command(pass_context=True)
 async def youtube(ctx, keyword_raw, url=""):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `yt`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `youtube`')
     print('------')
     keyword = url
 
@@ -186,10 +186,10 @@ async def youtube(ctx, keyword_raw, url=""):
             if(x.server == ctx.message.server):
                 return await x.disconnect()
 
-    if keyword_raw == "play":
-        try:
+    try:
+        if keyword_raw == "play":
             if url is "":
-                return ctx.bot.say("You got to give me a YouTube URL, stupid! `!yt play URL_HERE`")
+                return ctx.bot.say("You got to give me a YouTube URL, stupid! `!youtube play URL_HERE`")
             await ctx.bot.say(playing)
             voice = await bot.join_voice_channel(channel)
             global player
@@ -197,29 +197,29 @@ async def youtube(ctx, keyword_raw, url=""):
             player.start()
             return player
 
-            if keyword_raw == "stop":
-                await ctx.bot.say(stopping)
-                player.stop()
+        if keyword_raw == "stop":
+            await ctx.bot.say(stopping)
+            player.stop()
 
-            if keyword_raw == "pause":
-                await ctx.bot.say(pausing)
-                player.pause()
+        if keyword_raw == "pause":
+            await ctx.bot.say(pausing)
+            player.pause()
 
-            if keyword_raw == "resume":
-                await ctx.bot.say(resuming)
-                player.resume()
+        if keyword_raw == "resume":
+            await ctx.bot.say(resuming)
+            player.resume()
 
-            if keyword_raw == "volume":
+        if keyword_raw == "volume":
+            set_vol = (int(keyword)/100)
+            if float(set_vol) <= 0:
+                return await ctx.bot.say("You can\'t do that, silly.")
+            elif float(set_vol) > 1:
+                return await ctx.bot.say("You can\'t do that, silly.")
+            else:
                 await ctx.bot.say(volume)
-                set_vol = (int(keyword)/100)
-                if float(set_vol) <= 0:
-                    return await ctx.bot.say("You can\'t do that, silly.")
-                if float(set_vol) > 100:
-                    return await ctx.bot.say("You can\'t do that, silly.")
-                else:
-                    player.volume = set_vol
-        except:
-            return await ctx.bot.say(player.error)
+                player.volume = set_vol
+    except:
+        return await ctx.bot.say(player.error)
 
 
 @bot.command(pass_context=True)
