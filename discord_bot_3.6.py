@@ -161,7 +161,7 @@ async def on_message_edit(before, after):
 
 @bot.command(pass_context=True)
 async def youtube(ctx, keyword_raw, url=""):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `youtube`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     keyword = url
 
@@ -224,7 +224,7 @@ async def youtube(ctx, keyword_raw, url=""):
 
 @bot.command(pass_context=True)
 async def say(ctx, serv_raw, chan, *mes_raw):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `say`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     if ctx.message.author.server_permissions.administrator:
         if ctx.message.author.id == bot_owner_id:
@@ -237,7 +237,7 @@ async def say(ctx, serv_raw, chan, *mes_raw):
                     all = (f'"{mes}" sent to channel {channel} on server {serv}\n')
                     return print(all)
 
-# todo
+
 @bot.command(pass_context=True)
 async def leave(ctx, ID):
     if ctx.message.author.server_permissions.administrator:
@@ -255,13 +255,15 @@ async def leave(ctx, ID):
         except:
             await ctx.bot.say("`Something did go wrong. Please read the log.`")
     else:
-        embed = discord.Embed(title="Permission", description=(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.'),
+        embed = discord.Embed(title="Permission", description=(ctx.message.author.mention + ', you\'re not a mod. You can\'t use `' + ctx.command.name + '`.'),
                             color=0xeee657)
         return await ctx.bot.say(embed=embed)
 
 
 @bot.command(pass_context=True)
 async def userinfo(ctx, member : discord.Member = None):
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
+    print('------')
     if member is None: member = ctx.message.author
     await ctx.bot.say(embed=discord.Embed(title=f"{member.name}'s User Information", color=0xeee657)
     .add_field(name="Name", value=member.name, inline = False)
@@ -279,7 +281,7 @@ async def userinfo(ctx, member : discord.Member = None):
 
 @bot.command(pass_context=True)
 async def reload(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `reload`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
@@ -308,7 +310,7 @@ async def reload(ctx):
 
 @bot.command(pass_context=True)
 async def quit(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `quit`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
@@ -336,7 +338,7 @@ async def quit(ctx):
 
 @bot.command(pass_context=True)
 async def suggestion(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `suggestion`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     try:
@@ -353,7 +355,7 @@ async def suggestion(ctx):
 
 @bot.command(pass_context=True)
 async def prefix(ctx, prefix_raw):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `prefix`') # TODO cmd auto grab
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
@@ -389,7 +391,7 @@ async def prefix(ctx, prefix_raw):
 
 @bot.command(pass_context=True)
 async def status(ctx, *status_raw):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `status`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
@@ -444,7 +446,7 @@ async def status(ctx, *status_raw):
 # todo 2000 char restriciton (time)
 @bot.command(pass_context=True)
 async def members(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `members`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
@@ -459,7 +461,7 @@ async def members(ctx):
 
 @bot.command(pass_context=True)
 async def members_show(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `members_show`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
@@ -482,7 +484,7 @@ def total_uptime_save():
 
 @bot.command(pass_context=True)
 async def info(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `info`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     total_uptime_save()
@@ -506,7 +508,7 @@ async def info(ctx):
 
 @bot.command(name="time", pass_context=True, ignore_extras=False)
 async def cmd_time(ctx, *tz_keywords):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `time`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     tz_keyword = '_'.join(tz_keywords)
@@ -569,7 +571,7 @@ async def cmd_time(ctx, *tz_keywords):
 @bot.command(pass_context=True)
 async def archive(ctx):
     print(
-        'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `archive` in channel: ' + ctx.message.channel.name)
+        'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '` in channel: ' + ctx.message.channel.name)
     print('------')
     for channel in ctx.message.server.channels:
             if channel.name == 'logs':
@@ -594,7 +596,7 @@ async def log_messages(ctx):
 @bot.command(pass_context=True)
 async def clear(ctx, cle: int = 1000):
     print(
-        'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `clear` in channel: ' + ctx.message.channel.name)
+        'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '` in channel: ' + ctx.message.channel.name)
     print('------')
     cmd_trigger()
     if ctx.message.author.server_permissions.administrator:
@@ -625,7 +627,7 @@ async def clear(ctx, cle: int = 1000):
 
 @bot.command(pass_context=True)
 async def test(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `test`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     await ctx.bot.say("successful")
@@ -633,7 +635,7 @@ async def test(ctx):
 
 @bot.command(pass_context=True)
 async def mod(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `mod`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     if ctx.message.author.server_permissions.administrator:
         return await ctx.bot.say(ctx.message.author.mention + ', you\'re a mod.')
@@ -644,7 +646,7 @@ async def mod(ctx):
 @bot.command(name='help', pass_context=True)
 async def cmd_help(ctx):
     member = ctx.message.author
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `help`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
 
@@ -665,7 +667,7 @@ async def cmd_help(ctx):
 
 @bot.command(pass_context=True)
 async def sleep(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `sleep`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     sleep = ['Yes, you should use the sleep.', 'But mooooom idonwanna!', 'Whatevs, man.', 'JA!']
@@ -674,7 +676,7 @@ async def sleep(ctx):
 
 @bot.command(pass_context=True)
 async def shower(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `shower`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     shower = [' you reek already!', ' it`s about time...', ' nah, its cool.',
@@ -685,7 +687,7 @@ async def shower(ctx):
 # todo store jokes in json.log
 @bot.command(pass_context=True)
 async def joke(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `joke`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
 
@@ -695,7 +697,7 @@ async def joke(ctx):
 
 @bot.command(name='8ball', pass_context=True)
 async def cmd_8ball(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `8ball`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     ball_res = ['It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes - definitely.', 'You may rely on it.',
@@ -709,7 +711,7 @@ async def cmd_8ball(ctx):
 
 @bot.command(pass_context=True)
 async def roll(ctx, dice_string, mod: int = 0):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `roll`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     try:
@@ -739,7 +741,7 @@ async def roll(ctx, dice_string, mod: int = 0):
 
 @bot.command(pass_context=True)
 async def bleach(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `bleach`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
 
@@ -763,7 +765,7 @@ async def bleach(ctx):
 
 @bot.command(pass_context=True)
 async def goodreads(ctx, *keyword_raw):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `goodreads`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     keyword = "+".join(keyword_raw)
@@ -785,7 +787,7 @@ async def goodreads(ctx, *keyword_raw):
 async def cmd_reddit(ctx, subreddit_raw):
     subreddit_input = str(subreddit_raw)
     print(
-        'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `reddit`, looking for the subreddit: `' + subreddit_input + '`')
+        'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`, looking for the subreddit: `' + subreddit_input + '`')
     print('------')
     cmd_trigger()
     x = int(0)
@@ -811,7 +813,7 @@ async def cmd_reddit(ctx, subreddit_raw):
 
 @bot.command(name='wikipedia', pass_context=True)
 async def cmd_wikipedia(ctx, *wiki_keyword_raw):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `wikipedia`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     wiki_error = "Error. Specify/ check/ rephrase your search query,"
@@ -834,7 +836,7 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
 @bot.command(pass_context=True)
 async def wiktionary(ctx, *wikti_keyword_list):
     wikti_keyword_raw = " ".join(wikti_keyword_list)
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `wiktionary`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     wiki_error = "Error. Specify/ check/ rephrase your search query,"
@@ -857,7 +859,7 @@ async def wiktionary(ctx, *wikti_keyword_list):
 
 @bot.command(pass_context=True)
 async def roles(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `roles`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
     await ctx.bot.say(ctx.message.author.mention + "\'s roles are:")
