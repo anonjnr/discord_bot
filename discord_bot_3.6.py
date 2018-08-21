@@ -21,6 +21,7 @@ import praw
 import pytz
 import wikipedia
 import requests
+import youtube_dl # to run this, the installation of ffmpeg is important: sudo apt-get install ffmpeg
 from discord.ext import commands
 from pytz import timezone
 from wiktionaryparser import WiktionaryParser
@@ -85,7 +86,7 @@ async def create_chan_suggestions():
         my_perms = discord.PermissionOverwrite(read_messages=True)
         everyone = discord.ChannelPermissions(target=server.default_role, overwrite=everyone_perms)
         mine = discord.ChannelPermissions(target=server.me, overwrite=my_perms)
-        await bot.create_channel(server, 'suggestions', everyone, mine)          
+        await bot.create_channel(server, 'suggestions', everyone, mine)
 
 
 @bot.event
@@ -159,6 +160,69 @@ async def on_message_edit(before, after):
 
 
 @bot.command(pass_context=True)
+async def youtube(ctx, keyword_raw, url=""):
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `yt`')
+    print('------')
+    keyword = url
+
+    joining = (f'Okay, I\'m here. What now?')
+    playing = (f'Now playing!')
+    leaving = (f'Okay, okay, I\'ll leave! Jeez, calm down.')
+    stopping = (f'Stopped playing.')
+    pausing = (f'Paused playing.')
+    resuming = (f'Resumed playing.')
+    volume = (f'Changing volume to {keyword}%.')
+
+    channel = ctx.message.author.voice.voice_channel
+    voice = bot.join_voice_channel(channel)
+
+    if keyword_raw == "join":
+        await ctx.bot.say(joining)
+        await voice
+
+    if keyword_raw == "leave":
+        await ctx.bot.say(leaving)
+        for x in bot.voice_clients:
+            if(x.server == ctx.message.server):
+                return await x.disconnect()
+
+    if keyword_raw == "play":
+        try:
+            if url is "":
+                return ctx.bot.say("You got to give me a YouTube URL, stupid! `!yt play URL_HERE`")
+            await ctx.bot.say(playing)
+            voice = await bot.join_voice_channel(channel)
+            global player
+            player = await voice.create_ytdl_player(url)
+            player.start()
+            return player
+
+            if keyword_raw == "stop":
+                await ctx.bot.say(stopping)
+                player.stop()
+
+            if keyword_raw == "pause":
+                await ctx.bot.say(pausing)
+                player.pause()
+
+            if keyword_raw == "resume":
+                await ctx.bot.say(resuming)
+                player.resume()
+
+            if keyword_raw == "volume":
+                await ctx.bot.say(volume)
+                set_vol = (int(keyword)/100)
+                if float(set_vol) <= 0:
+                    return await ctx.bot.say("You can\'t do that, silly.")
+                if float(set_vol) > 100:
+                    return await ctx.bot.say("You can\'t do that, silly.")
+                else:
+                    player.volume = set_vol
+        except:
+            return await ctx.bot.say(player.error)
+
+
+@bot.command(pass_context=True)
 async def say(ctx, serv_raw, chan, *mes_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `say`')
     print('------')
@@ -199,9 +263,8 @@ async def leave(ctx, ID):
 @bot.command(pass_context=True)
 async def userinfo(ctx, member : discord.Member = None):
     if member is None: member = ctx.message.author
-    await ctx.bot.say(f"Here is what the information I found on {member.name}!", 
-    embed=discord.Embed(title=f"{member.name}'s User Information'", 
-    color = 0x36393f).add_field(name="Name", value=member.name, inline = False)
+    await ctx.bot.say(embed=discord.Embed(title=f"{member.name}'s User Information", color=0xeee657)
+    .add_field(name="Name", value=member.name, inline = False)
     .add_field(name="Discriminator", value=member.discriminator, inline = False)
     .add_field(name="ID", value=member.id, inline = False)
     .add_field(name="This Server's ID", value=ctx.message.server.id, inline = False)
@@ -425,8 +488,7 @@ async def info(ctx):
     total_uptime_save()
     time_lapsed = (time.time() - start_time)
     total_uptime = time_lapsed + uptime_pull
-    await ctx.bot.say(f"Here is the information on {bot.user.name}!",
-    embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
+    await ctx.bot.say(embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
     .set_thumbnail(url=bot.user.avatar_url)
     .add_field(name="System Time:", value=utilities.epoch_to_custom_date(utilities.FMT_TIME), inline=False)
     .add_field(name="Command count: ", value=cmd_trigger.Counter, inline=False)
@@ -835,9 +897,6 @@ async def on_message(message):
 
     reaction_trigger()
 
-    message.content = message.content.lower()
-    await bot.process_commands(message)
-
     if message.author == bot.user:
         return
 
@@ -849,7 +908,7 @@ async def on_message(message):
         # else:
         #     await message.add_reaction('👀')
 
-    if 'usa' in message.content:
+    if 'USA' in message.content:
         await bot.add_reaction(message, random.choice(('🇺🇸', '🍔', '🌭', '🔫')))
     if 'nani' in message.content:
         await bot.send_message(message.channel, 'NAAAAANNNIIIIII!?!?!?!11')
@@ -858,6 +917,9 @@ async def on_message(message):
         if t in message.content:
             for reaction in messages.TRIGGERS[t]:
                 await bot.add_reaction(message, reaction)
+
+    # message.content = message.content.lower()
+    await bot.process_commands(message)
 
 
 bot.run(TOKEN)
