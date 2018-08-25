@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.6
 # -*- coding: utf-8 -*-
 # bot_bcad_3.6.py
+# import pdb; pdb.set_trace()
 
 import os
 import sys
@@ -10,6 +11,7 @@ import datetime
 import json
 import random
 import time
+import logging
 from datetime import datetime
 from datetime import timedelta
 from xml.etree import ElementTree
@@ -21,7 +23,7 @@ import praw
 import pytz
 import wikipedia
 import requests
-import youtube_dl # to run this, the installation of ffmpeg is important: sudo apt-get install ffmpeg
+import youtube_dl
 from discord.ext import commands
 from pytz import timezone
 from wiktionaryparser import WiktionaryParser
@@ -30,7 +32,7 @@ import memberList
 import messages
 import utilities
 
-with open('config.json') as json_file:
+with open('config.json', 'r') as json_file:
     data = json.load(json_file)
     for p in data['TOKEN']:
         TOKEN = p['value']
@@ -49,6 +51,9 @@ with open('config.json') as json_file:
         uptime_pull = p['uptime']
     for p in data ['BOT_OWNER_ID']:
         bot_owner_id = p['bot_owner_id']
+    for p in data ['STATUS']:
+        status_pull = p['status']
+print(json_file.closed)
 
 
 description = 'Sir Henry Pickles, the pickly Bot!'
@@ -57,6 +62,14 @@ reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret,
 start_time = time.time()
 bot.remove_command('help')
 random.seed(a=None)
+
+logger_discord_info = logging.getLogger('discord')
+logger_discord_info.setLevel(logging.INFO)
+log = logging.getLogger()
+log.setLevel(logging.INFO)
+handler_discord_info = logging.FileHandler(filename='./logs/discord_info.log', encoding='utf-8', mode='a+')
+handler_discord_info.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger_discord_info.addHandler(handler_discord_info)
 
 
 async def fetch(session, url):
@@ -91,26 +104,43 @@ async def create_chan_suggestions():
 
 @bot.event
 async def on_ready():
-    activity = discord.Game(name="with pickles.")
-    await bot.change_presence(status=discord.Status.online, game=activity)
+    boot = discord.Game(name="BOOTING")
+    boot_fin = discord.Game(name="BOOT FINISHED")
+    err = discord.Game(name="ERROR CODE 1")
+    serv = discord.Game(name="AT YOUR SERVICE")
+    stat = discord.Game(name=status_pull)
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
     print('------')
     await create_chan_log()
     await create_chan_suggestions()
+    await bot.change_presence(status=discord.Status.idle, game=boot)
+    await asyncio.sleep(3)
+    await bot.change_presence(status=discord.Status.idle, game=boot_fin)
+    await asyncio.sleep(3)
+    await bot.change_presence(status=discord.Status.online, game=err)
+    await asyncio.sleep(3)
+    await bot.change_presence(status=discord.Status.online, game=stat)
     
 
 @bot.event
 async def on_member_join(member):
     for channel in member.server.channels:
         if channel.name == 'general':
+            welm = (f"Welcome to ")
+            delm = (f"`{member.server}`!")
+            desm = (f'Enjoy the server.')
+            vasm = (f'Type `!help` to learn all my commands.\n Now go and have some fun, {member.mention} <3')
+            await bot.send_message(channel, embed=discord.Embed(title=welm, description=delm, color=0xeee657)
+            .add_field(name=desm, value=vasm, inline = False)
+            .set_thumbnail(url=member.avatar_url))
+    for channel in member.server.channels:
+        if channel.name == 'logs':
             welm = (f"Welcome to `{member.server}`!")
-            desm = (
-                f'Enjoy the server.\n Type `!help` to learn all my commands.\n Now go and have some fun, {member.mention} <3')
-            embed = discord.Embed(title=welm, description=desm, color=0xeee657)
-            embed.set_thumbnail(url=member.avatar_url)
-            return await bot.send_message(channel, embed=embed)
+            desm = (f'ONE OF US!\n A warm welcome to: {member.mention} <3')
+            return await bot.send_message(channel, embed=discord.Embed(title=welm, description=desm, color=0xeee657)
+            .set_thumbnail(url=member.avatar_url))
 
 
 @bot.event
@@ -130,12 +160,15 @@ async def on_message_delete(message):
         for channel in message.server.channels:
             if channel.name == 'logs':
                 auth = (f'{message.author.name} ({message.author})')
-                embed = discord.Embed(title="Message deleted", color=0xeee657)
-                embed.add_field(name="Channel", value=message.channel)
-                embed.add_field(name="Message Author", value=auth)
-                embed.add_field(name="Message Author ID", value=message.author.id)
-                embed.add_field(name="Message", value=message.content)
-                return await bot.send_message(channel, embed=embed)
+                chan = (f'#{message.channel}')
+                return await bot.send_message(channel, embed=discord.Embed(title="Message deleted", color=0xeee657)
+                .add_field(name="Channel", value=chan, inline = False)
+                .add_field(name="Message Author", value=auth, inline = False)
+                .add_field(name="Message Author ID", value=message.author.id, inline = False)
+                .add_field(name="Message ID", value=message.id, inline = False)
+                .add_field(name="Message", value=message.content, inline = False)
+                .set_thumbnail(url=message.author.avatar_url)
+                .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
     except:
         return
 
@@ -148,30 +181,32 @@ async def on_message_edit(before, after):
                 for channel in before.server.channels:
                     if channel.name == 'logs':
                         auth = (f'{before.author.name} ({before.author})')
-                        embed = discord.Embed(title="Message edited", color=0xeee657)
-                        embed.add_field(name="Channel", value=before.channel)
-                        embed.add_field(name="Message Author", value=auth)
-                        embed.add_field(name="Message Author ID", value=before.author.id)
-                        embed.add_field(name="Message before", value=before.content)
-                        embed.add_field(name="Message after", value=after.content)
-                        return await bot.send_message(channel, embed=embed)
+                        chan = (f'#{before.channel}')
+                        return await bot.send_message(channel, embed=discord.Embed(title="Message edited", color=0xeee657)
+                        .add_field(name="Channel", value=chan, inline = False)
+                        .add_field(name="Message Author", value=auth, inline = False)
+                        .add_field(name="Message Author ID", value=before.author.id, inline = False)
+                        .add_field(name="Message ID", value=after.id, inline = False)
+                        .add_field(name="Message before", value=before.content, inline = False)
+                        .add_field(name="Message after", value=after.content, inline = False)
+                        .set_thumbnail(url=after.author.avatar_url)
+                        .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
             except:
                 return
 
 
 @bot.command(pass_context=True)
 async def youtube(ctx, keyword_raw, url=""):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + ' ' + keyword_raw + '`')
     print('------')
-    keyword = url
+    cmd_trigger()
 
     joining = (f'Okay, I\'m here. What now?')
-    playing = (f'Now playing!')
     leaving = (f'Okay, okay, I\'ll leave! Jeez, calm down.')
     stopping = (f'Stopped playing.')
     pausing = (f'Paused playing.')
     resuming = (f'Resumed playing.')
-    volume = (f'Changing volume to {keyword}%.')
+    volume = (f'Changing volume to {url}%.')
 
     channel = ctx.message.author.voice.voice_channel
     voice = bot.join_voice_channel(channel)
@@ -186,46 +221,59 @@ async def youtube(ctx, keyword_raw, url=""):
             if(x.server == ctx.message.server):
                 return await x.disconnect()
 
-    try:
-        if keyword_raw == "play":
-            if url is "":
-                return ctx.bot.say("You got to give me a YouTube URL, stupid! `!youtube play URL_HERE`")
-            await ctx.bot.say(playing)
-            voice = await bot.join_voice_channel(channel)
-            global player
-            player = await voice.create_ytdl_player(url)
-            player.start()
-            return player
+    # if a song is already playing nothing happens
+    if keyword_raw == "play":
+        if url is "":
+            return ctx.bot.say("You got to give me a YouTube URL, stupid! `!youtube play URL_HERE`")
+        voice = await bot.join_voice_channel(channel)
+        global player
+        player = await voice.create_ytdl_player(url)
+        player.start()
+        playing = (f'`Now playing {player.title}!`')
+        await ctx.bot.say(playing)
+        return player
 
-        if keyword_raw == "stop":
-            await ctx.bot.say(stopping)
-            player.stop()
+    if keyword_raw == "stop":
+        await ctx.bot.say(stopping)
+        player.stop()
 
-        if keyword_raw == "pause":
-            await ctx.bot.say(pausing)
-            player.pause()
+    if keyword_raw == "pause":
+        await ctx.bot.say(pausing)
+        player.pause()
 
-        if keyword_raw == "resume":
-            await ctx.bot.say(resuming)
-            player.resume()
+    if keyword_raw == "resume":
+        await ctx.bot.say(resuming)
+        player.resume()
 
-        if keyword_raw == "volume":
-            set_vol = (int(keyword)/100)
-            if float(set_vol) <= 0:
-                return await ctx.bot.say("You can\'t do that, silly.")
-            elif float(set_vol) > 1:
-                return await ctx.bot.say("You can\'t do that, silly.")
-            else:
-                await ctx.bot.say(volume)
-                player.volume = set_vol
-    except:
-        return await ctx.bot.say(player.error)
+    if keyword_raw == "volume":
+        set_vol = (int(url)/100)
+        if float(set_vol) <= 0:
+            return await ctx.bot.say("You can\'t do that, silly.")
+        elif float(set_vol) > 1:
+            return await ctx.bot.say("You can\'t do that, silly.")
+        else:
+            await ctx.bot.say(volume)
+            player.volume = set_vol
+
+    if keyword_raw == "info":
+        if player.is_playing():
+            return await ctx.bot.say(embed=discord.Embed(title="Info on Youtube Player", color=0xeee657)
+            .add_field(name="Title", value=player.title, inline = False)
+            .add_field(name="Description", value=player.description, inline = False)
+            .add_field(name="Length", value=player.duration, inline = False)
+            .add_field(name="URL", value=player.url, inline = False)
+            .set_thumbnail(url=ctx.message.author.avatar_url)
+            .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
+        else:
+            return await ctx.bot.say("There is nothing playing, silly!")
 
 
 @bot.command(pass_context=True)
 async def say(ctx, serv_raw, chan, *mes_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
+    cmd_trigger()
+
     if ctx.message.author.server_permissions.administrator:
         if ctx.message.author.id == bot_owner_id:
             serv = serv_raw.replace("-"," ")
@@ -240,6 +288,8 @@ async def say(ctx, serv_raw, chan, *mes_raw):
 
 @bot.command(pass_context=True)
 async def leave(ctx, ID):
+    cmd_trigger()
+
     if ctx.message.author.server_permissions.administrator:
         try:
             if ctx.message.author.id == bot_owner_id:
@@ -264,8 +314,10 @@ async def leave(ctx, ID):
 async def userinfo(ctx, member : discord.Member = None):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
+    cmd_trigger()
+
     if member is None: member = ctx.message.author
-    await ctx.bot.say(embed=discord.Embed(title=f"{member.name}'s User Information", color=0xeee657)
+    return await ctx.bot.say(embed=discord.Embed(title=f"{member.name}'s User Information", color=0xeee657)
     .add_field(name="Name", value=member.name, inline = False)
     .add_field(name="Discriminator", value=member.discriminator, inline = False)
     .add_field(name="ID", value=member.id, inline = False)
@@ -278,20 +330,30 @@ async def userinfo(ctx, member : discord.Member = None):
     .set_thumbnail(url=member.avatar_url)
     .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
 
-
+##############
 @bot.command(pass_context=True)
 async def reload(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     if ctx.message.author.server_permissions.administrator:
         try:
             if ctx.message.author.id == bot_owner_id:
                 await ctx.bot.say("`Reloading modules. Restarting connection.`")
                 try:
+                    sd = discord.Game(name="REBOOT")
+                    bye = discord.Game(name="BYE")
+                    await bot.change_presence(status=discord.Status.idle, game=sd)
+                    await asyncio.sleep(3)
+                    await bot.change_presence(status=discord.Status.idle, game=bye)
+                    await asyncio.sleep(1)
+                    await bot.change_presence(status=discord.Status.offline)
                     total_uptime_save()
                     reaction_trigger_save()
                     cmd_trigger_save()
+                    await ctx.bot.say("`Values saved`")
+                    await ctx.bot.say("`Logout`")
                     os.execv(sys.executable, ['python3.6'] + sys.argv)
                     # os.execv(sys.executable, ['sudo nohup python3.6'] + sys.argv)
                 except:
@@ -309,14 +371,38 @@ async def reload(ctx):
 
 
 @bot.command(pass_context=True)
+async def suggestion(ctx):
+    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
+    print('------')
+    cmd_trigger()
+
+    try:
+        for channel in ctx.message.server.channels:
+            if channel.name == 'suggestions':
+                embed = discord.Embed(title="Suggestion Author", description=ctx.message.author.name, color=0xeee657)
+                embed.add_field(name="Suggestion Message", value=ctx.message.content)
+                await bot.send_message(channel, embed=embed)
+        embed = discord.Embed(title="Suggestion received", color=0xeee657)
+        return await ctx.bot.say(embed=embed)  
+    except:
+        return
+
+##############
+@bot.command(pass_context=True)
 async def quit(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     if ctx.message.author.server_permissions.administrator:
         try:
             if ctx.message.author.id == bot_owner_id:
                 await ctx.bot.say("`Shutdown requested`")
+                sd = discord.Game(name="SHUTDOWN")
+                bye = discord.Game(name="BYE")
+                await bot.change_presence(status=discord.Status.idle, game=sd)
+                await asyncio.sleep(3)
+                await bot.change_presence(status=discord.Status.idle, game=bye)
                 total_uptime_save()
                 reaction_trigger_save()
                 cmd_trigger_save()
@@ -335,54 +421,42 @@ async def quit(ctx):
                             color=0xeee657)
             return await ctx.bot.say(embed=embed)
 
-
-@bot.command(pass_context=True)
-async def suggestion(ctx):
-    print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
-    print('------')
-    cmd_trigger()
-    try:
-        for channel in ctx.message.server.channels:
-            if channel.name == 'suggestions':
-                embed = discord.Embed(title="Suggestion Author", description=ctx.message.author.name, color=0xeee657)
-                embed.add_field(name="Suggestion Message", value=ctx.message.content)
-                await bot.send_message(channel, embed=embed)
-        embed = discord.Embed(title="Suggestion received", color=0xeee657)
-        return await ctx.bot.say(embed=embed)  
-    except:
-        return
-
-
+#############
 @bot.command(pass_context=True)
 async def prefix(ctx, prefix_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     if ctx.message.author.server_permissions.administrator:
-        try:
-            with open('config.json', 'r') as json_file:
-                data = json.load(json_file)    
-                for p in data ['PREFIX']:
-                    prefix_choice = p['prefix']
-                    if prefix_raw == "show":
-                        embed = discord.Embed(title="Prefix", description=("Actual prefix is: " + prefix_choice), color=0xeee657)
-                        return await ctx.bot.say(embed=embed)
-                    else:
-                        if ctx.message.author.id == bot_owner_id:
-                            data["PREFIX"][0]["prefix"] = prefix_raw
-                            with open('config.json', 'w') as outfile:
-                                json.dump(data, outfile)
-                                bot.command_prefix = commands.when_mentioned_or(prefix_raw)
-                                embed = discord.Embed(title="Return", description=("Prefix successfully set."),
-                            color=0xeee657)
-                                return await ctx.bot.say(embed=embed)
-                        else:
-                            embed = discord.Embed(title="Notification", description=("<@!"+bot_owner_id+">, " + ctx.message.author.mention + " wants to have the prefix changed to " + prefix_raw + "."),
-                            color=0xeee657)
-                            return await ctx.bot.say(embed=embed)
-        except IndexError:
-            embed = discord.Embed(title="Error", description=("Index error when grabbing first obj"), color=0xeee657)
+        with open('config.json', 'r') as json_file:
+            data = json.load(json_file)    
+            for p in data ['PREFIX']:
+                prefix_choice = p['prefix']
+        print(json_file.closed) # debug
+        if prefix_raw == "show":
+            embed = discord.Embed(title="Prefix", description=("Actual prefix is: " + prefix_choice), color=0xeee657)
             return await ctx.bot.say(embed=embed)
+        else:
+            if ctx.message.author.id == bot_owner_id:
+                data["PREFIX"][0]["prefix"] = prefix_raw
+                with open('config.json', 'w') as outfile:
+                    json.dump(data, outfile)
+                print(json_file.closed) # debug
+                prefix_raw = prefix_choice # debug
+                status_pref = discord.Game(name=(f'{prefix_raw}help'))
+                await bot.change_presence(status=discord.Status.online, game=status_pref)
+                data["STATUS"][0]["status"] = str(status_pref)
+                with open('config.json', 'w') as outfile_st:
+                    json.dump(data, outfile_st)
+                print(json_file.closed) # debug
+                status_pref = status_pull # debug
+                bot.command_prefix = commands.when_mentioned_or(prefix_raw)
+                return await ctx.bot.say(embed=discord.Embed(title="Return", description=("Prefix successfully set."), color=0xeee657))
+            else:
+                return await ctx.bot.say(embed=discord.Embed(title="Notification", 
+                description=("<@!"+bot_owner_id+">, " + ctx.message.author.mention + " wants to have the prefix changed to " + prefix_raw + "."), 
+                color=0xeee657))
     else:
         embed = discord.Embed(title="Permission", description=(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.'),
                             color=0xeee657)
@@ -394,13 +468,15 @@ async def status(ctx, *status_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     if ctx.message.author.server_permissions.administrator:
         status_arg = ' '.join(status_raw)
         activity = discord.Game(name=status_arg)
+        data["STATUS"][0]["status"] = status_arg
+        with open('config.json', 'w') as outfile:
+            json.dump(data, outfile)
         await bot.change_presence(status=discord.Status.online, game=(activity))
-        embed = discord.Embed(title="Status changed to: ", description=("@Sir Henry Pickles playing " + status_arg),
-                            color=0xeee657)
-        return await ctx.bot.say(embed=embed)
+        return await ctx.bot.say(embed=discord.Embed(title="Status changed to: ", description=("@Sir Henry Pickles playing " + status_arg), color=0xeee657))
     else:
         return await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
 
@@ -410,45 +486,13 @@ async def status(ctx, *status_raw):
 # async def on_command_error(error):
 #     await bot.send_message(error.channel, "What now," + error.author.mention + "?")
 
-# todo converter celsius kelvin farenheit
-# todo converter mile kilometer etc
-# @bot.command(pass_context = True)
-# async def convert(ctx, *keywords_raw):
-#     await ctx.bot.say("This is in the making.")
 
-# todo YT?
-
-# # todo
-# @bot.command(pass_context = True)
-# async def timer(ctx, number, unit):
-#     # print(number_unit_raw)
-#     # number_unit = number_unit_raw
-#     # print(number_unit)
-#     # number, unit = number_unit.split(" ")
-#     print(number)
-#     print(unit)
-#     if not unit:
-#         unit = minutes
-#     if unit == "seconds":
-#         unit = seconds
-#     if unit == "minutes":
-#         unit = minutes
-#     if unit == "hours":
-#         unit = minutes
-#     start_time_now = time.time()
-#     print(number)
-#     print(unit)
-#     print(time.time())
-#     timer_to = time.time() + (number * unit)
-#     print(timer_to)
-
-
-# todo 2000 char restriciton (time)
 @bot.command(pass_context=True)
 async def members(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     if ctx.message.author.server_permissions.administrator:
         try:
             await memberList.membersLog(ctx)
@@ -464,6 +508,7 @@ async def members_show(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     if ctx.message.author.server_permissions.administrator:
         try:
             await memberList.membersDump(ctx)
@@ -473,13 +518,14 @@ async def members_show(ctx):
     else:
         return await ctx.bot.say(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
 
-
+###############
 def total_uptime_save():
     time_lapsed = (time.time() - start_time)
     total_uptime = time_lapsed + uptime_pull
     data["UPTIME"][0]["uptime"] = total_uptime
-    with open('config.json', 'w') as outfile:
-        json.dump(data, outfile)
+    with open('config.json', 'w') as json_file:
+        json.dump(data, json_file) # at this point the config is written and overwrites the set prefix
+    return
 
 
 @bot.command(pass_context=True)
@@ -490,7 +536,8 @@ async def info(ctx):
     total_uptime_save()
     time_lapsed = (time.time() - start_time)
     total_uptime = time_lapsed + uptime_pull
-    await ctx.bot.say(embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
+
+    return await ctx.bot.say(embed = discord.Embed(title="Sir Henry Pickles", description="Pickles are love, pickles are life!", color=0xeee657)
     .set_thumbnail(url=bot.user.avatar_url)
     .add_field(name="System Time:", value=utilities.epoch_to_custom_date(utilities.FMT_TIME), inline=False)
     .add_field(name="Command count: ", value=cmd_trigger.Counter, inline=False)
@@ -516,11 +563,11 @@ async def cmd_time(ctx, *tz_keywords):
     moon_rep = ('Very funny, ' + ctx.message.author.mention, 'Wow, ' + ctx.message.author.mention,
                 'Oi, ' + ctx.message.author.mention + '! Go fork urself m8!',
                 'Maan, dude, idk maaan, like ... on the moon? duuuude .... DUUuUuuUuUUuDDDEeeeee. *hits blunt* idk ' + ctx.message.author.mention + ', better call the space tesla guy ..!?')
+
     if tz_keyword in (moon):
         await ctx.bot.say("...")
         await asyncio.sleep(2)
         return await ctx.bot.say(random.choice(moon_rep))
-        sleep()
     if tz_keyword is "":
         tz_keyword = "GMT+0"
         await ctx.bot.say("No keyword given, so I'll give you `GMT+0`. Try `!time GMT+0` or `!time Denver` next time.")
@@ -573,6 +620,8 @@ async def archive(ctx):
     print(
         'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '` in channel: ' + ctx.message.channel.name)
     print('------')
+    cmd_trigger()
+
     for channel in ctx.message.server.channels:
             if channel.name == 'logs':
                 msg = (f'{ctx.message.author.mention} just created an archive of {ctx.message.channel.name}!')
@@ -581,6 +630,7 @@ async def archive(ctx):
 
 async def log_messages(ctx):
     cmd_trigger()
+
     log_path = ("./logs/archive" + "-server-" + ctx.message.server.name.replace(' ', '-') + "-channel-" + ctx.message.channel.name + "-" + (utilities.epoch_to_custom_date(utilities.FMT_TIME_FILE)) + ".log")
     if ctx.message.author.server_permissions.administrator:
         async for m in bot.logs_from(ctx.message.channel):
@@ -590,7 +640,7 @@ async def log_messages(ctx):
         for channel in ctx.message.server.channels:
             if channel.name == 'logs':
                 await ctx.bot.send_file(channel, log_path)
-        await ctx.bot.send_file(ctx.message.author, log_path)
+        return await ctx.bot.send_file(ctx.message.author, log_path)
 
 
 @bot.command(pass_context=True)
@@ -599,6 +649,7 @@ async def clear(ctx, cle: int = 1000):
         'ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '` in channel: ' + ctx.message.channel.name)
     print('------')
     cmd_trigger()
+
     if ctx.message.author.server_permissions.administrator:
         for channel in ctx.message.server.channels:
             if channel.name == 'logs':
@@ -630,13 +681,16 @@ async def test(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
-    await ctx.bot.say("successful")
+
+    return await ctx.bot.say("successful")
 
 
 @bot.command(pass_context=True)
 async def mod(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
+    cmd_trigger()
+
     if ctx.message.author.server_permissions.administrator:
         return await ctx.bot.say(ctx.message.author.mention + ', you\'re a mod.')
     else:
@@ -651,18 +705,18 @@ async def cmd_help(ctx):
     cmd_trigger()
 
     await bot.send_message(member,
-                           "If you are in need of immediate assistance, I kindly suggest you to call the emergency "
-                           "services.\n "
-                           "\n"
-                           "----------\n"
-                           "\n"
-                           "**Name**: Sir Henry Pickles\n"
-                           "**Description:** *Does his best.*\n"
-                           )
+                        "If you are in need of immediate assistance, I kindly suggest you to call the emergency "
+                        "services.\n "
+                        "\n"
+                        "----------\n"
+                        "\n"
+                        "**Name**: Sir Henry Pickles\n"
+                        "**Description:** *Does his best.*\n"
+                        )
     for embed in messages.HELP_EMBEDS:
         await bot.send_message(member, embed=embed)
 
-    await bot.send_message(member, "If you still have questions, please ping the `@Mods`")
+    return await bot.send_message(member, "If you still have questions, please ping the `@Mods`")
 
 
 @bot.command(pass_context=True)
@@ -670,8 +724,9 @@ async def sleep(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     sleep = ['Yes, you should use the sleep.', 'But mooooom idonwanna!', 'Whatevs, man.', 'JA!']
-    await ctx.bot.say(random.choice(sleep))
+    return await ctx.bot.say(random.choice(sleep))
 
 
 @bot.command(pass_context=True)
@@ -679,20 +734,18 @@ async def shower(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     shower = [' you reek already!', ' it`s about time...', ' nah, its cool.',
-              ' I mean, have you already showered this week?', ' but only a golden shower.']
-    await ctx.bot.say(ctx.message.author.mention + " " + random.choice(shower))
+            ' I mean, have you already showered this week?', ' but only a golden shower.']
+    return await ctx.bot.say(ctx.message.author.mention + " " + random.choice(shower))
 
 
-# todo store jokes in json.log
 @bot.command(pass_context=True)
 async def joke(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
-
-    embed = discord.Embed(title="Joke", description=random.choice(messages.JOKES), color=0x00ff00)
-    await ctx.bot.say(embed=embed)
+    return await ctx.bot.say(embed=discord.Embed(title="Joke", description=random.choice(messages.JOKES), color=0x00ff00))
 
 
 @bot.command(name='8ball', pass_context=True)
@@ -700,13 +753,13 @@ async def cmd_8ball(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     ball_res = ['It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes - definitely.', 'You may rely on it.',
                 'As I see it, yes.', 'Most likely.', 'Outlook good.', 'Yes.', 'Signs point to yes.',
                 'Reply hazy, try again.', 'Ask again later.', 'Better not tell you now.', 'Connot predict now.',
                 'Concentrate and ask again.', 'Don`t count on it.', 'My reply is no.', 'My sources say no.',
                 'Outlook not so good.']
-    embed = discord.Embed(title="8Ball", description=random.choice(ball_res), color=0x00ff00)
-    await ctx.bot.say(embed=embed)
+    return await ctx.bot.say(embed=discord.Embed(title="8Ball", description=random.choice(ball_res), color=0x00ff00))
 
 
 @bot.command(pass_context=True)
@@ -714,6 +767,7 @@ async def roll(ctx, dice_string, mod: int = 0):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     try:
         count_raw, num_raw = dice_string.split("d")
         if not count_raw:
@@ -748,26 +802,12 @@ async def bleach(ctx):
     await ctx.bot.say(random.choice(messages.BLEACHES))
 
 
-# todo
-# TIP System
-# Karma System
-# given that karma systems are memory intent can you use the nickname system to hold the karma information. 
-# Example USER (0) and I get thanked the bot looks at the nickname takes the int 0 and increments 
-# it by one and renames me USER (1). The only caveat to this system  is you would have to restrict 
-# nicknames to the bot and build a request to change it. But it would display karma openly and free up 
-# memory as it's stored server side.
-
-# todo
-# #google calendar
-# @bot.command()
-# async def cal(ctx):
-#     ctx.bot.say()
-
 @bot.command(pass_context=True)
 async def goodreads(ctx, *keyword_raw):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     keyword = "+".join(keyword_raw)
     async with aiohttp.ClientSession() as session:
         html = await fetch(session,'https://www.goodreads.com/search.xml?key=' + goodreads_key + '&q=' + keyword + '&page=1')
@@ -791,6 +831,7 @@ async def cmd_reddit(ctx, subreddit_raw):
     print('------')
     cmd_trigger()
     x = int(0)
+
     try:
         for i, submission in enumerate(reddit.subreddit(subreddit_input).hot(limit=5)):
             if reddit.subreddit(subreddit_input).over18:
@@ -817,6 +858,7 @@ async def cmd_wikipedia(ctx, *wiki_keyword_raw):
     print('------')
     cmd_trigger()
     wiki_error = "Error. Specify/ check/ rephrase your search query,"
+
     try:
         wiki_keyword = ' '.join(wiki_keyword_raw)
         wiki_keyword_string = wikipedia.page(wiki_keyword, auto_suggest=True, redirect=True)
@@ -841,6 +883,7 @@ async def wiktionary(ctx, *wikti_keyword_list):
     cmd_trigger()
     wiki_error = "Error. Specify/ check/ rephrase your search query,"
     parser = WiktionaryParser()
+
     try:
         def wiktionary__dict(the_fetch):
             return ast.literal_eval(str(the_fetch).encode('ascii', 'ignore').decode('ascii'))[0]
@@ -854,7 +897,14 @@ async def wiktionary(ctx, *wikti_keyword_list):
         embed_wikti = discord.Embed(title="Wiktionary", description=layout, color=0x00ff00)
         await ctx.bot.say(embed=embed_wikti)
     except:
-        await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>!')
+        return await ctx.bot.say(f'{wiki_error} <@{ctx.message.author.id}>!')
+
+
+@bot.command(pass_context=True)
+async def python(ctx, *keywords_raw):
+    keywords_clean = '+'.join(keywords_raw)
+    url = ("https://docs.python.org/3.6/search.html?q=" + keywords_clean)
+    return await ctx.bot.say("Here you go: " + url)
 
 
 @bot.command(pass_context=True)
@@ -862,6 +912,7 @@ async def roles(ctx):
     print('ID: ' + ctx.message.author.id + ' (Name: ' + ctx.message.author.name + ') used `' + ctx.command.name + '`')
     print('------')
     cmd_trigger()
+
     await ctx.bot.say(ctx.message.author.mention + "\'s roles are:")
     for r in ctx.message.author.roles:
         roles_me = r.name
@@ -873,6 +924,7 @@ def reaction_trigger_save():
     with open('config.json', 'w') as outfile:
         json.dump(data, outfile)
     reaction_trigger.counter = reaction_trigger_pull
+    return
 
 def reaction_trigger():
     reaction_trigger.counter += 1
@@ -886,6 +938,7 @@ def cmd_trigger_save():
     with open('config.json', 'w') as outfile:
         json.dump(data, outfile)
     cmd_trigger.Counter = cmd_trigger_pull
+    return
 
 def cmd_trigger():
     cmd_trigger.Counter += 1
@@ -919,7 +972,8 @@ async def on_message(message):
         if t in message.content:
             for reaction in messages.TRIGGERS[t]:
                 await bot.add_reaction(message, reaction)
-
+    
+    # .lower doesn't work well with arguments coming after a command
     # message.content = message.content.lower()
     await bot.process_commands(message)
 
