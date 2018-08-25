@@ -211,49 +211,53 @@ async def youtube(ctx, keyword_raw, url=""):
     channel = ctx.message.author.voice.voice_channel
     voice = bot.join_voice_channel(channel)
 
-    if keyword_raw == "join":
-        await ctx.bot.say(joining)
-        await voice
+    try:
 
-    if keyword_raw == "leave":
-        await ctx.bot.say(leaving)
-        for x in bot.voice_clients:
-            if(x.server == ctx.message.server):
-                return await x.disconnect()
+        if keyword_raw == "join":
+            await ctx.bot.say(joining)
+            await voice
 
-    # if a song is already playing nothing happens
-    if keyword_raw == "play":
-        if url is "":
-            return ctx.bot.say("You got to give me a YouTube URL, stupid! `!youtube play URL_HERE`")
-        voice = await bot.join_voice_channel(channel)
-        global player
-        player = await voice.create_ytdl_player(url)
-        player.start()
-        playing = (f'`Now playing {player.title}!`')
-        await ctx.bot.say(playing)
-        return player
+        if keyword_raw == "leave":
+            await ctx.bot.say(leaving)
+            for x in bot.voice_clients:
+                if(x.server == ctx.message.server):
+                    return await x.disconnect()
 
-    if keyword_raw == "stop":
-        await ctx.bot.say(stopping)
-        player.stop()
+        # if a song is already playing nothing happens
+        if keyword_raw == "play":
+            if url is "":
+                return ctx.bot.say("You got to give me a YouTube URL, stupid! `!youtube play URL_HERE`")
+            voice = await bot.join_voice_channel(channel)
+            global player
+            player = await voice.create_ytdl_player(url)
+            player.start()
+            playing = (f'`Now playing {player.title}!`')
+            await ctx.bot.say(playing)
+            return player
 
-    if keyword_raw == "pause":
-        await ctx.bot.say(pausing)
-        player.pause()
+        if keyword_raw == "stop":
+            await ctx.bot.say(stopping)
+            player.stop()
 
-    if keyword_raw == "resume":
-        await ctx.bot.say(resuming)
-        player.resume()
+        if keyword_raw == "pause":
+            await ctx.bot.say(pausing)
+            player.pause()
 
-    if keyword_raw == "volume":
-        set_vol = (int(url)/100)
-        if float(set_vol) <= 0:
-            return await ctx.bot.say("You can\'t do that, silly.")
-        elif float(set_vol) > 1:
-            return await ctx.bot.say("You can\'t do that, silly.")
-        else:
-            await ctx.bot.say(volume)
-            player.volume = set_vol
+        if keyword_raw == "resume":
+            await ctx.bot.say(resuming)
+            player.resume()
+
+        if keyword_raw == "volume":
+            set_vol = (int(url)/100)
+            if float(set_vol) <= 0:
+                return await ctx.bot.say("You can\'t do that, silly.")
+            elif float(set_vol) > 1:
+                return await ctx.bot.say("You can\'t do that, silly.")
+            else:
+                await ctx.bot.say(volume)
+                player.volume = set_vol
+    except:
+        return await ctx.bot.say("Whoops, " + ctx.message.author.mention + "! `!" + ctx.command.name + " " + keyword_raw + "` didn\'t work this time.\nI\'m probably already playing something or idk.\nProbably I broke.")
 
     if keyword_raw == "info":
         if player.is_playing():
@@ -379,11 +383,9 @@ async def suggestion(ctx):
     try:
         for channel in ctx.message.server.channels:
             if channel.name == 'suggestions':
-                embed = discord.Embed(title="Suggestion Author", description=ctx.message.author.name, color=0xeee657)
-                embed.add_field(name="Suggestion Message", value=ctx.message.content)
-                await bot.send_message(channel, embed=embed)
-        embed = discord.Embed(title="Suggestion received", color=0xeee657)
-        return await ctx.bot.say(embed=embed)  
+                await bot.send_message(channel, embed=discord.Embed(title="Suggestion Author", description=ctx.message.author.name, color=0xeee657)
+                .add_field(name="Suggestion Message", value=ctx.message.content))
+        return await ctx.bot.say(embed=discord.Embed(title="Suggestion received", color=0xeee657))  
     except:
         return
 
@@ -836,6 +838,18 @@ async def cmd_reddit(ctx, subreddit_raw):
         for i, submission in enumerate(reddit.subreddit(subreddit_input).hot(limit=5)):
             if reddit.subreddit(subreddit_input).over18:
                 await ctx.bot.say("Please do not request NSFW results.")
+                for channel in ctx.message.server.channels:
+                    if channel.name == 'logs':
+                        auth = (f'{ctx.message.author.name} ({ctx.message.author})')
+                        chan = (f'#{ctx.message.channel}')
+                        return await bot.send_message(channel, embed=discord.Embed(title="Requested NSFW content", color=0xeee657)
+                        .add_field(name="Channel", value=chan, inline = False)
+                        .add_field(name="Message Author", value=auth, inline = False)
+                        .add_field(name="Message Author ID", value=ctx.message.author.id, inline = False)
+                        .add_field(name="Message ID", value=ctx.message.id, inline = False)
+                        .add_field(name="Message", value=ctx.message.content, inline = False)
+                        .set_thumbnail(url=ctx.message.author.avatar_url)
+                        .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
                 break
             if submission.over_18:
                 continue
