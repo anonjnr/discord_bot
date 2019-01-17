@@ -72,7 +72,7 @@ To start the bot simply use `python3.6 bcad_bot3.6.py`(will automatically start 
 
 If you run into any issues, look up the documentation as provided on top of this `readme.md` or file an issue.
 
-XOXOXoxooxo - @anonjnr
+XOXOXoxooxo - @x3l51
 
 ## Commands for the Bot:
 
