@@ -1,12 +1,17 @@
 sudo apt-get update
 sudo apt-get upgrade
-cd /opt
-sudo wget https://www.python.org/ftp/python/3.6.6/Python-3.6.6.tar.xz
-sudo tar xf Python-3.6.6.tar.xz
-cd Python-3.6.6/
-sudo ./configure
-sudo make
-sudo make altinstall
+if command -v python3 &>/dev/null; then
+    echo Python 3 is installed
+else
+    cd /opt
+    sudo wget https://www.python.org/ftp/python/3.6.6/Python-3.6.6.tar.xz
+    sudo tar xf Python-3.6.6.tar.xz
+    cd Python-3.6.6/
+    sudo ./configure
+    sudo make
+    sudo make altinstall
+fi
+sudo apt-get install python3-pip
 sudo apt-get install python-dev
 sudo apt-get install python-lxml
 sudo python3.6 -m pip install --upgrade pip
