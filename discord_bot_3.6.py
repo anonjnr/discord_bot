@@ -602,8 +602,8 @@ async def quit(ctx):
             if bot.is_ready():
                 await ctx.send("`Values saved`")
                 await ctx.send("`Logout`")
-                return await bot.logout()
-                sys.exit(0)
+                await bot.logout()
+                return sys.exit(0)
         else:
             embed = discord.Embed(title="Notification", description=("<@!"+bot_owner_id+">, " + ctx.message.author.mention + " wants to quit the bot."),
                         color=0xeee657)
@@ -1088,7 +1088,6 @@ def reaction_trigger_save():
         data["COUNTER"][0]["counter_reac"] = str(reaction_trigger.counter)
         with open('config.json', 'w') as outfile:
             json.dump(data, outfile)
-        reaction_trigger.counter = reaction_trigger_pull
     return
 
 def reaction_trigger():
@@ -1106,7 +1105,6 @@ def cmd_trigger_save():
         data["COUNTER"][0]["counter_cmd"] = str(cmd_trigger.Counter)
         with open('config.json', 'w') as outfile:
             json.dump(data, outfile)
-        cmd_trigger.Counter = cmd_trigger_pull
     return
 
 def cmd_trigger():
