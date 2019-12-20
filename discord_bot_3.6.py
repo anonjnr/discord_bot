@@ -55,7 +55,7 @@ with open('config.json', 'r') as json_file:
         status_pull = p['status']
 
 description = 'Sir Henry Pickles, the pickly Bot!'
-bot = commands.Bot(max_messages=10000, command_prefix=commands.when_mentioned_or(prefix_choice))
+bot = commands.Bot(max_messages=10000, command_prefix=commands.when_mentioned_or(prefix_choice), case_insensitive=True)
 reddit = praw.Reddit(client_id=json_client_id, client_secret=json_client_secret, user_agent=json_user_agent)
 start_time = time.time()
 bot.remove_command('help')
