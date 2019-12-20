@@ -1159,80 +1159,80 @@ async def on_message(message):
             await message.add_reaction(random.choice(['🇺🇸', '🍔', '🌭', '🔫']))
         if 'NANI' in message.content.upper():
             await message.channel.send('NAAAAANNNIIIIII!?!?!?!11')
-#         if not message.channel.nsfw:
-#             offensiveMatch = False
-#             offensiveMatchList = []
-#             for y in re.sub("[^\w]", " ",  message.content).split():
-#                 for z in messages.OFFENSIVE_LANGUAGE:
-#                     if y.lower() == z.lower():
-#                         offensiveMatchList.append(y)
-#                         offensiveMatch = True
-#             if offensiveMatch:
-#                 usage_string = (f'\
-#     [TIME: {utilities.epoch_to_custom_date(utilities.FMT_TIME)}]\n\
-#     Author Alias: {message.author.name}\n\
-#     Author Name: {message.author}\n\
-#     Author ID: {message.author.id}\n\
-#     Event: Offensive Language\n\
-#     Full Message: `{message.content}`\n\
-#     Channel: {message.channel}\n\
-#     Server: {message.guild}\n\
-#     Server ID: {message.guild.id}\n\
-# ------\
-#                 ')
-#                 print(usage_string)
-#                 await message.channel.send(f'{message.author.mention}, please do not use this kind of language in non-NSFW marked channels. There are kids here.')
-#                 for channel in message.guild.channels:
-#                     if channel.name == 'logs':
-#                         if len(offensiveMatchList) > 1:
-#                             singularOrPlural = "Words:" 
-#                         else:
-#                             singularOrPlural = "Word:"
-#                         await channel.send(embed=discord.Embed(title="Offensive Language", color=0xff0000)
-#                         .add_field(name="Author Alias:", value=message.author, inline = False)
-#                         .add_field(name="Author Name:", value=message.author.name, inline = False)
-#                         .add_field(name="Author ID:", value=message.author.id, inline = False)
-#                         .add_field(name="Server Name:", value=message.guild.name, inline = False)
-#                         .add_field(name="Server ID:", value=message.guild.id, inline = False)
-#                         .add_field(name="Channel:", value=message.channel.name, inline = False)
-#                         .add_field(name="Offensive " + singularOrPlural, value=(', '.join(offensiveMatchList)), inline = False)
-#                         .add_field(name="Original Message:", value=message.content, inline = False)
-#                         .add_field(name="State:", value="DELETED", inline = False)
-#                         .set_thumbnail(url=message.author.avatar_url)
-#                         .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
-#                         await channel.send(message.guild.roles[-1].mention)
-#                         break
+        if not message.channel.nsfw:
+            offensiveMatch = False
+            offensiveMatchList = []
+            for y in re.sub("[^\w]", " ",  message.content).split():
+                for z in messages.OFFENSIVE_LANGUAGE:
+                    if y.lower() == z.lower():
+                        offensiveMatchList.append(y)
+                        offensiveMatch = True
+            if offensiveMatch:
+                usage_string = (f'\
+    [TIME: {utilities.epoch_to_custom_date(utilities.FMT_TIME)}]\n\
+    Author Alias: {message.author.name}\n\
+    Author Name: {message.author}\n\
+    Author ID: {message.author.id}\n\
+    Event: Offensive Language\n\
+    Full Message: `{message.content}`\n\
+    Channel: {message.channel}\n\
+    Server: {message.guild}\n\
+    Server ID: {message.guild.id}\n\
+------\
+                ')
+                print(usage_string)
+                await message.channel.send(f'{message.author.mention}, please do not use this kind of language in non-NSFW marked channels. There are kids here.')
+                for channel in message.guild.channels:
+                    if channel.name == 'logs':
+                        if len(offensiveMatchList) > 1:
+                            singularOrPlural = "Words:" 
+                        else:
+                            singularOrPlural = "Word:"
+                        await channel.send(embed=discord.Embed(title="Offensive Language", color=0xff0000)
+                        .add_field(name="Author Alias:", value=message.author, inline = False)
+                        .add_field(name="Author Name:", value=message.author.name, inline = False)
+                        .add_field(name="Author ID:", value=message.author.id, inline = False)
+                        .add_field(name="Server Name:", value=message.guild.name, inline = False)
+                        .add_field(name="Server ID:", value=message.guild.id, inline = False)
+                        .add_field(name="Channel:", value=message.channel.name, inline = False)
+                        .add_field(name="Offensive " + singularOrPlural, value=(', '.join(offensiveMatchList)), inline = False)
+                        .add_field(name="Original Message:", value=message.content, inline = False)
+                        .add_field(name="State:", value="DELETED", inline = False)
+                        .set_thumbnail(url=message.author.avatar_url)
+                        .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
+                        await channel.send(message.guild.roles[-1].mention)
+                        break
 
-#                 messageClean = message.content
-#                 for matchNr in range(0, len(offensiveMatchList)):
-#                     messageClean = messageClean.replace(offensiveMatchList[matchNr], (len(offensiveMatchList[matchNr]) * "*"))
+                messageClean = message.content
+                for matchNr in range(0, len(offensiveMatchList)):
+                    messageClean = messageClean.replace(offensiveMatchList[matchNr], (len(offensiveMatchList[matchNr]) * "*"))
 
-#                 await message.channel.send(embed=discord.Embed(title="Offensive Language", color=0xff0000)
-#                     .add_field(name="Author Alias:", value=message.author, inline = False)
-#                     .add_field(name="Author Name:", value=message.author.name, inline = False)
-#                     .add_field(name="Author ID:", value=message.author.id, inline = False)
-#                     .add_field(name="Server Name:", value=message.guild.name, inline = False)
-#                     .add_field(name="Server ID:", value=message.guild.id, inline = False)
-#                     .add_field(name="Channel:", value=message.channel.name, inline = False)
-#                     .add_field(name="Original Message:", value=discord.utils.escape_markdown(messageClean), inline = False)
-#                     .add_field(name="State:", value="DELETED", inline = False)
-#                     .set_thumbnail(url=message.author.avatar_url)
-#                     .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
+                await message.channel.send(embed=discord.Embed(title="Offensive Language", color=0xff0000)
+                    .add_field(name="Author Alias:", value=message.author, inline = False)
+                    .add_field(name="Author Name:", value=message.author.name, inline = False)
+                    .add_field(name="Author ID:", value=message.author.id, inline = False)
+                    .add_field(name="Server Name:", value=message.guild.name, inline = False)
+                    .add_field(name="Server ID:", value=message.guild.id, inline = False)
+                    .add_field(name="Channel:", value=message.channel.name, inline = False)
+                    .add_field(name="Original Message:", value=discord.utils.escape_markdown(messageClean), inline = False)
+                    .add_field(name="State:", value="DELETED", inline = False)
+                    .set_thumbnail(url=message.author.avatar_url)
+                    .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
 
-#                 await message.author.send(embed=discord.Embed(title="Offensive Language", color=0xff0000)
-#                         .add_field(name="Author Alias:", value=message.author, inline = False)
-#                         .add_field(name="Author Name:", value=message.author.name, inline = False)
-#                         .add_field(name="Author ID:", value=message.author.id, inline = False)
-#                         .add_field(name="Server Name:", value=message.guild.name, inline = False)
-#                         .add_field(name="Server ID:", value=message.guild.id, inline = False)
-#                         .add_field(name="Channel:", value=message.channel.name, inline = False)
-#                         .add_field(name="Offensive " + singularOrPlural, value=(', '.join(offensiveMatchList)), inline = False)
-#                         .add_field(name="Original Message:", value=message.content, inline = False)
-#                         .add_field(name="State:", value="DELETED", inline = False)
-#                         .add_field(name="Rules", value="Please rephrase your message", inline = False)
-#                         .set_thumbnail(url=message.author.avatar_url)
-#                         .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
-#                 return await message.delete()
+                await message.author.send(embed=discord.Embed(title="Offensive Language", color=0xff0000)
+                        .add_field(name="Author Alias:", value=message.author, inline = False)
+                        .add_field(name="Author Name:", value=message.author.name, inline = False)
+                        .add_field(name="Author ID:", value=message.author.id, inline = False)
+                        .add_field(name="Server Name:", value=message.guild.name, inline = False)
+                        .add_field(name="Server ID:", value=message.guild.id, inline = False)
+                        .add_field(name="Channel:", value=message.channel.name, inline = False)
+                        .add_field(name="Offensive " + singularOrPlural, value=(', '.join(offensiveMatchList)), inline = False)
+                        .add_field(name="Original Message:", value=message.content, inline = False)
+                        .add_field(name="State:", value="DELETED", inline = False)
+                        .add_field(name="Rules", value="Please rephrase your message", inline = False)
+                        .set_thumbnail(url=message.author.avatar_url)
+                        .set_footer(text=bot.user.name, icon_url=bot.user.avatar_url))
+                return await message.delete()
 
         for t in messages.TRIGGERS:
             if t in message.content.upper() or t in message.content.lower():
