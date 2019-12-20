@@ -77,96 +77,127 @@ XOXOXoxooxo - @x3l51
 You can call a command by typing `@Sir Henry Pickles COMMAND` or `!COMMAND`
 
 `help`
+
 Prints this. It's the basic commands you can use the Bot for
 
 `info`
+
 Basic information on the Bot such as name and author
 
 `userinfo`
+
 Let's you look up basic info about another user. Example: `!userinfo @OTHERUSER`
 
 `test`
+
 Tests if the Bot works properly. Has no other purpose
 
 `suggestion`
+
 Lets everyone suggest stuff for the bot/ server. Example: `!suggestion The bot should stay as it is for it is already awesome`
 
 `goodreads`
+
 Let's you look for authors and books on Goodread.com. For this you can use an authors name, book title, ISBN or even all together. Example: `@Sir Henry Pickles goodreads Neil Gaiman Norse Mythology` or `!goodreads Neil Gaiman Norse Mythology`
 
 `reddit`
+
 With this command you can let Henry post the `top 3 hot topics` of a subreddit of your choosing. Simply use `@Sir Henry Pickles reddit SUBREDDIT` or `!reddit SUBREDDIT` with `subreddit` being the subreddit of your choosing. Subreddit
     
 `wikipedia`
+
 Let's you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you're looking for
 
 `wiktionary`
+
 Let's you search wiktionary for anything. Gives you a short summary and stuff. Use with `@Sir Henry Pickles wiktionary KEYWORD` or `!wiktionary KEYWORD` with KEYWORD being what you're looking for
 
 `roll`
+
 You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!")
 
 `time`
+
 Gives you the current time for different timezones. For example use with `!time Berlin` or `!time EST`.
 
 `bleach`
+
 Applies eye bleach. Try it! (recommended after and/ or before clear)
 
 `votecall`
+
 Calls a simple thumb up/ thumb down vote for the message.
 
 `greeting`
+
 Say Hi to Henry! Or Hello or Morning or something like this
 
 `goodbye`
+
 Same as with greeting. Responds to a variety of goodbyes
 
 `sleep`
+
 Let's the Bot decide if you should go to bed
 
 `shower`
+
 Let's the Bot decide if you should take a shower
 
 `joke`
+
 Let Henry tell you a joke which most certainly is hilarious
 
 `8ball`
+
 Ask the oracle with this all time classic
 
 `python`
+
 Gives you a link to the official python docs: `!python recursion`
 
 ## This section is commands for mods/ owners only
 
 `archive`
+
 Archives alll messages of the channel it is called from. A log will be send to the caller of the commmand via PM and another copy goes into #logs
 
 `clear`
+
 With this command a Moderator can clear all messages in a channel if something NSFW or otherwise inapropriate got posted. Other users can use this command aswell - it automatically pings the Moderators for them. For the last 1000 messages purged `clear`, for a certains amount `clear NUMBER` with `NUMBER` being any number between 0 and 1000
 
 `members`
+
 With  this you can save a list of all users of your server
 
 `members_show`
+
 Shows the contains of the saved member list 
 
 `mod`
+
 Shows if you're a mod
 
 `roles`
+
 Shows you what roles you have
 
 `status`
+
 Change the status of the bot. `!status the guitar` to have his status changed to: `@Sir Henry Pickles Playing the guitar`
 
 `prefix`
+
 With `!prefix show` the bot will say what prefix is currently used. With `!prefix ?` you can change it to `?` with `?` being whatever you want
 
 `reload`
+
 Shuts down the bot and let's it start up anew
 
 `quit`
+
 Shuts down the bot. It needs to be restarted manually after
 
 `leave`
+
 Leaves the server the command is called from
