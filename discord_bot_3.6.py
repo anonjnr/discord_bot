@@ -808,7 +808,7 @@ async def log_messages(ctx):
     log_path = ("./logs/archive" + "-server-" + ctx.message.guild.name.replace(' ', '-') + "-channel-" + ctx.message.channel.name + "-" + (utilities.epoch_to_custom_date(utilities.FMT_TIME_FILE)) + ".log")
     if ctx.message.author.guild_permissions.administrator:
         async for m in ctx.message.channel.history(limit=None):
-            list_all = (f'Time (CET): {utilities.epoch_to_custom_date(utilities.FMT_TIME)}\nID: {m.author.id}\nName: {m.author} ({m.author.name})\nContent: {m.content}\n\n')
+            list_all = (f'Time (CET): {m.created_at}\nID: {m.author.id}\nName: {m.author} ({m.author.name})\nContent: {m.content}\n\n')
             with open(log_path, 'a', encoding='utf-8') as file:
                 file.write(list_all)
         for channel in ctx.message.guild.channels:
