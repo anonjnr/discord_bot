@@ -211,10 +211,14 @@ async def on_member_join(member):
     print(usage_string)
     for channel in member.guild.channels:
         if channel.name == 'general':
+            with open('config.json', 'r') as json_file:
+                data = json.load(json_file)    
+                for p in data ['PREFIX']:
+                    prefix_choice = p['prefix']
             welm = (f"Welcome to ")
             delm = (f"`{member.guild}`!")
             desm = (f'Enjoy the guild.')
-            vasm = (f'Type `!help` to learn all my commands.\n Now go and have some fun, {member.mention} <3')
+            vasm = (f'Type `{prefix_choice}help` to learn all my commands.\n Now go and have some fun, {member.mention} <3')
             await channel.send(embed=discord.Embed(title=welm, description=delm, color=0x28e778)
             .add_field(name=desm, value=vasm, inline = False)
             .set_thumbnail(url=member.avatar_url))
@@ -538,11 +542,14 @@ async def suggestion(ctx):
         return
 
 def reloadRaw():
-    import ctypes
-    argc = ctypes.c_int()
-    argv = ctypes.POINTER(ctypes.c_wchar_p if sys.version_info >= (3, ) else ctypes.c_char_p)()
-    ctypes.pythonapi.Py_GetArgcArgv(ctypes.byref(argc), ctypes.byref(argv))
-    os.execv(sys.executable, ['python3.6'] + [argv[1]] + sys.argv)
+    if os.name is "nt":
+        os.execv(sys.executable, ['python3.6'] + sys.argv)
+    else:
+        import ctypes
+        argc = ctypes.c_int()
+        argv = ctypes.POINTER(ctypes.c_wchar_p if sys.version_info >= (3, ) else ctypes.c_char_p)()
+        ctypes.pythonapi.Py_GetArgcArgv(ctypes.byref(argc), ctypes.byref(argv))
+        os.execv(sys.executable, ['python3.6'] + [argv[1]] + sys.argv)
 
 @bot.command()
 async def reload(ctx):
@@ -566,7 +573,6 @@ async def reload(ctx):
                 await ctx.send("`Values saved`")
                 await ctx.send("`Logout`")
                 reloadRaw()
-                # os.execv(sys.executable, ['python3.6'] + sys.argv)
         else:
             embed = discord.Embed(title="Notification", description=("<@!"+bot_owner_id+">, " + ctx.message.author.mention + " wants to reload the bot."),
                         color=0xeee657)
@@ -611,20 +617,24 @@ async def prefix(ctx, prefix_raw):
     printCtx(ctx)
     cmd_trigger()
 
-    with open('config.json', 'r') as json_file:
-        data = json.load(json_file)    
-        for p in data ['PREFIX']:
-            prefix_choice = p['prefix']
     if prefix_raw == "show":
+        with open('config.json', 'r') as json_file:
+            data = json.load(json_file)    
+            for p in data ['PREFIX']:
+                prefix_choice = p['prefix']
         embed = discord.Embed(description=("Actual prefix is: " + prefix_choice), color=0xeee657)
         return await ctx.send(embed=embed)
     else:
         if ctx.message.author.guild_permissions.administrator:
             if commands.is_owner():
-                data["PREFIX"][0]["prefix"] = prefix_raw
-                with open('config.json', 'w') as outfile:
-                    json.dump(data, outfile)
-                status_pref = discord.Game(name=(f'{prefix_raw}help'))
+                with open('config.json', 'r') as json_file:
+                    data = json.load(json_file)  
+                    data["PREFIX"][0]["prefix"] = prefix_raw
+                    with open('config.json', 'w') as outfile:
+                        json.dump(data, outfile)
+                statusMsg = (f'{prefix_raw}help')
+                status_pref = discord.Game(name=statusMsg)
+                saveStatus(statusMsg)
                 await bot.change_presence(status=discord.Status.online, activity=status_pref)
                 bot.command_prefix = commands.when_mentioned_or(prefix_raw)
                 return await ctx.send(embed=discord.Embed( description=("Prefix successfully set to: " + prefix_raw), color=0xeee657))
@@ -645,13 +655,21 @@ async def status(ctx, *status_raw):
     if ctx.message.author.guild_permissions.administrator:
         status_arg = ' '.join(status_raw)
         activity_stat = discord.Game(name=status_arg)
-        data["STATUS"][0]["status"] = status_arg
-        with open('config.json', 'w') as outfile:
-            json.dump(data, outfile)
+        saveStatus(status_arg)
+        # data["STATUS"][0]["status"] = status_arg
+        # with open('config.json', 'w') as outfile:
+        #     json.dump(data, outfile)
         await bot.change_presence(status=discord.Status.online, activity=(activity_stat))
         return await ctx.send(embed=discord.Embed(title="Status changed to: ", description=("@Sir Henry Pickles playing " + status_arg), color=0xeee657))
     else:
         return await ctx.send(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
+
+def saveStatus(status_arg):
+    with open('config.json', 'r') as json_file:
+        data = json.load(json_file)  
+        data["STATUS"][0]["status"] = status_arg
+        with open('config.json', 'w') as outfile:
+            json.dump(data, outfile)
 
 @bot.command()
 async def members(ctx):
@@ -684,14 +702,6 @@ async def members_show(ctx):
         return
     else:
         return await ctx.send(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
-
-def total_uptime_save():
-    time_lapsed = (time.time() - start_time)
-    total_uptime = time_lapsed + uptime_pull
-    data["UPTIME"][0]["uptime"] = total_uptime
-    with open('config.json', 'w') as json_file:
-        json.dump(data, json_file)
-    return
 
 @bot.command()
 async def info(ctx):
@@ -1068,11 +1078,23 @@ async def roles(ctx):
         roles_me = r.name
         await ctx.send("`" + roles_me + "`")
 
+def total_uptime_save():
+    time_lapsed = (time.time() - start_time)
+    total_uptime = time_lapsed + uptime_pull
+    with open('config.json', 'r') as json_file:
+        data = json.load(json_file)
+        data["UPTIME"][0]["uptime"] = total_uptime
+        with open('config.json', 'w') as json_file:
+            json.dump(data, json_file)
+    return
+
 def reaction_trigger_save():
-    data["COUNTER"][0]["counter_reac"] = str(reaction_trigger.counter)
-    with open('config.json', 'w') as outfile:
-        json.dump(data, outfile)
-    reaction_trigger.counter = reaction_trigger_pull
+    with open('config.json', 'r') as json_file:
+        data = json.load(json_file)
+        data["COUNTER"][0]["counter_reac"] = str(reaction_trigger.counter)
+        with open('config.json', 'w') as outfile:
+            json.dump(data, outfile)
+        reaction_trigger.counter = reaction_trigger_pull
     return
 
 def reaction_trigger():
@@ -1085,10 +1107,12 @@ def reaction_trigger():
 reaction_trigger.counter = int(reaction_trigger_pull)
 
 def cmd_trigger_save():
-    data["COUNTER"][0]["counter_cmd"] = str(cmd_trigger.Counter)
-    with open('config.json', 'w') as outfile:
-        json.dump(data, outfile)
-    cmd_trigger.Counter = cmd_trigger_pull
+    with open('config.json', 'r') as json_file:
+        data = json.load(json_file)
+        data["COUNTER"][0]["counter_cmd"] = str(cmd_trigger.Counter)
+        with open('config.json', 'w') as outfile:
+            json.dump(data, outfile)
+        cmd_trigger.Counter = cmd_trigger_pull
     return
 
 def cmd_trigger():
