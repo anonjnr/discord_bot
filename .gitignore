@@ -1,4 +1,5 @@
 *.log
+logs/
 config.json
 _config.yml
 *.pyc
