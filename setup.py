@@ -1,6 +1,5 @@
 import json
 
-
 def credentials():
     with open('config.json') as json_file:
         data = json.load(json_file)
@@ -85,12 +84,10 @@ def credentials():
                         print("Invalid input")
                         start()
 
-
 def welcome():
     print("This is the setup file for the Discord Bot.")
     print("Here you can enter, change or view all credentials needed to run it.\n")
     start()
-
 
 def start():
     start_question = input("Do you want to enter your credentials or make changes? (y/n/exit) ")
@@ -111,7 +108,6 @@ def start():
     else:
         print("Invalid input")
         start()
-
 
 def credentials_view():
     start_question_no = input("Do you want to view you credentials? (y/n/exit) ")
@@ -143,10 +139,8 @@ def credentials_view():
         print("Invalid input. Starting over.")
         start()
 
-
 def end():
     print("Ending script now.")
     return
-
 
 welcome()

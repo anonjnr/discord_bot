@@ -1,5 +1,0 @@
--e git+git://github.com/Rapptz/discord.py.git
--e git+git://github.com/goldsmith/Wikipedia.git
--e git+git://github.com/praw-dev/praw.git
--e git+git://github.com/lxml/lxml.git
--e git+git://github.com/newvem/pytz.git

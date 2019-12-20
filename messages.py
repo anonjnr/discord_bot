@@ -237,6 +237,8 @@ USER_BYES = ('bye', 'see you', 'see ya', 'cya', 'nite', 'good night')
 
 BOT_BYES = ('Farewell!', 'bye', 'see you', 'see ya', 'cya', 'nite')
 
+OFFENSIVE_LANGUAGE = ('motherfucking', 'motherfucker', 'asshole', 'analsex', 'anal', 'anus', 'arse', 'ass', 'buttplug', 'buttfuck', 'ballsack', 'bastard', 'bitch', 'biatch', 'bloody', 'blowjob', 'blow job', 'bollock', 'bollok', 'boner', 'boob', 'bugger', 'butt', 'buttplug', 'clitoris', 'cock', 'coon', 'crap', 'cunt', 'cocksuck', 'cocksucker','facefucker', 'cybersex', 'deapthroat', 'dickhead', 'dick', 'dildo', 'dyke', 'fag','faggot', 'fagot', 'fannyfucker', 'fatass', 'fistfuck', 'fistfucker', 'fistfucked', 'feck', 'fellate', 'fellatio', 'felching', 'fucking', 'fuckable', 'fucker', 'fuckable', 'fucked', 'fuckers', 'fuckface', 'fuck', 'f u c k', 'fudgepacker', 'fudge packer', 'flange', 'horeshit', 'jizz', 'lmfao', 'muff', 'nigger', 'nigga', 'piss', 'pisser', 'pissed', 'pissing', 'rimjob', 'prick', 'pussy', 'son of a whore', 'son of a motherless goat', 'shitting', 'shit', 'shitstain', 'shitbrain', 'shithead', 'sh1t', 'slut', 'smegma', 'spunk', 'tit', 'tity', 'titty', 'titie', 'tittie', 'titties', 'tits', 'tosser', 'turd', 'twat', 'vagina', 'wank', 'wanker', 'wankstain', 'whore')
+
 TRIGGERS = {
     'votecall': ('👍', '👎'),
     'australia': ('🇦🇺',),
@@ -261,53 +263,53 @@ TRIGGERS = {
 embed_cmd = discord.Embed(title="COMMANDS",
                           description="You can call a command by typing `@Sir Henry Pickles COMMAND` or `!COMMAND`",
                           color=0x00ff00)
-embed_cmd.add_field(name="`help`", value="Sends this per DM. It's the basic commands you can use the Bot for")
-embed_cmd.add_field(name="`info`", value="Basic information on the Bot such as name and author")
-embed_cmd.add_field(name="`suggestion`", value="Suggest a new funtion or improvement for the Bot. Use with `!suggestion More pickles!`")
-embed_cmd.add_field(name="`test`", value="Tests if the Bot works properly. Has no other purpose")
+embed_cmd.add_field(name="`help`", value="Sends this per DM. It's the basic commands you can use the Bot for", inline=False)
+embed_cmd.add_field(name="`info`", value="Basic information on the Bot such as name and author", inline=False)
+embed_cmd.add_field(name="`suggestion`", value="Suggest a new funtion or improvement for the Bot. Use with `!suggestion More pickles!`", inline=False)
+embed_cmd.add_field(name="`test`", value="Tests if the Bot works properly. Has no other purpose", inline=False)
 
 embed_use = discord.Embed(title="USEFUL", description="", color=0x00ff00)
 embed_use.add_field(name="`goodreads`",
-                    value="Let\'s you look for authors and books on Goodread.com. For this you can use an authors name, book title, ISBN or even all together. Example: `@Sir Henry Pickles goodreads Neil Gaiman Norse Mythology` or `!goodreads Neil Gaiman Norse Mythology`")
+                    value="Let\'s you look for authors and books on Goodread.com. For this you can use an authors name, book title, ISBN or even all together. Example: `@Sir Henry Pickles goodreads Neil Gaiman Norse Mythology` or `!goodreads Neil Gaiman Norse Mythology`", inline=False)
 embed_use.add_field(name="`reddit`",
-                    value="With this command you can let Henry post the `top 3 hot topics` of a subreddit of your choosing. Simply use `@Sir Henry Pickles reddit SUBREDDIT` or `!reddit SUBREDDIT` with `subreddit` being the subreddit of your choosing. Subreddit")
+                    value="With this command you can let Henry post the `top 3 hot topics` of a subreddit of your choosing. Simply use `@Sir Henry Pickles reddit SUBREDDIT` or `!reddit SUBREDDIT` with `subreddit` being the subreddit of your choosing. Subreddit", inline=False)
 embed_use.add_field(name="`wikipedia`",
-                    value="Let\'s you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you\'re looking for")
+                    value="Let\'s you search wikipedia for anything. Gives you a short summary and the link to the full article. Use with `@Sir Henry Pickles wikipedia KEYWORD` or `!wikipedia KEYWORD` with KEYWORD being what you\'re looking for", inline=False)
 embed_use.add_field(name="`wiktionary`",
-                    value="Let\'s you search wiktionary for anything. Basicalle the same as `Wikipedia` but only for word definition")
+                    value="Let\'s you search wiktionary for anything. Basicalle the same as `Wikipedia` but only for word definition", inline=False)
 embed_use.add_field(name="`youtube`",
-                    value="Let\'s you play music off of YouTube. Use it with `!youtube play LINK_TO_SONG`. **Important**: You have to already be in the Voice Channel you want the Bot to play music in. You can also pause, resume, stop, change the volume (0-100) or make the bot leave the Voice Channel. Example: `!youtube pause`")
+                    value="Let\'s you play music off of YouTube. Use it with `!youtube play LINK_TO_SONG`. **Important**: You have to already be in the Voice Channel you want the Bot to play music in. You can also pause, resume, stop, change the volume (0-100) or make the bot leave the Voice Channel. Example: `!youtube pause`", inline=False)
 embed_use.add_field(name="`roll`",
-                    value="You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!")
+                    value="You can `roll` a dice using `2d8` with 2 being the number of dice you want the bot to roll and 8 being the number of sides the dice has. If you just want the bot to throw one dice, just put `d8`. You can add your modifier too! Simply put `2d8 3` with 3 being your modifier. Negative values do work too!", inline=False)
 embed_use.add_field(name="`time`",
-                    value="Gives you the current time for different timezones. For example use with `!time Berlin` or `!time EST`.")
+                    value="Gives you the current time for different timezones. For example use with `!time Berlin` or `!time EST`.", inline=False)
 embed_use.add_field(name="`userinfo`",
-                    value="Posts info about a given user. `!userinfo @USER` posts all details available")
+                    value="Posts info about a given user. `!userinfo @USER` posts all details available", inline=False)
 
 embed_mod = discord.Embed(title="MODERATION", description="", color=0x00ff00)
 embed_mod.add_field(name="`clear`",
-                    value="With this command a Moderator can clear all messages in a channel if something NSFW or otherwise inapropriate got posted. Other users can use this command aswell - it automatically pings the Moderators for them. For the last 1000 messages purged `clear`, for a certain amount `clear NUMBER` with `NUMBER` being any number between 0 and 1000")
-embed_mod.add_field(name="`archive`", value="Creates an archive of the current channel and sends it via direct message")
-embed_mod.add_field(name="`prefix`", value="Let\'s you change the used prefix of the Bot. Changes it for all servers so better not use this")
-embed_mod.add_field(name="`reload`", value="Shuts down the Bot for every server and restarts it. But why would you do that?")
-embed_mod.add_field(name="`quit`", value="Let\'s the bot go offline without coming online again.")
-embed_mod.add_field(name="`leave`", value="Makes the Bot leave a server. `!leave SERVER_ID`")
+                    value="With this command a Moderator can clear all messages in a channel if something NSFW or otherwise inapropriate got posted. Other users can use this command aswell - it automatically pings the Moderators for them. For the last 1000 messages purged `clear`, for a certain amount `clear NUMBER` with `NUMBER` being any number between 0 and 1000", inline=False)
+embed_mod.add_field(name="`archive`", value="Creates an archive of the current channel and sends it via direct message", inline=False)
+embed_mod.add_field(name="`prefix`", value="Let\'s you change the used prefix of the Bot. Changes it for all servers so better not use this", inline=False)
+embed_mod.add_field(name="`reload`", value="Shuts down the Bot for every server and restarts it. But why would you do that?", inline=False)
+embed_mod.add_field(name="`quit`", value="Let\'s the bot go offline without coming online again.", inline=False)
+embed_mod.add_field(name="`leave`", value="Makes the Bot leave a server. `!leave SERVER_ID`", inline=False)
 embed_mod.add_field(name="`bleach`",
-                    value="Applies eye bleach. *Try it!* (recommended after and/ or before `clear`)")
-embed_mod.add_field(name="`roles`", value="Lists every role you have. Sometimes it\'s useful")
-embed_mod.add_field(name="`mod`", value="Checks if you\'re a moderator/ administrator or not")
+                    value="Applies eye bleach. *Try it!* (recommended after and/ or before `clear`)", inline=False)
+embed_mod.add_field(name="`roles`", value="Lists every role you have. Sometimes it\'s useful", inline=False)
+embed_mod.add_field(name="`mod`", value="Checks if you\'re a moderator/ administrator or not", inline=False)
 embed_mod.add_field(name="`status`",
-                    value="Change the status of the bot. `!status the guitar` to have his status changed to: `@Sir Henry Pickles Playing the guitar`")
+                    value="Change the status of the bot. `!status the guitar` to have his status changed to: `@Sir Henry Pickles Playing the guitar`", inline=False)
 
 embed_misc = discord.Embed(title="MISC", description="", color=0x00ff00)
-embed_misc.add_field(name="`votecall`", value="Calls a simple thumb up/ thumb down vote for the message.")
+embed_misc.add_field(name="`votecall`", value="Calls a simple thumb up/ thumb down vote for the message.", inline=False)
 embed_misc.add_field(name="`greeting`",
-                     value="Say `Hi` to Henry! Or `Hello` or `Morning` or something like this. `@Sir Henry Pickles Sup`")
+                     value="Say `Hi` to Henry! Or `Hello` or `Morning` or something like this. `@Sir Henry Pickles Sup`", inline=False)
 embed_misc.add_field(name="`goodbye`",
-                     value="Same as with greeting. Responds to a variety of goodbyes. `@Sir Henry Pickles Nite`")
-embed_misc.add_field(name="`sleep`", value="Let\'s the Bot decide if you should go to bed")
-embed_misc.add_field(name="`shower`", value="Let\'s the Bot decide if you should take a shower")
-embed_misc.add_field(name="`joke`", value="Let Henry tell you a joke which most certainly is hilarious")
-embed_misc.add_field(name="`8ball`", value="Ask the oracle with this all time classic")
+                     value="Same as with greeting. Responds to a variety of goodbyes. `@Sir Henry Pickles Nite`", inline=False)
+embed_misc.add_field(name="`sleep`", value="Let\'s the Bot decide if you should go to bed", inline=False)
+embed_misc.add_field(name="`shower`", value="Let\'s the Bot decide if you should take a shower", inline=False)
+embed_misc.add_field(name="`joke`", value="Let Henry tell you a joke which most certainly is hilarious", inline=False)
+embed_misc.add_field(name="`8ball`", value="Ask the oracle with this all time classic", inline=False)
 
 HELP_EMBEDS = (embed_cmd, embed_use, embed_mod, embed_misc)

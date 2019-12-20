@@ -12,8 +12,8 @@ async def membersDump(ctx):
 
 
 async def membersLog(ctx):
-    log_path = ("./logs/members" + "-server-" + ctx.message.server.name.replace(' ', '-') + "-" + (utilities.epoch_to_custom_date(utilities.FMT_TIME_FILE)) + ".log")
-    for i, member in enumerate(ctx.message.server.members):
+    log_path = ("./logs/members" + "-server-" + ctx.message.guild.name.replace(' ', '-') + "-" + (utilities.epoch_to_custom_date(utilities.FMT_TIME_FILE)) + ".log")
+    for i, member in enumerate(ctx.message.guild.members):
         list_mem_num = (f'{i}')
         list_mem_id = (f'{member.id}')
         list_mem = (f'{member}')
@@ -21,7 +21,4 @@ async def membersLog(ctx):
         list_all = (f'Number: {list_mem_num} ID: {list_mem_id} Name: {list_mem} ({list_mem_name})\n')
         with open(log_path, 'a') as file:
             file.write(list_all)
-    for channel in ctx.message.server.channels:
-        if channel.name == 'logs':
-            await ctx.bot.send_file(channel, log_path)
-    await ctx.bot.send_file(ctx.message.author, log_path)
+    return log_path

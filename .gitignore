@@ -1,2 +1,3 @@
-# *.log
-# data_bcad.log
+*.log
+config.json
+_config.yml
