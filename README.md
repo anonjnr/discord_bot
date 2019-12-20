@@ -1,3 +1,10 @@
+<a href="https://github.com/x3l51/discord_bot/releases" target=”_blank”>
+<img src="https://img.shields.io/github/v/release/x3l51/discord_bot?include_prereleases">
+</a>
+<a href="https://discordapp.com/invite/5raBJUU" target=”_blank”>
+<img src="https://img.shields.io/discord/475317056443645952">
+</a>
+
 PLEASE NOTICE THAT THIS IS BEING WORKED ON DAILY
 BUT ONLY PUSHED TO GITHUB EVERY NOW AND THEN
 
