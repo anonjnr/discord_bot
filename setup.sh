@@ -25,9 +25,8 @@ sudo python3.6 -m pip install youtube-dl
 cd ~
 sudo mkdir projects
 cd projects
+sudo mkdir logs
 sudo wget https://github.com/x3l51/discord_bot/archive/master.zip
 sudo unzip master.zip
-sudo chmod +x bcad_bot_3.6.py
-sudo chmod 777 bcad_bot_3.6.py
-python3.6 setup.py
-python3.6 bcad_bot_3.6.py
+sudo chmod 777 config.json
+python3 setup.py

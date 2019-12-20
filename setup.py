@@ -140,7 +140,7 @@ def credentials_view():
         start()
 
 def end():
-    print("Ending script now.")
+    print("Ending script now.\n\nStart bot with `sudo python3 discord_bot_3.6.py`\n\n")
     return
 
 welcome()
