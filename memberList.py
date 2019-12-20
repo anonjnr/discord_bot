@@ -2,14 +2,26 @@
 # -*- coding: utf-8 -*-
 # bot_bcad_3.6.py
 
-import utilities
+import utilities, os, fnmatch, re
 
 async def membersDump(ctx):
-    with open('./logs/members.log', 'r', newline='\n', encoding='utf-8') as members_list_raw:
-        members_list = members_list_raw.read()
-        member = ctx.message.author
-        await ctx.bot.send_message(member, members_list)
-
+    serverName = (f"*{ctx.message.guild.name.replace(' ', '-')}*")
+    membersList = []
+    for file in os.listdir('./logs'):
+        if fnmatch.fnmatch(file, 'members-server*'):
+            if fnmatch.fnmatch(file, serverName):
+                filePath = './logs/' + file
+                with open(filePath) as fp:
+                    lines = fp.readlines()
+                    for line in lines:
+                        line = line.split("Number: " + line[re.search(r"\d", line).start()])[1].strip(" ").replace("_", "\_")
+                        if line not in membersList:
+                            membersList.append(line)
+    membersList = '\n'.join(membersList)
+    return membersList
+    # with open('./logs/members.log', 'r', newline='\n', encoding='utf-8') as members_list_raw:
+    #     members_list = members_list_raw.read()
+    #     return members_list
 
 async def membersLog(ctx):
     log_path = ("./logs/members" + "-server-" + ctx.message.guild.name.replace(' ', '-') + "-" + (utilities.epoch_to_custom_date(utilities.FMT_TIME_FILE)) + ".log")
