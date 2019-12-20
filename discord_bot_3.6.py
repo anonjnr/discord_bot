@@ -603,6 +603,7 @@ async def quit(ctx):
                 await ctx.send("`Values saved`")
                 await ctx.send("`Logout`")
                 return await bot.logout()
+                sys.exit(0)
         else:
             embed = discord.Embed(title="Notification", description=("<@!"+bot_owner_id+">, " + ctx.message.author.mention + " wants to quit the bot."),
                         color=0xeee657)
@@ -677,15 +678,11 @@ async def members(ctx):
     cmd_trigger()
 
     if ctx.message.author.guild_permissions.administrator:
-        try:
-            log_path = await memberList.membersLog(ctx)
-            for channel in ctx.message.guild.channels:
-                if channel.name == 'logs':
-                    await channel.send(file=discord.File(log_path))
-            return await ctx.message.author.send(file=discord.File(log_path))
-        except:
-            await ctx.send('Whoops, something went wrong ' + ctx.message.author.mention + '.')
-        return
+        log_path = await memberList.membersLog(ctx)
+        for channel in ctx.message.guild.channels:
+            if channel.name == 'logs':
+                await channel.send(file=discord.File(log_path))
+        return await ctx.message.author.send(file=discord.File(log_path))
     else:
         return await ctx.send(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
 
@@ -695,11 +692,8 @@ async def members_show(ctx):
     cmd_trigger()
 
     if ctx.message.author.guild_permissions.administrator:
-        try:
-            await memberList.membersDump(ctx)
-        except:
-            await ctx.send('Whoops, something went wrong ' + ctx.message.author.mention + '.')
-        return
+        members = await memberList.membersDump(ctx)
+        return await ctx.message.author.send(members)
     else:
         return await ctx.send(ctx.message.author.mention + ', you\'re not a mod. You can\'t use this command.')
 
@@ -1146,7 +1140,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if not message.channel.type is "private":
+    if message.channel.type != discord.ChannelType.private:
         if bot.user.mentioned_in(message) and not message.mention_everyone:
             if any(x in message.content for x in messages.USER_GREETINGS):
                 return await message.channel.send(random.choice(messages.BOT_GREETINGS))
