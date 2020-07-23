@@ -1,0 +1,45 @@
+{
+    "TOKEN": [
+        {
+            "value": ""
+        }
+    ], 
+    "REDDIT": [
+        {
+            "client_id": "", 
+            "client_secret": "", 
+            "user_agent": ""
+        }
+    ], 
+    "PREFIX": [
+        {
+            "prefix": "!"
+        }
+    ], 
+    "GOODREADS": [
+        {
+            "goodreads_key": ""
+        }
+    ], 
+    "COUNTER": [
+        {
+            "counter_reac": "0",
+            "counter_cmd": "0"
+        }
+    ], 
+    "UPTIME": [
+        {
+            "uptime": 0
+        }
+    ], 
+    "BOT_OWNER_ID": [
+        {
+            "bot_owner_id": ""
+        }
+    ], 
+    "STATUS": [
+        {
+            "status": "!help"
+        }
+    ]
+}
