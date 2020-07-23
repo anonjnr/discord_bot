@@ -73,7 +73,7 @@ sudo python3.6 setup.py
 
 Open `setup.py` (`sudo python3 setup.py`- will autoomatically be opened if you use the `setup.sh`) and fill in the token for Discord, the role ID's for the administrators/ mods of your server (find out by `\@ROLE_MENTION` into chat on server), reddit api client ID/ client secret/ user agent, ID auf the author (same method as with roles `\@AUTHER_MENTION`) and the goodreads key. The Discord Token is the only thin mandatory, you can leave the rest blank if you'd like. Most funtions will not work properly then.
 
-To start the bot simply use `python3 bcad_bot3.6.py`(will automatically start if you use the `setup.sh`).
+To start the bot simply use `python3 discord_bot_3.6.py`(will automatically start if you use the `setup.sh`).
 
 If you run into any issues, look up the documentation as provided on top of this `readme.md` or file an issue.
 
